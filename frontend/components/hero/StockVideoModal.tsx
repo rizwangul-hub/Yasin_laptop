@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import { X, MessageCircle, Play, Sparkles, Laptop, ShieldCheck } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { X, MessageCircle, Play, Laptop, ShieldCheck, ExternalLink } from 'lucide-react';
 import { sanitizeWhatsAppNumber } from '@/lib/formatters';
 
 interface StockVideoModalProps {
@@ -21,6 +21,8 @@ export const StockVideoModal: React.FC<StockVideoModalProps> = ({
   description = 'Check out our fresh container stock arrival with 1-month warranty in Lakki Marwat.',
   whatsappNumber = '923427709129',
 }) => {
+  const [iframeError, setIframeError] = useState(false);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -41,32 +43,53 @@ export const StockVideoModal: React.FC<StockVideoModalProps> = ({
 
   const cleanNum = sanitizeWhatsAppNumber(whatsappNumber);
   const whatsappInquiryUrl = `https://wa.me/${cleanNum}?text=${encodeURIComponent(
-    `Assalam o Alaikum, I just watched your Daily Stock Video ("${title}") and would like to inquire about the laptops available right now.`
+    `Assalam o Alaikum, I watched your video ("${title}") and would like to inquire about the laptops available right now.`
   )}`;
 
-  // Determine if YouTube or direct video
+  const trimmedUrl = (videoUrl || '').trim();
+
+  // 1. Check YouTube
   const isYouTube =
-    videoUrl && (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be'));
+    trimmedUrl.includes('youtube.com') ||
+    trimmedUrl.includes('youtu.be');
 
   const getYouTubeEmbedUrl = (url: string) => {
     let videoId = '';
     if (url.includes('youtu.be/')) {
-      videoId = url.split('youtu.be/')[1]?.split('?')[0] || '';
-    } else if (url.includes('watch?v=')) {
-      videoId = url.split('watch?v=')[1]?.split('&')[0] || '';
+      videoId = url.split('youtu.be/')[1]?.split('?')[0]?.split('&')[0] || '';
+    } else if (url.includes('youtube.com/shorts/')) {
+      videoId = url.split('youtube.com/shorts/')[1]?.split('?')[0]?.split('&')[0] || '';
+    } else if (url.includes('watch?v=') || url.includes('watch?')) {
+      const match = url.match(/[?&]v=([^&#]+)/);
+      videoId = match ? match[1] : '';
     } else if (url.includes('/embed/')) {
-      videoId = url.split('/embed/')[1]?.split('?')[0] || '';
+      videoId = url.split('/embed/')[1]?.split('?')[0]?.split('&')[0] || '';
     }
-    return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0` : url;
+    return videoId
+      ? `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`
+      : url;
+  };
+
+  // 2. Check TikTok
+  const isTikTok =
+    trimmedUrl.includes('tiktok.com');
+
+  const getTikTokEmbedUrl = (url: string) => {
+    // If format: tiktok.com/@username/video/71234567890
+    const videoMatch = url.match(/\/video\/(\d+)/);
+    if (videoMatch && videoMatch[1]) {
+      return `https://www.tiktok.com/player/v1/${videoMatch[1]}?autoplay=1`;
+    }
+    return url;
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-10 bg-black/85 backdrop-blur-md animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 md:p-10 bg-black/85 backdrop-blur-md animate-fade-in">
       {/* Backdrop click */}
       <div className="absolute inset-0" onClick={onClose} />
 
       {/* Modal Box */}
-      <div className="relative w-full max-w-4xl bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden z-10 flex flex-col max-h-[90vh]">
+      <div className="relative w-full max-w-4xl bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden z-10 flex flex-col max-h-[92vh]">
         {/* Header */}
         <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-slate-800 bg-slate-950/80">
           <div className="flex items-center gap-3">
@@ -76,9 +99,9 @@ export const StockVideoModal: React.FC<StockVideoModalProps> = ({
             </span>
             <div>
               <h3 className="text-sm sm:text-base font-bold text-white tracking-tight flex items-center gap-2">
-                <span>{title}</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-semibold border border-rose-500/30">
-                  DAILY STATUS VIDEO
+                <span className="line-clamp-1">{title}</span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-semibold border border-rose-500/30 shrink-0">
+                  {isTikTok ? 'TIKTOK VIDEO' : isYouTube ? 'YOUTUBE VIDEO' : 'STOCK VIDEO'}
                 </span>
               </h3>
               <p className="text-[11px] text-slate-400 hidden sm:block">
@@ -96,25 +119,47 @@ export const StockVideoModal: React.FC<StockVideoModalProps> = ({
           </button>
         </div>
 
-        {/* Video Area */}
-        <div className="relative w-full aspect-video bg-black flex items-center justify-center overflow-hidden">
-          {videoUrl ? (
+        {/* Video Player Area */}
+        <div className="relative w-full aspect-video sm:max-h-[60vh] bg-black flex items-center justify-center overflow-hidden">
+          {trimmedUrl ? (
             isYouTube ? (
               <iframe
-                src={getYouTubeEmbedUrl(videoUrl)}
+                src={getYouTubeEmbedUrl(trimmedUrl)}
                 title={title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
                 className="w-full h-full border-0"
               />
+            ) : isTikTok ? (
+              <div className="w-full h-full relative flex items-center justify-center bg-slate-950">
+                <iframe
+                  src={getTikTokEmbedUrl(trimmedUrl)}
+                  title={title}
+                  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full border-0 max-w-md mx-auto"
+                />
+                {/* Direct TikTok link helper */}
+                <div className="absolute top-2 right-2 z-10">
+                  <a
+                    href={trimmedUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/70 hover:bg-black text-white text-[11px] font-medium backdrop-blur-md border border-white/20 transition-all"
+                  >
+                    <span>Open in TikTok</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+              </div>
             ) : (
               <video
-                src={videoUrl}
+                src={trimmedUrl}
                 controls
                 autoPlay
                 className="w-full h-full object-contain"
               >
-                Your browser does not support the video tag.
+                Your browser does not support video playback.
               </video>
             )
           ) : (
@@ -126,7 +171,7 @@ export const StockVideoModal: React.FC<StockVideoModalProps> = ({
               <div className="space-y-1">
                 <h4 className="text-base font-bold text-white">Daily WhatsApp Status Video</h4>
                 <p className="text-xs text-slate-400 leading-relaxed">
-                  We post live unboxing and condition testing videos daily on our WhatsApp status. Contact us directly to get live videos of any specific laptop model.
+                  We post live unboxing and condition testing videos daily on TikTok and WhatsApp. Contact us directly for live stock videos.
                 </p>
               </div>
               <a

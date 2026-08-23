@@ -343,13 +343,13 @@ export default function AdminReviewsPage() {
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1">
-                    Customer Video URL (Optional)
+                    Customer Video URL (TikTok, YouTube, Shorts, or MP4)
                   </label>
                   <input
                     type="text"
                     value={formData.videoUrl}
                     onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
-                    placeholder="YouTube URL, MP4 link or Cloudinary video"
+                    placeholder="e.g. https://www.tiktok.com/@... or https://youtube.com/..."
                     className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-brand-500 font-mono"
                   />
                 </div>
