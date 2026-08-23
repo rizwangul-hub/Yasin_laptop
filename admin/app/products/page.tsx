@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { adminApiClient } from '@/lib/api-client';
+import { getOptimizedAdminThumbnail } from '@/lib/cloudinary';
 import {
   Laptop,
   Plus,
@@ -348,7 +349,14 @@ export default function AdminProductsPage() {
                       <div className="w-14 h-14 rounded-xl bg-charcoal-50 border border-charcoal-200 flex items-center justify-center shrink-0 overflow-hidden">
                         {primaryImg?.url ? (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img src={primaryImg.url} alt={p.name} className="w-full h-full object-contain p-1" />
+                          <img
+                            src={getOptimizedAdminThumbnail(primaryImg.url)}
+                            alt={p.name}
+                            width={56}
+                            height={56}
+                            className="w-full h-full object-contain p-1"
+                            loading="lazy"
+                          />
                         ) : (
                           <Laptop className="w-6 h-6 text-charcoal-400" />
                         )}
@@ -456,9 +464,12 @@ export default function AdminProductsPage() {
                               {primaryImg?.url ? (
                                 // eslint-disable-next-line @next/next/no-img-element
                                 <img
-                                  src={primaryImg.url}
+                                  src={getOptimizedAdminThumbnail(primaryImg.url)}
                                   alt={p.name}
+                                  width={48}
+                                  height={48}
                                   className="w-full h-full object-contain p-1"
+                                  loading="lazy"
                                 />
                               ) : (
                                 <Laptop className="w-5 h-5 text-charcoal-400" />

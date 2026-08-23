@@ -5,6 +5,7 @@ import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
 import { IProduct, IProductImage } from '@/types';
 import { formatPrice, buildProductWhatsAppUrl } from '@/lib/formatters';
+import { ImagePresets } from '@/lib/cloudinary';
 import { DEFAULT_BUSINESS_CONFIG } from '@/lib/business-config';
 import { Laptop, Cpu, HardDrive, MemoryStick, MessageCircle, ArrowRight } from 'lucide-react';
 
@@ -16,6 +17,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const mainImage =
     product.images?.find((img: IProductImage) => img.isPrimary || img.isMain) ||
     product.images?.[0];
+  const optimizedImageUrl = ImagePresets.productCard(mainImage?.url);
   const brandName =
     typeof product.brand === 'object' && product.brand !== null
       ? product.brand.name
@@ -38,13 +40,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     >
       {/* Image & Badges Container */}
       <div className="relative w-full aspect-[4/3] bg-[#F8F8F4] flex items-center justify-center overflow-hidden border-b border-charcoal-100">
-        {mainImage?.url ? (
+        {optimizedImageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={mainImage.url}
-            alt={mainImage.alt || mainImage.altText || product.name}
+            src={optimizedImageUrl}
+            alt={mainImage?.alt || mainImage?.altText || product.name}
+            width={400}
+            height={300}
             className="w-full h-full object-contain p-2.5 sm:p-4 group-hover:scale-105 transition-transform duration-300"
             loading="lazy"
+            decoding="async"
           />
         ) : (
           <div className="flex flex-col items-center justify-center text-charcoal-400 gap-1.5 p-4">

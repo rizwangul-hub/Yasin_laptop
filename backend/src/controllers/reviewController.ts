@@ -15,6 +15,7 @@ export const getReviews = async (req: Request, res: Response): Promise<void> => 
   }
 
   const reviews = await Review.find(query).sort({ sortOrder: 1, createdAt: -1 }).lean();
+  res.setHeader('Cache-Control', 'public, max-age=180, stale-while-revalidate=300');
   sendSuccess(res, 'Reviews fetched successfully', reviews);
 };
 

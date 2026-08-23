@@ -225,8 +225,12 @@ export const Hero: React.FC<HeroProps> = () => {
                   <img
                     src={slide.desktopImage}
                     alt={slide.tag}
+                    width={600}
+                    height={380}
                     className="w-full h-full object-contain drop-shadow-md transition-transform duration-500 group-hover:scale-105"
                     loading={idx === 0 ? 'eager' : 'lazy'}
+                    decoding="async"
+                    {...(idx === 0 ? { fetchPriority: 'high' } : {})}
                   />
 
                   {/* Slide Label Badge */}

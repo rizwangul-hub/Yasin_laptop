@@ -10,6 +10,7 @@ export const getBrands = async (_req: Request, res: Response): Promise<void> => 
   }
 
   const brands = await Brand.find({ isActive: true }).sort({ sortOrder: 1, name: 1 }).lean();
+  res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
   sendSuccess(res, 'Brands fetched successfully', brands);
 };
 
@@ -27,6 +28,7 @@ export const getBrandBySlug = async (req: Request, res: Response): Promise<void>
     return;
   }
 
+  res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
   sendSuccess(res, 'Brand fetched successfully', brand);
 };
 

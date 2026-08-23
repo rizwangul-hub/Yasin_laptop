@@ -26,6 +26,7 @@ export const getProducts = async (req: Request, res: Response): Promise<void> =>
   const queryParams: ProductQueryParams = req.query as unknown as ProductQueryParams;
   const result = await productQueryService.executeProductQuery(queryParams);
 
+  res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
   sendSuccess(res, 'Products fetched successfully', result);
 };
 
@@ -37,6 +38,7 @@ export const getProductFilters = async (req: Request, res: Response): Promise<vo
   }
 
   const filterMeta = await productQueryService.getFilterMetadata(String(req.query.productType || 'laptop'));
+  res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
   sendSuccess(res, 'Filter metadata fetched successfully', filterMeta);
 };
 
@@ -59,6 +61,7 @@ export const getProductBySlug = async (req: Request, res: Response): Promise<voi
     return;
   }
 
+  res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
   sendSuccess(res, 'Product fetched successfully', product);
 };
 

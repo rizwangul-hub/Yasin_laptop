@@ -124,12 +124,15 @@ export default function HomePage() {
   const [accessories, setAccessories] = useState<IAccessory[]>([]);
   const [activeTab, setActiveTab] = useState<'all' | 'chromebooks' | 'deals'>('all');
   const [isLoading, setIsLoading] = useState(true);
+  const isLoadedRef = React.useRef(false);
 
   useEffect(() => {
     let isMounted = true;
 
     async function loadHomeData() {
-      setIsLoading(true);
+      if (!isLoadedRef.current) {
+        setIsLoading(true);
+      }
 
       try {
         const [productsRes, accRes] = await Promise.allSettled([
@@ -161,6 +164,7 @@ export default function HomePage() {
       } finally {
         if (isMounted) {
           setIsLoading(false);
+          isLoadedRef.current = true;
         }
       }
     }

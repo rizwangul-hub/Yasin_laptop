@@ -279,8 +279,12 @@ export const productQueryService = {
     const filter = await productQueryService.buildFilterQuery(params);
     const sort = productQueryService.getSortOption(params.sort);
 
+    const cardProjection =
+      'name slug laptopModel brand categories productType price previousPrice isDiscounted discountPercentage stockStatus condition publicationStatus images specs accessoryCategory featured bestDeal latestArrival createdAt';
+
     const [items, total] = await Promise.all([
       Product.find(filter)
+        .select(cardProjection)
         .populate('brand', 'name slug logo')
         .populate('categories', 'name slug')
         .populate('useCases', 'name slug')

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { IProductImage } from '@/types';
+import { ImagePresets } from '@/lib/cloudinary';
 import {
   ChevronLeft,
   ChevronRight,
@@ -115,8 +116,10 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
         {/* Main Image */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={currentImage.url}
+          src={ImagePresets.productDetail(currentImage.url)}
           alt={altText}
+          width={900}
+          height={675}
           style={
             isZoomed
               ? {
@@ -127,6 +130,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
           }
           className="w-full h-full object-contain p-4 sm:p-8 transition-transform duration-150 ease-out select-none pointer-events-none"
           loading="eager"
+          decoding="async"
         />
 
         {/* Zoom Hint Icon */}
@@ -189,10 +193,13 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={img.url}
+                  src={ImagePresets.thumbnail(img.url)}
                   alt={thumbAlt}
+                  width={150}
+                  height={150}
                   className="w-full h-full object-contain p-2"
                   loading="lazy"
+                  decoding="async"
                 />
               </button>
             );
@@ -226,9 +233,10 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={currentImage.url}
+              src={ImagePresets.lightbox(currentImage.url)}
               alt={altText}
               className="max-w-full max-h-full object-contain select-none rounded-2xl"
+              decoding="async"
             />
 
             {/* Navigation in Lightbox */}

@@ -5,6 +5,7 @@ import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
 import { IAccessory, IProductImage } from '@/types';
 import { formatPrice, buildWhatsAppUrl } from '@/lib/formatters';
+import { ImagePresets } from '@/lib/cloudinary';
 import { DEFAULT_BUSINESS_CONFIG } from '@/lib/business-config';
 import { Layers, MessageCircle, ArrowRight } from 'lucide-react';
 
@@ -16,6 +17,7 @@ export const AccessoryCard: React.FC<AccessoryCardProps> = ({ accessory }) => {
   const mainImage =
     accessory.images?.find((img: IProductImage) => img.isPrimary || img.isMain) ||
     accessory.images?.[0];
+  const optimizedImageUrl = ImagePresets.productCard(mainImage?.url);
   const isAvailable = accessory.stockStatus === 'available';
 
   const accessoryUrl = `/accessories?item=${accessory.slug}`;
@@ -34,13 +36,16 @@ export const AccessoryCard: React.FC<AccessoryCardProps> = ({ accessory }) => {
     >
       {/* Image & Badges */}
       <div className="relative w-full aspect-[4/3] bg-[#F8F8F4] flex items-center justify-center overflow-hidden border-b border-charcoal-100">
-        {mainImage?.url ? (
+        {optimizedImageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={mainImage.url}
-            alt={mainImage.alt || mainImage.altText || accessory.name}
+            src={optimizedImageUrl}
+            alt={mainImage?.alt || mainImage?.altText || accessory.name}
+            width={400}
+            height={300}
             className="w-full h-full object-contain p-2.5 sm:p-4 group-hover:scale-105 transition-transform duration-300"
             loading="lazy"
+            decoding="async"
           />
         ) : (
           <div className="flex flex-col items-center justify-center text-charcoal-400 gap-1 p-4">
