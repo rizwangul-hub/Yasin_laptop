@@ -4,7 +4,7 @@ import { authenticate, authorize } from '../middleware/authMiddleware';
 
 const router = Router();
 
-router.post('/', authenticate, authorize(['admin']), uploadImage);
-router.post('/delete', authenticate, authorize(['admin']), deleteImage);
+router.post('/', authenticate, authorize('admin', 'superadmin'), uploadImage);
+router.post('/delete', authenticate, authorize('admin', 'superadmin'), deleteImage);
 
 export default router;

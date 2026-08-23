@@ -158,44 +158,53 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, productId
     setIsUploading(true);
     setError(null);
 
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      if (file.size > 5 * 1024 * 1024) {
-        setError('One of the images exceeds 5MB limit.');
+    const fileList = Array.from(files);
+
+    for (const file of fileList) {
+      if (file.size > 10 * 1024 * 1024) {
+        setError(`"${file.name}" exceeds 10MB limit.`);
         continue;
       }
 
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const base64Data = reader.result as string;
-        try {
-          const res = await adminApiClient<{ url: string; publicId: string }>('/upload', {
-            method: 'POST',
-            body: JSON.stringify({ image: base64Data, folder: 'products' }),
-          });
+      try {
+        const base64Data = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
 
-          if (res.success && res.data) {
-            setFormData((prev) => ({
-              ...prev,
-              images: [
-                ...prev.images,
-                {
-                  url: res.data!.url,
-                  publicId: res.data!.publicId,
-                  isPrimary: prev.images.length === 0,
-                  alt: `${formData.name || 'Laptop'} image`,
-                },
-              ],
-            }));
-          }
-        } catch (err) {
-          setError('Failed to upload image to server');
-        }
-      };
-      reader.readAsDataURL(file);
+        const res = await adminApiClient<{ url: string; publicId: string }>('/upload', {
+          method: 'POST',
+          body: JSON.stringify({ image: base64Data, folder: 'products' }),
+        });
+
+        const imageUrl = res.success && res.data?.url ? res.data.url : base64Data;
+        const imagePublicId =
+          res.success && res.data?.publicId
+            ? res.data.publicId
+            : `img-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+
+        setFormData((prev) => ({
+          ...prev,
+          images: [
+            ...prev.images,
+            {
+              url: imageUrl,
+              publicId: imagePublicId,
+              isPrimary: prev.images.length === 0,
+              alt: `${formData.name || 'Laptop'} image`,
+            },
+          ],
+        }));
+      } catch (err) {
+        console.error('Image upload error:', err);
+        setError('Failed to upload image to server');
+      }
     }
 
     setIsUploading(false);
+    e.target.value = '';
   };
 
   const removeImage = (index: number) => {
