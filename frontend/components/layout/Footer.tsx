@@ -151,25 +151,45 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Location & Contact */}
+          {/* Store Locations */}
           <div>
             <h3 className="text-sm font-bold text-white tracking-wider uppercase mb-4">
-              Store Location
+              Store Locations
             </h3>
-            <div className="space-y-3 text-xs sm:text-sm text-charcoal-400">
-              <div className="flex items-start gap-2.5">
-                <MapPin className="w-4 h-4 text-brand-400 shrink-0 mt-0.5" />
-                <span>
-                  Main Bazaar, {DEFAULT_BUSINESS_CONFIG.address.city}, {DEFAULT_BUSINESS_CONFIG.address.province}, Pakistan
-                </span>
+            <div className="space-y-3.5 text-xs text-charcoal-400">
+              <div className="space-y-1">
+                <div className="flex items-center gap-1.5 font-bold text-white">
+                  <MapPin className="w-3.5 h-3.5 text-brand-400" />
+                  <span>Lakki Marwat (Main Shop)</span>
+                </div>
+                <p className="text-[11px] text-charcoal-400 pl-5">Main Bazaar, Lakki Marwat, KPK</p>
               </div>
-              <div className="flex items-center gap-2.5">
-                <Phone className="w-4 h-4 text-brand-400 shrink-0" />
-                <span>Phone: 03427709129</span>
+
+              <div className="space-y-1">
+                <div className="flex items-center gap-1.5 font-bold text-white">
+                  <MapPin className="w-3.5 h-3.5 text-brand-400" />
+                  <span>Peshawar Branch</span>
+                </div>
+                <p className="text-[11px] text-charcoal-400 pl-5">Saddar / University Rd Market, Peshawar, KPK</p>
               </div>
-              <div className="flex items-center gap-2.5">
-                <MessageCircle className="w-4 h-4 text-[#25D366] shrink-0" />
-                <span className="text-[#25D366] font-bold">WhatsApp: +92 342 7709129</span>
+
+              <div className="space-y-1">
+                <div className="flex items-center gap-1.5 font-bold text-white">
+                  <MapPin className="w-3.5 h-3.5 text-brand-400" />
+                  <span>Sargodha Branch</span>
+                </div>
+                <p className="text-[11px] text-charcoal-400 pl-5">Kutchery Rd / Trust Plaza Market, Sargodha</p>
+              </div>
+
+              <div className="pt-2 border-t border-charcoal-800 space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <Phone className="w-3.5 h-3.5 text-brand-400 shrink-0" />
+                  <span className="text-charcoal-300 font-bold">03427709129</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <MessageCircle className="w-3.5 h-3.5 text-[#25D366] shrink-0" />
+                  <span className="text-[#25D366] font-bold">+92 342 7709129</span>
+                </div>
               </div>
             </div>
           </div>

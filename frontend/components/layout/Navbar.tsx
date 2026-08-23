@@ -258,7 +258,7 @@ export const Navbar: React.FC = () => {
 
               <div className="flex items-center justify-center gap-1.5 text-[11px] text-charcoal-500 font-medium">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Main Bazaar, Lakki Marwat, KPK</span>
+                <span>Lakki Marwat • Peshawar • Sargodha</span>
               </div>
             </div>
           </div>

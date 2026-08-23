@@ -19,8 +19,8 @@ const TRUST_POINTS = [
   },
   {
     icon: MapPin,
-    title: 'Local Shop Lakki Marwat',
-    subtitle: 'Main Bazaar, KPK & Delivery',
+    title: '3 Store Locations',
+    subtitle: 'Lakki, Peshawar & Sargodha',
   },
 ];
 

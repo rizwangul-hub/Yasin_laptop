@@ -31,13 +31,13 @@ export default function AboutPage() {
             Founded &amp; Managed by {DEFAULT_BUSINESS_CONFIG.ownerName}
           </h2>
           <p className="text-sm sm:text-base text-charcoal-600 leading-relaxed font-normal">
-            Based in <strong className="text-charcoal-900 font-bold">Main Bazaar, Lakki Marwat (Khyber Pakhtunkhwa)</strong>, 
-            Yasin Laptop Hub was founded to make reliable, high-performance computing hardware accessible to students, 
+            With physical retail stores across <strong className="text-charcoal-900 font-bold">Lakki Marwat (Main Branch)</strong>, <strong className="text-charcoal-900 font-bold">Peshawar (KPK Hub)</strong>, and <strong className="text-charcoal-900 font-bold">Sargodha (Punjab Hub)</strong>, 
+            Yasin Laptop Hub was founded by {DEFAULT_BUSINESS_CONFIG.ownerName} to make genuine, high-performance computing hardware accessible to students, 
             freelancers, software developers, and business professionals across Pakistan without exorbitant prices.
           </p>
           <p className="text-sm sm:text-base text-charcoal-600 leading-relaxed font-normal">
-            Every container shipment of laptops is personally inspected, diagnostic tested, and cleaned before being cataloged. 
-            We believe in honest condition ratings, original chargers, and backing our machines with a 1-month checking warranty.
+            Every container shipment of imported laptops is personally inspected, diagnostic tested, and cleaned before being cataloged. 
+            We believe in honest condition ratings, original chargers, transparent video testing on WhatsApp, and backing our machines with a standard 1-month checking warranty.
           </p>
         </div>
 
