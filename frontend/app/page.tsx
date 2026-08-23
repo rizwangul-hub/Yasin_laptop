@@ -22,14 +22,11 @@ import {
   Sparkles,
   ArrowRight,
   Cpu,
-  ChevronRight,
   Tag,
-  ArrowDownUp,
   ArrowDownNarrowWide,
   ArrowUpNarrowWide,
   Wallet,
   Building2,
-  CheckCircle2,
 } from 'lucide-react';
 
 const BRAND_CARDS = [
@@ -39,7 +36,6 @@ const BRAND_CARDS = [
     href: '/laptops?brand=hp',
     badge: 'Popular',
     tag: 'EliteBook / ProBook',
-    color: 'from-blue-50 to-white',
   },
   {
     name: 'Dell Laptops',
@@ -47,7 +43,6 @@ const BRAND_CARDS = [
     href: '/laptops?brand=dell',
     badge: 'Durable',
     tag: 'Latitude / XPS',
-    color: 'from-slate-50 to-white',
   },
   {
     name: 'Lenovo Laptops',
@@ -55,7 +50,6 @@ const BRAND_CARDS = [
     href: '/laptops?brand=lenovo',
     badge: 'Top Keyboard',
     tag: 'ThinkPad / Yoga',
-    color: 'from-amber-50 to-white',
   },
   {
     name: 'Chromebooks',
@@ -63,7 +57,6 @@ const BRAND_CARDS = [
     href: '/chromebooks',
     badge: 'Budget Friendly',
     tag: 'HP / Dell / Acer',
-    color: 'from-emerald-50 to-white',
   },
   {
     name: 'Apple MacBooks',
@@ -71,7 +64,6 @@ const BRAND_CARDS = [
     href: '/laptops?brand=apple',
     badge: 'Premium',
     tag: 'Air / Pro',
-    color: 'from-charcoal-50 to-white',
   },
   {
     name: 'Laptop Accessories',
@@ -79,7 +71,6 @@ const BRAND_CARDS = [
     href: '/accessories',
     badge: 'Original',
     tag: 'Power & Gear',
-    color: 'from-brand-50 to-white',
   },
 ];
 
@@ -129,10 +120,9 @@ const PRICE_RANGE_CARDS = [
 ];
 
 export default function HomePage() {
-  const [featuredProducts, setFeaturedProducts] = useState<IProduct[]>([]);
-  const [bestDeals, setBestDeals] = useState<IProduct[]>([]);
-  const [chromebooks, setChromebooks] = useState<IProduct[]>([]);
+  const [allLaptops, setAllLaptops] = useState<IProduct[]>([]);
   const [accessories, setAccessories] = useState<IAccessory[]>([]);
+  const [activeTab, setActiveTab] = useState<'all' | 'chromebooks' | 'deals'>('all');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -142,10 +132,9 @@ export default function HomePage() {
       setIsLoading(true);
 
       try {
-        const [featuredRes, allProductsRes, accRes] = await Promise.allSettled([
-          productService.getFeatured(),
-          productService.getProducts({ limit: 20 }),
-          productService.getAccessories({ limit: 6 }),
+        const [productsRes, accRes] = await Promise.allSettled([
+          productService.getProducts({ limit: 24 }),
+          productService.getAccessories({ limit: 8 }),
         ]);
 
         if (!isMounted) return;
@@ -160,17 +149,8 @@ export default function HomePage() {
           return [];
         };
 
-        if (featuredRes.status === 'fulfilled' && featuredRes.value.success) {
-          setFeaturedProducts(extractItems<IProduct>(featuredRes.value.data));
-        }
-
-        if (allProductsRes.status === 'fulfilled' && allProductsRes.value.success) {
-          const all = extractItems<IProduct>(allProductsRes.value.data);
-          const deals = all.filter((p) => p.bestDeal || (p.previousPrice && p.previousPrice > p.price));
-          setBestDeals(deals.length > 0 ? deals.slice(0, 4) : all.slice(0, 4));
-
-          const chromes = all.filter((p) => p.productType === 'chromebook');
-          setChromebooks(chromes.length > 0 ? chromes.slice(0, 4) : []);
+        if (productsRes.status === 'fulfilled' && productsRes.value.success) {
+          setAllLaptops(extractItems<IProduct>(productsRes.value.data));
         }
 
         if (accRes.status === 'fulfilled' && accRes.value.success) {
@@ -192,6 +172,17 @@ export default function HomePage() {
     };
   }, []);
 
+  // Filter displayed laptops based on active tab
+  const displayedLaptops = React.useMemo(() => {
+    if (activeTab === 'chromebooks') {
+      return allLaptops.filter((p) => p.productType === 'chromebook');
+    }
+    if (activeTab === 'deals') {
+      return allLaptops.filter((p) => p.bestDeal || (p.previousPrice && p.previousPrice > p.price));
+    }
+    return allLaptops.filter((p) => p.productType !== 'accessory');
+  }, [allLaptops, activeTab]);
+
   return (
     <div className="space-y-10 sm:space-y-16 lg:space-y-20 pb-20 overflow-x-hidden bg-warm-bg">
       {/* 1. TOP MOBILE SEARCH BAR */}
@@ -209,7 +200,7 @@ export default function HomePage() {
           <div>
             <div className="flex items-center gap-1.5 text-brand-700 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-0.5">
               <Building2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-              <span>Top Laptop Manufacturers</span>
+              <span>Top Manufacturers</span>
             </div>
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-charcoal-950 tracking-tight">
               Shop by Brand
@@ -259,14 +250,13 @@ export default function HomePage() {
           <div>
             <div className="flex items-center gap-1.5 text-brand-700 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-0.5">
               <Wallet className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-              <span>Budget &amp; Price Filter</span>
+              <span>Budget Filter</span>
             </div>
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-charcoal-950 tracking-tight">
               Shop by Price Range
             </h2>
           </div>
 
-          {/* Quick Sort Links */}
           <div className="flex items-center gap-2 text-xs">
             <Link
               href="/laptops?sort=price_asc"
@@ -317,43 +307,88 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 6. FEATURED LAPTOPS (2-COL ON MOBILE) */}
-      <section className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-4 sm:mb-6">
+      {/* ========================================================================= */}
+      {/* SECTION 1 OF 2: LAPTOPS & CHROMEBOOKS (PRIMARY ITEMS SECTION)             */}
+      {/* ========================================================================= */}
+      <section className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
             <div className="flex items-center gap-1.5 text-brand-700 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-0.5">
-              <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-              <span>Handpicked Units</span>
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Section 1 • Verified Computing Hardware</span>
             </div>
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-charcoal-950 tracking-tight">
-              Featured Laptops
+              Laptops &amp; Chromebooks
             </h2>
+            <p className="text-xs sm:text-sm text-charcoal-500 font-medium mt-1">
+              Handpicked HP, Dell, Lenovo ThinkPads &amp; Chromebooks with 1-month checking warranty.
+            </p>
           </div>
-          <Link
-            href="/laptops"
-            className="text-xs sm:text-sm font-bold text-charcoal-800 hover:text-brand-700 inline-flex items-center gap-1 transition-colors shrink-0"
-          >
-            <span>View All</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+
+          <div className="flex items-center gap-2">
+            {/* Quick Filter Switcher */}
+            <div className="flex items-center p-1 rounded-2xl bg-charcoal-100 border border-charcoal-200 text-xs font-bold">
+              <button
+                type="button"
+                onClick={() => setActiveTab('all')}
+                className={`px-3 py-1.5 rounded-xl transition-all ${
+                  activeTab === 'all'
+                    ? 'bg-white text-charcoal-950 shadow-xs border border-charcoal-200'
+                    : 'text-charcoal-600 hover:text-charcoal-950'
+                }`}
+              >
+                All Laptops
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('chromebooks')}
+                className={`px-3 py-1.5 rounded-xl transition-all ${
+                  activeTab === 'chromebooks'
+                    ? 'bg-white text-charcoal-950 shadow-xs border border-charcoal-200'
+                    : 'text-charcoal-600 hover:text-charcoal-950'
+                }`}
+              >
+                Chromebooks
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('deals')}
+                className={`px-3 py-1.5 rounded-xl transition-all ${
+                  activeTab === 'deals'
+                    ? 'bg-white text-charcoal-950 shadow-xs border border-charcoal-200'
+                    : 'text-charcoal-600 hover:text-charcoal-950'
+                }`}
+              >
+                Best Deals
+              </button>
+            </div>
+
+            <Link
+              href="/laptops"
+              className="text-xs sm:text-sm font-bold text-charcoal-800 hover:text-brand-700 inline-flex items-center gap-1 transition-colors shrink-0 ml-1"
+            >
+              <span>View All</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
         </div>
 
         {isLoading ? (
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-5">
-            {[...Array(4)].map((_, i) => (
+            {[...Array(8)].map((_, i) => (
               <ProductCardSkeleton key={i} />
             ))}
           </div>
-        ) : featuredProducts.length > 0 ? (
+        ) : displayedLaptops.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-5">
-            {featuredProducts.slice(0, 4).map((product) => (
+            {displayedLaptops.slice(0, 8).map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}
           </div>
         ) : (
           <EmptyState
-            title="Featured Inventory Synchronizing"
-            description="Featured laptop units registered through the admin dashboard will automatically appear here."
+            title="Laptops Inventory Synchronizing"
+            description="Laptop units registered through the admin dashboard will automatically appear here."
             action={
               <Link href="/laptops">
                 <Button variant="secondary" size="sm">
@@ -365,79 +400,22 @@ export default function HomePage() {
         )}
       </section>
 
-      {/* 7. BEST DEALS & DISCOUNTED UNITS (Soft Warm Yellow Tint) */}
-      {bestDeals.length > 0 && (
-        <section className="py-8 sm:py-12 bg-brand-50/60 border-y border-brand-200/70">
-          <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="flex items-center gap-1.5 text-amber-800 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-0.5">
-                  <Tag className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-700" />
-                  <span>Special Offers</span>
-                </div>
-                <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-charcoal-950 tracking-tight">
-                  Best Value Laptop Deals
-                </h2>
-              </div>
-              <Link
-                href="/laptops"
-                className="text-xs sm:text-sm font-bold text-charcoal-800 hover:text-brand-700 inline-flex items-center gap-1 transition-colors shrink-0"
-              >
-                <span>All Deals</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-5">
-              {bestDeals.map((product) => (
-                <ProductCard key={product._id} product={product} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* 8. CHROMEBOOKS (2-COL ON MOBILE) */}
-      {chromebooks.length > 0 && (
-        <section className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-4 sm:mb-6">
-            <div>
-              <div className="flex items-center gap-1.5 text-brand-700 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-0.5">
-                <Cpu className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                <span>Fast &amp; Budget Friendly</span>
-              </div>
-              <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-charcoal-950 tracking-tight">
-                Chromebooks for Students
-              </h2>
-            </div>
-            <Link
-              href="/chromebooks"
-              className="text-xs sm:text-sm font-bold text-charcoal-800 hover:text-brand-700 inline-flex items-center gap-1 transition-colors shrink-0"
-            >
-              <span>View All</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-5">
-            {chromebooks.map((product) => (
-              <ProductCard key={product._id} product={product} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* 9. LAPTOP ACCESSORIES (2-COL ON MOBILE) */}
-      <section className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-4 sm:mb-6">
+      {/* ========================================================================= */}
+      {/* SECTION 2 OF 2: LAPTOP ACCESSORIES (SECONDARY ITEMS SECTION)              */}
+      {/* ========================================================================= */}
+      <section className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-5">
+        <div className="flex items-center justify-between mb-2">
           <div>
             <div className="flex items-center gap-1.5 text-brand-700 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-0.5">
-              <Layers className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-              <span>Original Hardware</span>
+              <Layers className="w-3.5 h-3.5" />
+              <span>Section 2 • Original Power &amp; Gear</span>
             </div>
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-charcoal-950 tracking-tight">
               Laptop Accessories &amp; Upgrades
             </h2>
+            <p className="text-xs sm:text-sm text-charcoal-500 font-medium mt-1">
+              Original power adapters, padded backpacks, cooling stands, SSDs &amp; RAM memory upgrades.
+            </p>
           </div>
           <Link
             href="/accessories"
@@ -475,13 +453,13 @@ export default function HomePage() {
         )}
       </section>
 
-      {/* 10. CUSTOMER REVIEWS & VIDEO TESTIMONIALS */}
+      {/* Customer Reviews & Video Testimonials */}
       <CustomerReviews />
 
-      {/* 11. WHATSAPP GUIDANCE CTA */}
+      {/* WhatsApp Guidance CTA */}
       <WhatsAppCta />
 
-      {/* 12. CONTACT & STORE LOCATION PREVIEW */}
+      {/* 3 Store Locations (Lakki Marwat, Peshawar, Sargodha) */}
       <ContactPreview />
     </div>
   );

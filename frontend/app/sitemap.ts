@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 import { SITE_URL } from '@/lib/seo';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://yasin-laptop-backend.vercel.app/api';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -52,7 +52,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Dynamic Product routes
   let dynamicProductRoutes: MetadataRoute.Sitemap = [];
   try {
-    const res = await fetch(`${API_BASE_URL}/products?limit=500`, { next: { revalidate: 3600 } });
+    const res = await fetch(`${API_BASE_URL}/products?limit=500`, {
+      next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(3500),
+    });
     if (res.ok) {
       const data = await res.json();
       if (data.success && data.data?.items) {
@@ -64,14 +67,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         }));
       }
     }
-  } catch (err) {
-    // API offline during static build fallback
+  } catch {
+    // Fallback gracefully
   }
 
   // Dynamic Category routes
   let dynamicCategoryRoutes: MetadataRoute.Sitemap = [];
   try {
-    const res = await fetch(`${API_BASE_URL}/categories`, { next: { revalidate: 3600 } });
+    const res = await fetch(`${API_BASE_URL}/categories`, {
+      next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(3500),
+    });
     if (res.ok) {
       const data = await res.json();
       if (data.success && data.data) {
@@ -83,14 +89,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         }));
       }
     }
-  } catch (err) {
+  } catch {
     // Fallback
   }
 
   // Dynamic Brand routes
   let dynamicBrandRoutes: MetadataRoute.Sitemap = [];
   try {
-    const res = await fetch(`${API_BASE_URL}/brands`, { next: { revalidate: 3600 } });
+    const res = await fetch(`${API_BASE_URL}/brands`, {
+      next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(3500),
+    });
     if (res.ok) {
       const data = await res.json();
       if (data.success && data.data) {
@@ -102,7 +111,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         }));
       }
     }
-  } catch (err) {
+  } catch {
     // Fallback
   }
 
