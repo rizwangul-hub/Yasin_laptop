@@ -62,7 +62,7 @@ export const Hero: React.FC<HeroProps> = () => {
   }>({
     title: "Today's Fresh Stock Arrival",
     videoUrl: '',
-    description: 'Check out our fresh container stock arrival with 1-month warranty in Lakki Marwat.',
+    description: 'Check out our fresh container stock arrival with 1-month warranty in Lakki Marwat, Peshawar & Sargodha.',
     isActive: true,
     buttonText: 'Watch Daily Stock Video',
   });
@@ -134,9 +134,9 @@ export const Hero: React.FC<HeroProps> = () => {
           {/* Left Hero Content */}
           <div className="lg:col-span-6 space-y-4 sm:space-y-6 text-center lg:text-left">
             {/* Small Brand Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-100/90 text-brand-900 border border-brand-300 text-[11px] sm:text-xs font-bold shadow-xs">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-100/90 text-brand-900 border border-brand-300 text-[11px] sm:text-xs font-bold shadow-xs">
               <Sparkles className="w-3.5 h-3.5 text-brand-800" />
-              <span>Yasin Laptop Hub • Lakki Marwat</span>
+              <span>Lakki Marwat • Peshawar • Sargodha</span>
             </div>
 
             {/* Primary Heading */}
@@ -145,7 +145,7 @@ export const Hero: React.FC<HeroProps> = () => {
                 Find Your Perfect <span className="text-brand-700">Laptop</span>
               </h1>
               <p className="text-xs sm:text-base text-charcoal-600 font-medium max-w-lg mx-auto lg:mx-0 leading-relaxed">
-                Quality business laptops, Chromebooks &amp; original accessories at the right price with 1-month checking warranty.
+                Quality business laptops, Chromebooks &amp; accessories across our branches in Lakki Marwat, Peshawar, and Sargodha with nationwide delivery &amp; 1-month warranty.
               </p>
             </div>
 
