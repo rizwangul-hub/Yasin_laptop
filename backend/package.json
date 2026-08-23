@@ -10,7 +10,9 @@
     "start": "node dist/server.js",
     "type-check": "tsc --noEmit",
     "lint": "eslint src/ --ext .ts",
-    "seed:admin": "tsx src/scripts/seedAdmin.ts"
+    "seed": "tsx src/scripts/seed.ts",
+    "seed:admin": "tsx src/scripts/seedAdmin.ts",
+    "seed:reset": "tsx src/scripts/seedReset.ts"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
