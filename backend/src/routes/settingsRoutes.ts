@@ -5,6 +5,6 @@ import { authenticate, authorize } from '../middleware/authMiddleware';
 const router = Router();
 
 router.get('/', getSettings);
-router.put('/', authenticate, authorize(['admin']), updateSettings);
+router.put('/', authenticate, authorize('admin', 'superadmin'), updateSettings);
 
 export default router;

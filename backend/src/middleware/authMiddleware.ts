@@ -21,7 +21,7 @@ export const authenticate = (
     const decoded = verifyToken(token);
     req.user = decoded;
     next();
-  } catch (error) {
+  } catch {
     sendError(res, 'Invalid or expired authentication token', undefined, 401);
   }
 };
@@ -35,7 +35,19 @@ export const authorize = (...roles: (UserRole | UserRole[])[]) => {
       return;
     }
 
-    if (!allowedRoles.includes(req.user.role)) {
+    // Superadmin has full access to all admin operations
+    if (req.user.role === 'superadmin') {
+      next();
+      return;
+    }
+
+    // If 'admin' is in allowed roles, allow admin users
+    if (allowedRoles.includes('admin') && req.user.role === 'admin') {
+      next();
+      return;
+    }
+
+    if (allowedRoles.length > 0 && !allowedRoles.includes(req.user.role)) {
       sendError(res, 'Forbidden: You do not have permission to perform this action', undefined, 403);
       return;
     }
