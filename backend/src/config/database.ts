@@ -16,8 +16,8 @@ export const connectDatabase = async (): Promise<void> => {
 
   try {
     const conn = await mongoose.connect(ENV.MONGODB_URI, {
-      serverSelectionTimeoutMS: 5000,
-      autoIndex: true, // Auto build indexes in development
+      serverSelectionTimeoutMS: 8000,
+      autoIndex: true,
     });
 
     isConnected = true;
@@ -25,10 +25,6 @@ export const connectDatabase = async (): Promise<void> => {
   } catch (error) {
     isConnected = false;
     logger.error('❌ MongoDB Connection Error:', error instanceof Error ? error.message : 'Unknown database error');
-    if (ENV.NODE_ENV === 'production') {
-      logger.error('Production database connection failed. Exiting process.');
-      process.exit(1);
-    }
   }
 };
 
