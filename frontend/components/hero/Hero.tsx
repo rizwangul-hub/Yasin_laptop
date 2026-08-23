@@ -2,16 +2,18 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { ChevronLeft, ChevronRight, Play, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Play, MessageCircle, ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { StockVideoModal } from './StockVideoModal';
 import { settingsService } from '@/services/settingsService';
 import { DEFAULT_BUSINESS_CONFIG } from '@/lib/business-config';
+import { sanitizeWhatsAppNumber } from '@/lib/formatters';
 
 interface HeroSlide {
   id: number;
   desktopImage: string;
   mobileImage: string;
   link: string;
+  tag: string;
 }
 
 const HERO_SLIDES: HeroSlide[] = [
@@ -20,18 +22,21 @@ const HERO_SLIDES: HeroSlide[] = [
     desktopImage: '/image/L-hero-1.jpg',
     mobileImage: '/image/m-hero-1.jpg',
     link: '/laptops',
+    tag: 'Premium Business Laptops',
   },
   {
     id: 2,
     desktopImage: '/image/L-hero-2.jpg',
     mobileImage: '/image/m-hero-2.jpg',
     link: '/laptops?category=business-laptops',
+    tag: 'HP EliteBooks & Dell Latitudes',
   },
   {
     id: 3,
     desktopImage: '/image/L-hero-3.jpg',
     mobileImage: '/image/m-hero-3.jpg',
-    link: '/laptops',
+    link: '/chromebooks',
+    tag: 'Fast & Affordable Chromebooks',
   },
 ];
 
@@ -63,7 +68,6 @@ export const Hero: React.FC<HeroProps> = () => {
 
   const touchStartX = useRef<number | null>(null);
 
-  // Fetch dynamic video config and WhatsApp number
   useEffect(() => {
     settingsService
       .getSettings()
@@ -83,13 +87,13 @@ export const Hero: React.FC<HeroProps> = () => {
       .catch(() => {});
   }, []);
 
-  // Auto-advance slides every 3 seconds (3000ms)
+  // Auto-advance slides every 3.5 seconds
   useEffect(() => {
     if (isPaused) return;
 
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
-    }, 3000);
+    }, 3500);
 
     return () => clearInterval(timer);
   }, [isPaused]);
@@ -123,125 +127,197 @@ export const Hero: React.FC<HeroProps> = () => {
     touchStartX.current = null;
   };
 
+  const cleanNum = sanitizeWhatsAppNumber(whatsappNumber);
+  const whatsappUrl = `https://wa.me/${cleanNum}?text=${encodeURIComponent(
+    'Assalam o Alaikum, I am visiting Yasin Laptop Hub website and want to inquire about available laptops.'
+  )}`;
+
   return (
     <>
-      <section
-        className="relative overflow-hidden bg-slate-950 border-b border-slate-800 select-none group"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-      >
-        {/* Slideshow Frame */}
-        <div className="relative w-full h-[380px] xs:h-[440px] sm:h-[520px] md:h-[600px] lg:h-[660px] xl:h-[720px] bg-slate-950 flex items-center justify-center">
-          {HERO_SLIDES.map((s, index) => {
-            const isActive = currentSlide === index;
-            return (
-              <Link
-                key={s.id}
-                href={s.link}
-                aria-label={`Explore Laptops — Banner ${s.id}`}
-                className={`absolute inset-0 block cursor-pointer transition-opacity duration-1000 ease-in-out ${
-                  isActive ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'
-                }`}
-              >
-                {/* Desktop Screen Image */}
-                <div className="hidden sm:block absolute inset-0 w-full h-full">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={s.desktopImage}
-                    alt={`Yasin Laptop Hub Banner ${s.id}`}
-                    className="w-full h-full object-cover object-center"
-                  />
+      <section className="relative overflow-hidden bg-gradient-to-b from-[#FAFAF7] via-[#F6F6F0] to-[#FAFAF7] border-b border-charcoal-200/80 pt-8 pb-12 sm:pt-12 sm:pb-16 lg:pt-16 lg:pb-20">
+        {/* Subtle Warm Background Elements */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute -top-32 right-1/4 w-96 h-96 rounded-full bg-brand-200/35 blur-3xl" />
+          <div className="absolute top-1/2 -left-20 w-80 h-80 rounded-full bg-brand-100/40 blur-3xl" />
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            {/* Left Content Column */}
+            <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
+              {/* Trust Badge */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-50 border border-brand-300 text-charcoal-900 text-xs font-bold shadow-xs">
+                <ShieldCheck className="w-4 h-4 text-brand-700" />
+                <span>Verified Laptop Store • Lakki Marwat, KPK</span>
+              </div>
+
+              {/* Main Headline */}
+              <h1 className="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl font-black text-charcoal-950 tracking-tight leading-[1.12]">
+                Find the Right Laptop{' '}
+                <span className="relative inline-block">
+                  <span className="relative z-10 text-charcoal-950">for Your Work &amp; Life</span>
+                  <span className="absolute bottom-1 sm:bottom-2 left-0 right-0 h-3 sm:h-4 bg-brand-300/70 -z-0 rounded-sm" />
+                </span>
+              </h1>
+
+              {/* Supporting Description */}
+              <p className="text-sm sm:text-base text-charcoal-600 leading-relaxed max-w-xl mx-auto lg:mx-0">
+                Quality tested HP, Dell, Lenovo ThinkPads &amp; Chromebooks with original chargers, 1-month checking warranty, and verified battery health.
+              </p>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-2">
+                <Link
+                  href="/laptops"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-brand-500 hover:bg-brand-400 text-charcoal-950 font-bold text-sm shadow-sm hover:shadow transition-all duration-200 hover:scale-105 active:scale-95 border border-brand-500 hover:border-brand-400"
+                >
+                  <span>Explore Laptops</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm shadow-sm transition-all duration-200 hover:scale-105 active:scale-95"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  <span>WhatsApp Us</span>
+                </a>
+              </div>
+
+              {/* 3 Quick Value Bullets */}
+              <div className="pt-4 border-t border-charcoal-200/80 flex flex-wrap items-center justify-center lg:justify-start gap-y-2 gap-x-5 text-xs text-charcoal-600 font-medium">
+                <div className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <span>100% Tested Units</span>
                 </div>
-
-                {/* Mobile Screen Image */}
-                <div className="block sm:hidden absolute inset-0 w-full h-full">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={s.mobileImage}
-                    alt={`Yasin Laptop Hub Mobile Banner ${s.id}`}
-                    className="w-full h-full object-cover object-center"
-                  />
+                <div className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <span>1-Month Warranty</span>
                 </div>
-              </Link>
-            );
-          })}
-
-          {/* Daily Stock Video Floating CTA Button on Hero Section */}
-          {(videoConfig.isActive ?? true) && (
-            <div className="absolute z-20 bottom-12 sm:bottom-16 md:bottom-20 left-1/2 -translate-x-1/2 pointer-events-auto">
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  setIsVideoModalOpen(true);
-                }}
-                className="group/btn relative inline-flex items-center gap-2.5 px-5 sm:px-7 py-3 sm:py-3.5 rounded-full bg-slate-950/90 hover:bg-slate-900 text-white font-bold text-xs sm:text-sm border border-rose-500/60 hover:border-rose-400 shadow-2xl shadow-rose-600/40 backdrop-blur-md transition-all duration-300 hover:scale-105 active:scale-95"
-              >
-                {/* Glowing Pulse Indicator */}
-                <span className="relative flex h-3.5 w-3.5 shrink-0">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-rose-500 items-center justify-center">
-                    <Play className="w-2 h-2 text-white fill-white ml-0.5" />
-                  </span>
-                </span>
-
-                <span className="bg-gradient-to-r from-white via-slate-100 to-rose-200 bg-clip-text text-transparent group-hover/btn:to-rose-300">
-                  {videoConfig.buttonText || 'Watch Daily Stock Video'}
-                </span>
-
-                <span className="hidden sm:inline-block text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-semibold border border-rose-500/30">
-                  LIVE STATUS
-                </span>
-              </button>
+                <div className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <span>Fast Delivery in Pakistan</span>
+                </div>
+              </div>
             </div>
-          )}
 
-          {/* Left Arrow Navigation Button */}
-          <div className="absolute z-20 inset-y-0 left-3 sm:left-6 hidden sm:flex items-center pointer-events-none">
-            <button
-              type="button"
-              onClick={handlePrev}
-              aria-label="Previous Slide"
-              className="pointer-events-auto p-2.5 sm:p-3 rounded-full bg-slate-900/80 hover:bg-slate-800 border border-slate-700/70 text-white backdrop-blur-md transition-all shadow-xl hover:scale-110"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-          </div>
+            {/* Right Product Slideshow Frame */}
+            <div className="lg:col-span-6">
+              <div
+                className="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-3xl overflow-hidden bg-white border border-charcoal-200/90 shadow-soft-lg group select-none"
+                onMouseEnter={() => setIsPaused(true)}
+                onMouseLeave={() => setIsPaused(false)}
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+              >
+                {HERO_SLIDES.map((s, index) => {
+                  const isActive = currentSlide === index;
+                  return (
+                    <Link
+                      key={s.id}
+                      href={s.link}
+                      aria-label={`Explore Laptops — Banner ${s.id}`}
+                      className={`absolute inset-0 block cursor-pointer transition-opacity duration-700 ease-in-out ${
+                        isActive ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'
+                      }`}
+                    >
+                      {/* Desktop Banner Image */}
+                      <div className="hidden sm:block absolute inset-0 w-full h-full">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={s.desktopImage}
+                          alt={`Yasin Laptop Hub Banner ${s.id}`}
+                          className="w-full h-full object-cover object-center"
+                        />
+                      </div>
 
-          {/* Right Arrow Navigation Button */}
-          <div className="absolute z-20 inset-y-0 right-3 sm:right-6 hidden sm:flex items-center pointer-events-none">
-            <button
-              type="button"
-              onClick={handleNext}
-              aria-label="Next Slide"
-              className="pointer-events-auto p-2.5 sm:p-3 rounded-full bg-slate-900/80 hover:bg-slate-800 border border-slate-700/70 text-white backdrop-blur-md transition-all shadow-xl hover:scale-110"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
+                      {/* Mobile Banner Image */}
+                      <div className="block sm:hidden absolute inset-0 w-full h-full">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={s.mobileImage}
+                          alt={`Yasin Laptop Hub Mobile Banner ${s.id}`}
+                          className="w-full h-full object-cover object-center"
+                        />
+                      </div>
+                    </Link>
+                  );
+                })}
 
-          {/* 3-Dot Indicators */}
-          <div className="absolute z-20 bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-slate-950/60 backdrop-blur-sm px-3 py-1.5 rounded-full border border-slate-800/60 pointer-events-auto">
-            {HERO_SLIDES.map((_, index) => (
-              <button
-                key={index}
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  setCurrentSlide(index);
-                }}
-                aria-label={`Slide ${index + 1}`}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  currentSlide === index
-                    ? 'w-7 bg-brand-400 shadow-md shadow-brand-500/50'
-                    : 'w-2 bg-slate-600 hover:bg-slate-400'
-                }`}
-              />
-            ))}
+                {/* Daily Stock Video Floating CTA Button */}
+                {(videoConfig.isActive ?? true) && (
+                  <div className="absolute z-20 bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 pointer-events-auto">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        setIsVideoModalOpen(true);
+                      }}
+                      className="group/btn relative inline-flex items-center gap-2.5 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-charcoal-950/90 hover:bg-charcoal-900 text-white font-bold text-xs sm:text-sm border border-brand-400/60 shadow-xl backdrop-blur-md transition-all duration-300 hover:scale-105 active:scale-95"
+                    >
+                      <span className="relative flex h-3 w-3 shrink-0">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
+                      </span>
+
+                      <span className="text-white group-hover/btn:text-brand-300 transition-colors">
+                        {videoConfig.buttonText || 'Watch Daily Stock Video'}
+                      </span>
+
+                      <span className="hidden sm:inline-block text-[10px] px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-300 font-bold border border-brand-400/30">
+                        LIVE
+                      </span>
+                    </button>
+                  </div>
+                )}
+
+                {/* Left Arrow Button */}
+                <div className="absolute z-20 inset-y-0 left-2.5 flex items-center pointer-events-none">
+                  <button
+                    type="button"
+                    onClick={handlePrev}
+                    aria-label="Previous Slide"
+                    className="pointer-events-auto p-2 rounded-full bg-white/90 hover:bg-white border border-charcoal-200 text-charcoal-800 shadow-md transition-all hover:scale-110"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Right Arrow Button */}
+                <div className="absolute z-20 inset-y-0 right-2.5 flex items-center pointer-events-none">
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    aria-label="Next Slide"
+                    className="pointer-events-auto p-2 rounded-full bg-white/90 hover:bg-white border border-charcoal-200 text-charcoal-800 shadow-md transition-all hover:scale-110"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Dot Indicators */}
+                <div className="absolute z-20 top-3 right-3 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/20 pointer-events-auto">
+                  {HERO_SLIDES.map((_, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        setCurrentSlide(index);
+                      }}
+                      aria-label={`Slide ${index + 1}`}
+                      className={`h-1.5 rounded-full transition-all duration-300 ${
+                        currentSlide === index ? 'w-5 bg-brand-400' : 'w-1.5 bg-white/60 hover:bg-white'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

@@ -57,21 +57,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       {isOpen && (
         <div
           onClick={onClose}
-          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
         />
       )}
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed top-0 left-0 bottom-0 z-50 w-64 bg-slate-950 border-r border-slate-800 flex flex-col justify-between transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed top-0 left-0 bottom-0 z-50 w-64 bg-white border-r border-charcoal-200 flex flex-col justify-between transition-transform duration-300 ease-in-out lg:translate-x-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* Brand Header */}
         <div>
-          <div className="flex items-center justify-between h-16 px-5 border-b border-slate-800">
+          <div className="flex items-center justify-between h-16 px-5 border-b border-charcoal-200 bg-white">
             <div className="flex items-center gap-3">
-              <div className="relative w-9 h-9 shrink-0 overflow-hidden rounded-xl bg-slate-900 border border-slate-700/60 shadow-md">
+              <div className="relative w-9 h-9 shrink-0 overflow-hidden rounded-xl bg-charcoal-50 border border-charcoal-200 shadow-xs">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/logo.jpg"
@@ -80,13 +80,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 />
               </div>
               <div className="flex flex-col">
-                <span className="text-xs font-bold tracking-tight text-white">Yasin Laptop Hub</span>
-                <span className="text-[10px] text-slate-400">Admin SaaS Control</span>
+                <span className="text-xs font-black tracking-tight text-charcoal-950">Yasin Laptop Hub</span>
+                <span className="text-[10px] text-charcoal-500 font-medium">Admin Portal</span>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="p-1 rounded-lg text-slate-400 hover:text-white lg:hidden"
+              className="p-1 rounded-lg text-charcoal-500 hover:text-charcoal-950 lg:hidden"
             >
               <X className="w-5 h-5" />
             </button>
@@ -102,13 +102,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                   key={item.name}
                   href={item.href}
                   onClick={onClose}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition-colors ${
+                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
                     isActive
-                      ? 'bg-brand-600/20 text-brand-400 border border-brand-500/30'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                      ? 'bg-brand-50 text-charcoal-950 border border-brand-300 shadow-xs'
+                      : 'text-charcoal-600 hover:text-charcoal-950 hover:bg-charcoal-100/70 font-medium'
                   }`}
                 >
-                  <Icon className="w-4 h-4 shrink-0" />
+                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-brand-700' : 'text-charcoal-500'}`} />
                   <span>{item.name}</span>
                 </Link>
               );
@@ -117,10 +117,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Footer Actions & Profile Bar */}
-        <div className="p-3 border-t border-slate-800 space-y-1.5 bg-slate-950/80">
-          <div className="px-3 py-1 flex items-center justify-between text-[11px] text-slate-400">
+        <div className="p-3 border-t border-charcoal-200 space-y-1.5 bg-charcoal-50/60">
+          <div className="px-3 py-1 flex items-center justify-between text-[11px] text-charcoal-600 font-medium">
             <span className="truncate">{user?.name || 'Yasin Wahab'}</span>
-            <span className="px-1.5 py-0.2 rounded bg-slate-900 text-brand-400 font-semibold uppercase text-[9px]">
+            <span className="px-2 py-0.5 rounded-md bg-brand-100 border border-brand-200 text-brand-900 font-bold uppercase text-[9px]">
               Admin
             </span>
           </div>
@@ -129,7 +129,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             href={process.env.NEXT_PUBLIC_SITE_URL || 'https://yasin-laptop-hub.vercel.app'}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between px-3 py-1.5 rounded-lg text-xs text-slate-400 hover:text-white hover:bg-slate-900 transition-colors"
+            className="flex items-center justify-between px-3 py-2 rounded-xl text-xs text-charcoal-700 hover:text-charcoal-950 hover:bg-charcoal-100 transition-colors font-semibold"
           >
             <span className="flex items-center gap-2">
               <ExternalLink className="w-3.5 h-3.5" />
@@ -139,7 +139,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
           <button
             onClick={logout}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-rose-400 hover:bg-rose-950/40 hover:text-rose-300 transition-colors"
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition-colors"
           >
             <LogOut className="w-3.5 h-3.5" />
             <span>Logout</span>

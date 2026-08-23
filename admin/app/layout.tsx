@@ -18,8 +18,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className="antialiased selection:bg-brand-600 selection:text-white bg-slate-950 text-slate-100">
+    <html lang="en">
+      <body className="antialiased selection:bg-brand-400 selection:text-charcoal-950 bg-warm-bg text-charcoal-900 font-sans">
         <AuthProvider>
           <AdminLayout>{children}</AdminLayout>
         </AuthProvider>

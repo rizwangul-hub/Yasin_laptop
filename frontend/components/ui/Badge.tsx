@@ -2,7 +2,7 @@ import React, { HTMLAttributes } from 'react';
 import { cn } from '@/lib/formatters';
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-  variant?: 'success' | 'danger' | 'warning' | 'info' | 'neutral' | 'brand' | 'accent';
+  variant?: 'success' | 'danger' | 'warning' | 'info' | 'neutral' | 'brand' | 'accent' | 'dark';
   size?: 'sm' | 'md';
 }
 
@@ -16,17 +16,18 @@ export const Badge: React.FC<BadgeProps> = ({
   const baseStyles = 'inline-flex items-center font-medium rounded-full';
 
   const variants = {
-    success: 'bg-emerald-950/80 text-emerald-300 border border-emerald-800/60',
-    danger: 'bg-rose-950/80 text-rose-300 border border-rose-800/60',
-    warning: 'bg-amber-950/80 text-amber-300 border border-amber-800/60',
-    info: 'bg-sky-950/80 text-sky-300 border border-sky-800/60',
-    neutral: 'bg-slate-800 text-slate-300 border border-slate-700',
-    brand: 'bg-brand-950/80 text-brand-300 border border-brand-800/60',
-    accent: 'bg-purple-950/80 text-purple-300 border border-purple-800/60',
+    success: 'bg-emerald-50 text-emerald-800 border border-emerald-200',
+    danger: 'bg-rose-50 text-rose-700 border border-rose-200',
+    warning: 'bg-amber-50 text-amber-900 border border-amber-300 font-semibold',
+    info: 'bg-sky-50 text-sky-800 border border-sky-200',
+    neutral: 'bg-charcoal-100 text-charcoal-700 border border-charcoal-200',
+    brand: 'bg-brand-50 text-charcoal-950 border border-brand-300 font-bold',
+    accent: 'bg-purple-50 text-purple-800 border border-purple-200',
+    dark: 'bg-charcoal-900 text-white border border-charcoal-800',
   };
 
   const sizes = {
-    sm: 'text-[10px] px-2 py-0.5',
+    sm: 'text-[10px] px-2 py-0.5 font-medium',
     md: 'text-xs px-2.5 py-1',
   };
 

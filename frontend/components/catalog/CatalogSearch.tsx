@@ -12,7 +12,7 @@ interface CatalogSearchProps {
 export const CatalogSearch: React.FC<CatalogSearchProps> = ({
   initialValue = '',
   onSearch,
-  placeholder = 'Search laptops by name, brand, model or processor...',
+  placeholder = 'What laptop are you looking for? (e.g. HP EliteBook, Core i5, ThinkPad)',
 }) => {
   const [searchTerm, setSearchTerm] = useState(initialValue);
 
@@ -37,7 +37,7 @@ export const CatalogSearch: React.FC<CatalogSearchProps> = ({
 
   return (
     <div className="relative w-full">
-      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-charcoal-400">
         <Search className="w-4 h-4" />
       </div>
       <input
@@ -45,14 +45,14 @@ export const CatalogSearch: React.FC<CatalogSearchProps> = ({
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         placeholder={placeholder}
-        className="w-full pl-10 pr-10 py-3 rounded-xl bg-slate-900/90 border border-slate-800 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all shadow-inner"
+        className="w-full pl-10 pr-10 py-3 rounded-2xl bg-white border border-charcoal-200 text-sm text-charcoal-950 placeholder:text-charcoal-400 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-400/30 transition-all shadow-soft"
       />
       {searchTerm && (
         <button
           type="button"
           onClick={handleClear}
           aria-label="Clear search"
-          className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white transition-colors"
+          className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-charcoal-400 hover:text-charcoal-900 transition-colors"
         >
           <X className="w-4 h-4" />
         </button>

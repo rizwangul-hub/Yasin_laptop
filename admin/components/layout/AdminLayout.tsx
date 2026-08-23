@@ -10,11 +10,11 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   const pathname = usePathname();
 
   if (pathname === '/login') {
-    return <div className="min-h-screen bg-slate-950 text-slate-100">{children}</div>;
+    return <div className="min-h-screen bg-warm-bg text-charcoal-900">{children}</div>;
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex">
+    <div className="min-h-screen bg-warm-bg text-charcoal-900 flex">
       {/* Collapsible Sidebar */}
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 

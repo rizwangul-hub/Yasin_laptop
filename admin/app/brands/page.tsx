@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { adminApiClient } from '@/lib/api-client';
-import { Building2, Plus, Edit, Trash2, Check, AlertCircle, Loader2 } from 'lucide-react';
+import { Building2, Plus, Edit, Trash2, AlertCircle, Loader2 } from 'lucide-react';
 
 interface IBrand {
   _id: string;
@@ -26,7 +26,7 @@ export default function AdminBrandsPage() {
     try {
       const res = await adminApiClient<IBrand[]>('/brands');
       if (res.success && res.data) setBrands(res.data);
-    } catch (err) {
+    } catch {
       // Fallback
     } finally {
       setIsLoading(false);
@@ -77,7 +77,7 @@ export default function AdminBrandsPage() {
       } else {
         setError(res.message || 'Failed to save brand');
       }
-    } catch (err) {
+    } catch {
       setError('Connection failure while saving brand');
     } finally {
       setIsSaving(false);
@@ -89,60 +89,62 @@ export default function AdminBrandsPage() {
     try {
       const res = await adminApiClient(`/brands/${id}`, { method: 'DELETE' });
       if (res.success) loadBrands();
-    } catch (err) {}
+    } catch {
+      // Ignore
+    }
   };
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black text-charcoal-950 tracking-tight">
             Brand Management
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400">
-            Configure laptop manufacturers (HP, Dell, Lenovo, Apple, ASUS, Acer, etc.)
+          <p className="text-xs sm:text-sm text-charcoal-500 font-medium">
+            Manage supported laptop manufacturers (HP, Dell, Lenovo, Apple, etc.)
           </p>
         </div>
 
         <button
           onClick={openCreateModal}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs shadow-md"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-400 text-charcoal-950 font-bold text-xs shadow-sm transition-all hover:scale-105 active:scale-95"
         >
           <Plus className="w-4 h-4" />
           <span>Add Brand</span>
         </button>
       </div>
 
-      <div className="rounded-2xl bg-slate-900/60 border border-slate-800 overflow-hidden">
+      <div className="rounded-3xl bg-white border border-charcoal-200/90 shadow-soft overflow-hidden">
         {isLoading ? (
-          <div className="py-20 text-center text-xs text-slate-400">Loading brands...</div>
+          <div className="py-20 text-center text-xs text-charcoal-500 font-medium">Loading brands...</div>
         ) : brands.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-950/60 border-b border-slate-800 text-slate-400 uppercase text-[10px]">
+              <thead className="bg-charcoal-50/80 border-b border-charcoal-200 text-charcoal-500 uppercase text-[10px] font-bold tracking-wider">
                 <tr>
                   <th className="py-3.5 px-4">Brand Name</th>
-                  <th className="py-3.5 px-4">Slug</th>
+                  <th className="py-3.5 px-4">Brand Slug</th>
                   <th className="py-3.5 px-4">Description</th>
                   <th className="py-3.5 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-charcoal-100 font-medium">
                 {brands.map((b) => (
-                  <tr key={b._id} className="hover:bg-slate-900/40">
-                    <td className="py-3.5 px-4 font-bold text-white">{b.name}</td>
-                    <td className="py-3.5 px-4 text-slate-400">{b.slug}</td>
-                    <td className="py-3.5 px-4 text-slate-400 max-w-sm truncate">{b.description || '—'}</td>
+                  <tr key={b._id} className="hover:bg-charcoal-50/60 transition-colors">
+                    <td className="py-3.5 px-4 font-bold text-charcoal-950">{b.name}</td>
+                    <td className="py-3.5 px-4 text-charcoal-500 font-mono text-[11px]">/brands/{b.slug}</td>
+                    <td className="py-3.5 px-4 text-charcoal-600 max-w-sm truncate">{b.description || '—'}</td>
                     <td className="py-3.5 px-4 text-right space-x-2">
                       <button
                         onClick={() => openEditModal(b)}
-                        className="p-1.5 rounded-lg bg-brand-600/20 text-brand-400 hover:text-brand-300"
+                        className="p-1.5 rounded-xl bg-brand-50 hover:bg-brand-500 text-brand-900 hover:text-charcoal-950 transition-colors"
                       >
                         <Edit className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => handleDelete(b._id)}
-                        className="p-1.5 rounded-lg bg-rose-950/40 text-rose-400 hover:text-rose-300"
+                        className="p-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -154,14 +156,14 @@ export default function AdminBrandsPage() {
           </div>
         ) : (
           <div className="py-16 text-center space-y-3">
-            <Building2 className="w-12 h-12 text-slate-700 mx-auto" />
-            <p className="text-xs text-slate-400">No brands registered yet.</p>
+            <Building2 className="w-12 h-12 text-charcoal-300 mx-auto" />
+            <p className="text-xs text-charcoal-500 font-medium">No brands created yet.</p>
             <button
               onClick={openCreateModal}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-brand-600 text-white text-xs font-semibold"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-400 text-charcoal-950 text-xs font-bold shadow-xs"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>Add First Brand</span>
+              <span>Create First Brand</span>
             </button>
           </div>
         )}
@@ -169,17 +171,17 @@ export default function AdminBrandsPage() {
 
       {/* Modal Dialog */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
           <form
             onSubmit={handleSave}
-            className="max-w-md w-full p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-2xl"
+            className="max-w-md w-full p-8 rounded-3xl bg-white border border-charcoal-200 space-y-4 shadow-soft-lg"
           >
-            <h3 className="text-base font-bold text-white">
+            <h3 className="text-base font-black text-charcoal-950">
               {editingId ? 'Edit Brand' : 'New Brand'}
             </h3>
 
             {error && (
-              <div className="p-3 rounded-xl bg-rose-950/60 border border-rose-800 text-xs text-rose-300 flex items-center gap-2">
+              <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-center gap-2 font-medium">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 <span>{error}</span>
               </div>
@@ -187,7 +189,7 @@ export default function AdminBrandsPage() {
 
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Brand Name *</label>
+                <label className="block text-xs font-bold text-charcoal-900 mb-1">Brand Name *</label>
                 <input
                   type="text"
                   required
@@ -201,30 +203,30 @@ export default function AdminBrandsPage() {
                         : formData.slug,
                     })
                   }
-                  placeholder="e.g. Hewlett-Packard (HP)"
-                  className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-brand-500"
+                  placeholder="e.g. HP"
+                  className="w-full px-4 py-2.5 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-950 focus:outline-none focus:border-brand-500 font-medium"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Slug</label>
+                <label className="block text-xs font-bold text-charcoal-900 mb-1">Brand Slug</label>
                 <input
                   type="text"
                   value={formData.slug}
                   onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
                   placeholder="e.g. hp"
-                  className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-400 focus:outline-none focus:border-brand-500"
+                  className="w-full px-4 py-2.5 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-600 focus:outline-none focus:border-brand-500 font-mono text-[11px]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Description</label>
+                <label className="block text-xs font-bold text-charcoal-900 mb-1">Description</label>
                 <textarea
                   rows={3}
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Brand details..."
-                  className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-brand-500"
+                  placeholder="e.g. EliteBook, ProBook, Pavilion, and ZBook series"
+                  className="w-full p-4 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-950 focus:outline-none focus:border-brand-500 font-medium resize-none"
                 />
               </div>
             </div>
@@ -233,14 +235,14 @@ export default function AdminBrandsPage() {
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs font-semibold text-slate-300 hover:text-white"
+                className="py-3 rounded-xl bg-charcoal-100 hover:bg-charcoal-200 text-xs font-bold text-charcoal-800 transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSaving}
-                className="py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-md flex items-center justify-center gap-1.5"
+                className="py-3 rounded-xl bg-brand-500 hover:bg-brand-400 text-charcoal-950 text-xs font-bold shadow-xs flex items-center justify-center gap-1.5"
               >
                 {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <span>Save Brand</span>}
               </button>

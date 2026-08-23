@@ -4,7 +4,7 @@ import { cn } from '@/lib/formatters';
 export const Skeleton: React.FC<HTMLAttributes<HTMLDivElement>> = ({ className, ...props }) => {
   return (
     <div
-      className={cn('animate-pulse rounded-md bg-slate-800/60', className)}
+      className={cn('animate-pulse rounded-xl bg-charcoal-200/80', className)}
       {...props}
     />
   );

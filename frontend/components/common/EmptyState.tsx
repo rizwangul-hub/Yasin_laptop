@@ -9,18 +9,18 @@ interface EmptyStateProps {
 }
 
 export const EmptyState: React.FC<EmptyStateProps> = ({
-  title = 'No items found',
-  description = 'New inventory is currently being cataloged.',
+  title = 'No laptops found',
+  description = 'Try changing your filters or searching for another laptop model.',
   action,
   icon,
 }) => {
   return (
-    <div className="flex flex-col items-center justify-center p-8 sm:p-12 text-center rounded-2xl border border-dashed border-slate-800 bg-slate-900/30">
-      <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-slate-800/80 text-slate-400 mb-4">
-        {icon || <PackageOpen className="w-6 h-6" />}
+    <div className="flex flex-col items-center justify-center p-8 sm:p-14 text-center rounded-3xl border-2 border-dashed border-charcoal-200 bg-white shadow-soft">
+      <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-brand-50 border border-brand-200 text-brand-700 mb-4 shadow-xs">
+        {icon || <PackageOpen className="w-7 h-7" />}
       </div>
-      <h3 className="text-base font-semibold text-slate-200 mb-1">{title}</h3>
-      <p className="text-xs sm:text-sm text-slate-400 max-w-sm mb-6">{description}</p>
+      <h3 className="text-base sm:text-lg font-bold text-charcoal-950 mb-1.5">{title}</h3>
+      <p className="text-xs sm:text-sm text-charcoal-500 max-w-md mb-6 leading-relaxed">{description}</p>
       {action && <div>{action}</div>}
     </div>
   );

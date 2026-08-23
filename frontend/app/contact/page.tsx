@@ -1,8 +1,9 @@
 import React from 'react';
 import { DEFAULT_BUSINESS_CONFIG } from '@/lib/business-config';
-import { MapPin, Phone, Clock, MessageCircle } from 'lucide-react';
+import { MapPin, Phone, Clock, MessageCircle, ShieldCheck } from 'lucide-react';
 import { ContactForm } from '@/components/contact/ContactForm';
 import { SITE_URL } from '@/lib/seo';
+import { sanitizeWhatsAppNumber } from '@/lib/formatters';
 
 export const metadata = {
   title: 'Contact Us | Yasin Laptop Hub Lakki Marwat',
@@ -13,72 +14,80 @@ export const metadata = {
 };
 
 export default function ContactPage() {
-  const whatsappUrl = DEFAULT_BUSINESS_CONFIG.whatsappNumber
-    ? `https://wa.me/${DEFAULT_BUSINESS_CONFIG.whatsappNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Assalam o Alaikum, I would like to contact Yasin Laptop Hub.')}`
-    : '#';
+  const cleanNumber = sanitizeWhatsAppNumber(DEFAULT_BUSINESS_CONFIG.whatsappNumber);
+  const whatsappUrl = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(
+    'Assalam o Alaikum, I would like to contact Yasin Laptop Hub.'
+  )}`;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-10">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 space-y-12 bg-warm-bg">
+      {/* Header */}
       <div className="space-y-3 text-center">
-        <span className="text-xs font-semibold uppercase tracking-wider text-brand-400">
-          Direct Customer Support
+        <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-brand-100 text-brand-900 text-xs font-bold border border-brand-200">
+          Direct Store Support
         </span>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+        <h1 className="text-3xl sm:text-5xl font-black text-charcoal-950 tracking-tight">
           Contact Yasin Laptop Hub
         </h1>
-        <p className="text-sm sm:text-base text-slate-400 max-w-xl mx-auto">
-          Need a laptop recommendation, current stock availability, or price inquiry? Reach out directly.
+        <p className="text-sm sm:text-base text-charcoal-600 max-w-xl mx-auto font-medium leading-relaxed">
+          Need a laptop recommendation, checking warranty details, or current stock availability? Reach out directly to our shop.
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Column: Store Information */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-5">
-            <h2 className="text-lg font-bold text-white">Store Location &amp; Contact</h2>
-            <div className="space-y-4 text-xs text-slate-300">
-              <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-brand-400 shrink-0 mt-0.5" />
+          <div className="p-8 rounded-3xl bg-white border border-charcoal-200/90 shadow-soft space-y-6">
+            <h2 className="text-xl font-black text-charcoal-950">Store Location &amp; Contact</h2>
+            <div className="space-y-5 text-xs text-charcoal-600 font-medium">
+              <div className="flex items-start gap-3.5">
+                <div className="w-9 h-9 rounded-xl bg-brand-100 border border-brand-300 text-brand-900 flex items-center justify-center shrink-0 shadow-xs">
+                  <MapPin className="w-4 h-4" />
+                </div>
                 <div>
-                  <strong className="block text-white font-medium text-sm">Physical Store Address</strong>
-                  <span>{DEFAULT_BUSINESS_CONFIG.address.city}, {DEFAULT_BUSINESS_CONFIG.address.province}, Pakistan</span>
+                  <strong className="block text-charcoal-950 font-bold text-sm">Physical Store Address</strong>
+                  <span className="text-xs">Main Bazaar, {DEFAULT_BUSINESS_CONFIG.address.city}, {DEFAULT_BUSINESS_CONFIG.address.province}, Pakistan</span>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3">
-                <Phone className="w-5 h-5 text-brand-400 shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3.5">
+                <div className="w-9 h-9 rounded-xl bg-brand-100 border border-brand-300 text-brand-900 flex items-center justify-center shrink-0 shadow-xs">
+                  <Phone className="w-4 h-4" />
+                </div>
                 <div>
-                  <strong className="block text-white font-medium text-sm">Owner &amp; Manager</strong>
-                  <span>{DEFAULT_BUSINESS_CONFIG.ownerName}</span>
+                  <strong className="block text-charcoal-950 font-bold text-sm">Owner &amp; Manager</strong>
+                  <span className="text-xs">{DEFAULT_BUSINESS_CONFIG.ownerName} • 03427709129</span>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3">
-                <Clock className="w-5 h-5 text-brand-400 shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3.5">
+                <div className="w-9 h-9 rounded-xl bg-brand-100 border border-brand-300 text-brand-900 flex items-center justify-center shrink-0 shadow-xs">
+                  <Clock className="w-4 h-4" />
+                </div>
                 <div>
-                  <strong className="block text-white font-medium text-sm">Shop Timings</strong>
-                  <span>Monday – Saturday: 9:00 AM – 9:00 PM</span>
+                  <strong className="block text-charcoal-950 font-bold text-sm">Shop Timings</strong>
+                  <span className="text-xs">Monday – Saturday: 9:00 AM – 9:00 PM</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-900 to-emerald-950/40 border border-slate-800 space-y-4">
-            <div className="flex items-center gap-2 text-emerald-400">
+          <div className="p-8 rounded-3xl bg-gradient-to-br from-white to-emerald-50/50 border border-emerald-200/80 shadow-soft space-y-4">
+            <div className="flex items-center gap-2 text-emerald-700 font-bold">
               <MessageCircle className="w-5 h-5" />
-              <h2 className="text-base font-bold text-white">Instant WhatsApp Chat</h2>
+              <h2 className="text-base font-bold text-charcoal-950">Instant WhatsApp Inquiries</h2>
             </div>
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <p className="text-xs text-charcoal-600 leading-relaxed font-medium">
               Send us a message on WhatsApp for instant video checks, photos of actual units in stock, and price quotes.
             </p>
             <a
               href={whatsappUrl}
-              target={DEFAULT_BUSINESS_CONFIG.whatsappNumber ? '_blank' : '_self'}
+              target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-md shadow-emerald-600/30 transition-all"
+              className="inline-flex items-center justify-center gap-2 w-full py-3 px-5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs shadow-sm transition-all hover:scale-105 active:scale-95"
             >
               <MessageCircle className="w-4 h-4" />
-              <span>Open WhatsApp Chat</span>
+              <span>Open WhatsApp (+92 342 7709129)</span>
             </a>
           </div>
         </div>

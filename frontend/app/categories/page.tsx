@@ -14,21 +14,21 @@ const CATEGORIES = [
     slug: 'business-laptops',
     description: 'Enterprise-grade durability, security, and battery endurance (HP EliteBook, Dell Latitude, ThinkPad)',
     icon: <Briefcase className="w-5 h-5" />,
-    href: '/categories/business-laptops',
+    href: '/laptops?category=business-laptops',
   },
   {
     name: 'Student Laptops',
     slug: 'student-laptops',
     description: 'Affordable, reliable machines with long battery life for homework and university lectures',
     icon: <GraduationCap className="w-5 h-5" />,
-    href: '/categories/student-laptops',
+    href: '/laptops?category=student-budget-laptops',
   },
   {
     name: 'Programming & Development',
     slug: 'programming-laptops',
     description: 'Multi-core computing power and high RAM capacity for coders, designers, and freelancers',
     icon: <Code2 className="w-5 h-5" />,
-    href: '/categories/programming-laptops',
+    href: '/laptops?category=programming-laptops',
   },
   {
     name: 'Chromebooks',
@@ -42,7 +42,7 @@ const CATEGORIES = [
     slug: 'high-performance',
     description: 'Heavy processing units for 3D rendering, CAD design, simulations, and video editing',
     icon: <Zap className="w-5 h-5" />,
-    href: '/categories/high-performance',
+    href: '/laptops?category=gaming-heavy-workstations',
   },
   {
     name: 'Laptop Accessories',
@@ -55,18 +55,18 @@ const CATEGORIES = [
 
 export default function CategoriesPage() {
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 bg-warm-bg">
       <Breadcrumbs items={[{ label: 'Categories' }]} />
 
       <div className="space-y-2">
-        <div className="flex items-center gap-2 text-brand-400 text-xs font-semibold uppercase tracking-wider">
+        <div className="flex items-center gap-2 text-brand-700 text-xs font-bold uppercase tracking-wider">
           <Sparkles className="w-3.5 h-3.5" />
           <span>Explore Categories</span>
         </div>
-        <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+        <h1 className="text-2xl sm:text-4xl font-black text-charcoal-950 tracking-tight">
           Laptop Categories &amp; Workflows
         </h1>
-        <p className="text-xs sm:text-sm text-slate-400 max-w-2xl">
+        <p className="text-xs sm:text-sm text-charcoal-600 max-w-2xl font-medium">
           Select a category tailored to your academic field, enterprise workload, or personal computing needs.
         </p>
       </div>

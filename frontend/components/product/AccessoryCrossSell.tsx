@@ -11,16 +11,16 @@ export const AccessoryCrossSell: React.FC<AccessoryCrossSellProps> = ({ accessor
   if (!accessories || accessories.length === 0) return null;
 
   return (
-    <section className="space-y-6 pt-6 border-t border-slate-800">
-      <div className="flex items-center gap-2">
-        <div className="w-8 h-8 rounded-lg bg-emerald-600/15 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
-          <Layers className="w-4 h-4" />
+    <section className="space-y-6 pt-8 border-t border-charcoal-200/80">
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-2xl bg-brand-100 border border-brand-300 text-brand-900 flex items-center justify-center shadow-xs">
+          <Layers className="w-5 h-5" />
         </div>
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-black text-charcoal-950 tracking-tight">
             Complete Your Setup
           </h2>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-charcoal-500 font-medium">
             Original power adapters, padded backpacks, stands, and memory upgrades.
           </p>
         </div>

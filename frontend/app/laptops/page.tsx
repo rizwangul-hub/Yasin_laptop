@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function LaptopsPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-950" />}>
+    <Suspense fallback={<div className="min-h-screen bg-warm-bg" />}>
       <ProductCatalog
         title="All Laptops Catalog"
         subtitle="Explore genuine inspected business, student, programming and high-performance machines with checking warranty."

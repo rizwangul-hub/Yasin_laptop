@@ -17,22 +17,22 @@ export const StickyMobileCTA: React.FC<StickyMobileCTAProps> = ({ product }) => 
   const phoneUrl = buildPhoneUrl(DEFAULT_BUSINESS_CONFIG.phoneNumber);
 
   return (
-    <div className="fixed bottom-0 inset-x-0 z-40 lg:hidden bg-slate-950/95 border-t border-slate-800 p-3 sm:p-4 backdrop-blur-md pb-[env(safe-area-inset-bottom,12px)] shadow-2xl">
+    <div className="fixed bottom-0 inset-x-0 z-40 lg:hidden bg-white/95 border-t border-charcoal-200 p-3 sm:p-4 backdrop-blur-md pb-[env(safe-area-inset-bottom,12px)] shadow-soft-lg">
       <div className="flex items-center justify-between gap-3 max-w-lg mx-auto">
         <div className="min-w-0">
-          <span className="text-[11px] text-slate-400 block font-medium">
-            {isAvailable ? 'Cash / Transfer Price' : 'Availability Status'}
+          <span className="text-[10px] text-charcoal-500 block font-bold uppercase tracking-wider">
+            {isAvailable ? 'Cash / Transfer' : 'Status'}
           </span>
-          <span className="text-base sm:text-lg font-bold text-white truncate block">
+          <span className="text-base sm:text-lg font-black text-charcoal-950 truncate block">
             {formatPrice(product.price)}
           </span>
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
           {DEFAULT_BUSINESS_CONFIG.phoneNumber && (
-            <a href={phoneUrl} aria-label="Call store">
+            <a href={phoneUrl} aria-label="Call shop">
               <Button variant="secondary" size="sm" className="px-3 py-2">
-                <Phone className="w-4 h-4 text-brand-400" />
+                <Phone className="w-4 h-4 text-charcoal-800" />
               </Button>
             </a>
           )}
@@ -42,7 +42,7 @@ export const StickyMobileCTA: React.FC<StickyMobileCTAProps> = ({ product }) => 
             target={DEFAULT_BUSINESS_CONFIG.whatsappNumber ? '_blank' : '_self'}
             rel="noopener noreferrer"
           >
-            <Button variant="whatsapp" size="sm" className="font-semibold text-xs py-2 px-4 shadow-md">
+            <Button variant="whatsapp" size="sm" className="font-bold text-xs py-2 px-4 shadow-sm">
               <MessageCircle className="w-4 h-4 mr-1.5" />
               <span>{isAvailable ? 'WhatsApp' : 'Inquire'}</span>
             </Button>

@@ -13,7 +13,9 @@ interface AccessoryCardProps {
 }
 
 export const AccessoryCard: React.FC<AccessoryCardProps> = ({ accessory }) => {
-  const mainImage = accessory.images?.find((img: IProductImage) => img.isPrimary || img.isMain) || accessory.images?.[0];
+  const mainImage =
+    accessory.images?.find((img: IProductImage) => img.isPrimary || img.isMain) ||
+    accessory.images?.[0];
   const isAvailable = accessory.stockStatus === 'available';
 
   const accessoryUrl = `/accessories?item=${accessory.slug}`;
@@ -26,9 +28,12 @@ export const AccessoryCard: React.FC<AccessoryCardProps> = ({ accessory }) => {
   });
 
   return (
-    <Card hover className="flex flex-col h-full overflow-hidden bg-slate-900/80 border-slate-800">
+    <Card
+      hover
+      className="flex flex-col h-full overflow-hidden bg-white border border-charcoal-200/90 shadow-soft hover:shadow-soft-md hover:border-brand-500/80 transition-all duration-300 group rounded-3xl"
+    >
       {/* Image & Badges */}
-      <div className="relative w-full aspect-[4/3] bg-slate-950/60 flex items-center justify-center overflow-hidden border-b border-slate-800/80">
+      <div className="relative w-full aspect-[4/3] bg-[#F8F8F4] flex items-center justify-center overflow-hidden border-b border-charcoal-100">
         {mainImage?.url ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -38,21 +43,23 @@ export const AccessoryCard: React.FC<AccessoryCardProps> = ({ accessory }) => {
             loading="lazy"
           />
         ) : (
-          <div className="flex flex-col items-center justify-center text-slate-600 gap-2">
-            <Layers className="w-10 h-10" />
-            <span className="text-[10px] font-medium tracking-wider uppercase">Genuine Accessory</span>
+          <div className="flex flex-col items-center justify-center text-charcoal-400 gap-2">
+            <Layers className="w-10 h-10 text-charcoal-300" />
+            <span className="text-[10px] font-medium tracking-wider uppercase text-charcoal-400">
+              Genuine Accessory
+            </span>
           </div>
         )}
 
-        <div className="absolute top-2.5 left-2.5">
+        <div className="absolute top-3 left-3">
           <Badge variant="brand" size="sm">
             {accessory.category || 'Accessory'}
           </Badge>
         </div>
 
-        <div className="absolute top-2.5 right-2.5">
+        <div className="absolute top-3 right-3">
           <Badge variant={isAvailable ? 'success' : 'danger'} size="sm">
-            {isAvailable ? 'Available' : 'Sold Out'}
+            {isAvailable ? 'In Stock' : 'Sold Out'}
           </Badge>
         </div>
       </div>
@@ -60,27 +67,27 @@ export const AccessoryCard: React.FC<AccessoryCardProps> = ({ accessory }) => {
       {/* Content */}
       <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-4">
         <div className="space-y-2">
-          <Link href={accessoryUrl} className="block group">
-            <h3 className="text-sm sm:text-base font-semibold text-slate-100 group-hover:text-brand-300 transition-colors line-clamp-2">
+          <Link href={accessoryUrl} className="block group/title">
+            <h3 className="text-sm sm:text-base font-bold text-charcoal-950 group-hover/title:text-brand-700 transition-colors line-clamp-2 leading-snug">
               {accessory.name}
             </h3>
           </Link>
 
           {accessory.description && (
-            <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+            <p className="text-xs text-charcoal-500 line-clamp-2 leading-relaxed font-medium">
               {accessory.description}
             </p>
           )}
         </div>
 
         {/* Price & Actions */}
-        <div className="pt-3 border-t border-slate-800/80 space-y-3">
+        <div className="pt-3 border-t border-charcoal-100 space-y-3">
           <div className="flex items-baseline justify-between">
-            <span className="text-base sm:text-lg font-bold text-white">
+            <span className="text-lg sm:text-xl font-black text-charcoal-950">
               {formatPrice(accessory.price)}
             </span>
             {accessory.previousPrice && accessory.previousPrice > accessory.price && (
-              <span className="text-xs text-slate-500 line-through">
+              <span className="text-xs text-charcoal-400 line-through">
                 {formatPrice(accessory.previousPrice)}
               </span>
             )}
@@ -88,9 +95,13 @@ export const AccessoryCard: React.FC<AccessoryCardProps> = ({ accessory }) => {
 
           <div className="grid grid-cols-2 gap-2">
             <Link href={accessoryUrl} className="w-full">
-              <Button variant="secondary" size="sm" className="w-full text-xs">
+              <Button
+                variant="secondary"
+                size="sm"
+                className="w-full text-xs font-semibold"
+              >
                 <span>Details</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="w-3.5 h-3.5 ml-1" />
               </Button>
             </Link>
 
@@ -100,8 +111,12 @@ export const AccessoryCard: React.FC<AccessoryCardProps> = ({ accessory }) => {
               rel="noopener noreferrer"
               className="w-full"
             >
-              <Button variant="whatsapp" size="sm" className="w-full text-xs">
-                <MessageCircle className="w-3.5 h-3.5" />
+              <Button
+                variant="whatsapp"
+                size="sm"
+                className="w-full text-xs font-bold"
+              >
+                <MessageCircle className="w-3.5 h-3.5 mr-1" />
                 <span>WhatsApp</span>
               </Button>
             </a>

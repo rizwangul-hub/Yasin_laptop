@@ -5,6 +5,7 @@ import { Send, Check, AlertCircle, Loader2, MessageCircle } from 'lucide-react';
 import { DEFAULT_BUSINESS_CONFIG } from '@/lib/business-config';
 import { apiClient } from '@/lib/api-client';
 import { settingsService } from '@/services/settingsService';
+import { sanitizeWhatsAppNumber } from '@/lib/formatters';
 
 export const ContactForm: React.FC = () => {
   const [name, setName] = useState('');
@@ -26,9 +27,7 @@ export const ContactForm: React.FC = () => {
           setWhatsappNumber(res.data.whatsappNumber);
         }
       })
-      .catch(() => {
-        // Fallback
-      });
+      .catch(() => {});
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -70,7 +69,7 @@ export const ContactForm: React.FC = () => {
   };
 
   const handleWhatsAppDirect = () => {
-    const cleanNum = whatsappNumber.replace(/[^0-9]/g, '') || '923427709129';
+    const cleanNum = sanitizeWhatsAppNumber(whatsappNumber);
     const text = encodeURIComponent(
       `Assalam o Alaikum, My name is ${name || 'a customer'}. ${message || 'I would like to inquire about laptops in Lakki Marwat.'}`
     );
@@ -78,8 +77,8 @@ export const ContactForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-6 sm:p-8 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-4">
-      <h2 className="text-lg font-bold text-white">Send Us a Direct Message</h2>
+    <form onSubmit={handleSubmit} className="p-8 rounded-3xl bg-white border border-charcoal-200/90 shadow-soft space-y-4">
+      <h2 className="text-xl font-black text-charcoal-950">Send Us a Direct Message</h2>
 
       {/* Honeypot field for bot spam prevention */}
       <input
@@ -93,25 +92,25 @@ export const ContactForm: React.FC = () => {
       />
 
       {error && (
-        <div className="p-3.5 rounded-xl bg-rose-950/60 border border-rose-800 text-xs text-rose-300 flex items-center gap-2">
+        <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-center gap-2 font-medium">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {success && (
-        <div className="p-4 rounded-xl bg-emerald-950/60 border border-emerald-800 text-xs text-emerald-300 flex flex-col gap-2">
-          <div className="flex items-center gap-2 font-semibold">
-            <Check className="w-4 h-4 text-emerald-400" />
+        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex flex-col gap-1.5 font-medium">
+          <div className="flex items-center gap-2 font-bold">
+            <Check className="w-4 h-4 text-emerald-600" />
             <span>Thank you! Your message has been sent to Yasin Laptop Hub.</span>
           </div>
-          <p className="text-slate-300">We will respond on your contact number shortly.</p>
+          <p className="text-charcoal-600">We will respond on your contact number shortly.</p>
         </div>
       )}
 
       <div>
-        <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-          Your Full Name <span className="text-rose-400">*</span>
+        <label className="block text-xs font-bold text-charcoal-900 mb-1.5">
+          Your Full Name <span className="text-rose-500">*</span>
         </label>
         <input
           type="text"
@@ -119,35 +118,35 @@ export const ContactForm: React.FC = () => {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="e.g. Muhammad Usman"
-          className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors"
+          className="w-full px-4 py-3 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-950 placeholder:text-charcoal-400 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-400/30 transition-all font-medium"
         />
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-          Phone / WhatsApp Number <span className="text-rose-400">*</span>
+        <label className="block text-xs font-bold text-charcoal-900 mb-1.5">
+          Phone / WhatsApp Number <span className="text-rose-500">*</span>
         </label>
         <input
           type="tel"
           required
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          placeholder="e.g. 0300 1234567"
-          className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors"
+          placeholder="e.g. 0342 1234567"
+          className="w-full px-4 py-3 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-950 placeholder:text-charcoal-400 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-400/30 transition-all font-medium"
         />
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-          Your Message or Inquired Laptop <span className="text-rose-400">*</span>
+        <label className="block text-xs font-bold text-charcoal-900 mb-1.5">
+          Your Message or Inquired Laptop <span className="text-rose-500">*</span>
         </label>
         <textarea
           required
           rows={4}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="e.g. Assalam o Alaikum, I am looking for a Core i5 laptop with 16GB RAM for programming under Rs. 60,000. Is it available?"
-          className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors resize-none"
+          placeholder="e.g. Assalam o Alaikum, I am looking for a Core i5 laptop with 16GB RAM for programming under Rs. 60,000. Is it available in your shop?"
+          className="w-full px-4 py-3 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-950 placeholder:text-charcoal-400 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-400/30 transition-all font-medium resize-none"
         />
       </div>
 
@@ -155,7 +154,7 @@ export const ContactForm: React.FC = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs shadow-lg shadow-brand-600/30 transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 rounded-xl bg-brand-500 hover:bg-brand-400 text-charcoal-950 font-bold text-xs shadow-sm transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
         >
           {isSubmitting ? (
             <>
@@ -173,7 +172,7 @@ export const ContactForm: React.FC = () => {
         <button
           type="button"
           onClick={handleWhatsAppDirect}
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-lg shadow-emerald-950/60 transition-all hover:scale-105 active:scale-95"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs shadow-sm transition-all hover:scale-105 active:scale-95"
         >
           <MessageCircle className="w-3.5 h-3.5" />
           <span>Open in WhatsApp</span>

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function ChromebooksPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-950" />}>
+    <Suspense fallback={<div className="min-h-screen bg-warm-bg" />}>
       <ProductCatalog
         title="Chromebooks Catalog"
         subtitle="Portable, cloud-ready laptops with exceptional battery endurance for students and everyday web browsing."

@@ -118,60 +118,38 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
       storage: currentFilters.storage?.join(','),
       condition: currentFilters.condition?.join(','),
       stockStatus: currentFilters.stockStatus,
-      minPrice: currentFilters.minPrice,
-      maxPrice: currentFilters.maxPrice,
+      minPrice: currentFilters.minPrice ? Number(currentFilters.minPrice) : undefined,
+      maxPrice: currentFilters.maxPrice ? Number(currentFilters.maxPrice) : undefined,
     };
 
     try {
-      const res = await productService.getProducts(query);
-      if (res.success && res.data) {
-        const rawData = res.data as unknown as Record<string, unknown>;
-        const items = Array.isArray(rawData)
-          ? (rawData as IProduct[])
-          : Array.isArray(rawData.items)
-          ? (rawData.items as IProduct[])
-          : Array.isArray(rawData.products)
-          ? (rawData.products as IProduct[])
-          : [];
-
-        const pagination = (rawData.pagination as PaginatedResponse<IProduct>['pagination']) || {
-          page: 1,
-          limit: 12,
-          total: items.length,
-          totalPages: Math.ceil(items.length / 12) || 1,
-          hasNextPage: false,
-          hasPreviousPage: false,
-        };
-
-        setData({ items, pagination });
+      const response = await productService.getProducts(query);
+      if (response.success && response.data) {
+        setData(response.data);
       } else {
-        setData({
-          items: [],
-          pagination: {
-            page: 1,
-            limit: 12,
-            total: 0,
-            totalPages: 0,
-            hasNextPage: false,
-            hasPreviousPage: false,
-          },
-        });
+        setError(true);
       }
-    } catch (err) {
+    } catch {
       setError(true);
     } finally {
       setIsLoading(false);
     }
-  }, [currentPage, currentSort, currentSearch, currentFilters, defaultProductType]);
+  }, [
+    defaultProductType,
+    currentPage,
+    currentSort,
+    currentSearch,
+    currentFilters,
+  ]);
 
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
 
-  // Handle filter changes
+  // Handlers for filter interactions
   const handleFilterChange = (newFilters: FilterState) => {
     const updates: Record<string, string | null> = {
-      page: '1', // Reset to page 1 on filter changes
+      page: '1', // Always reset page on filter update
       brand: newFilters.brand?.join(',') || null,
       category: newFilters.category?.join(',') || null,
       useCase: newFilters.useCase?.join(',') || null,
@@ -275,14 +253,14 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
 
       {/* 2. CATALOG HEADER */}
       <div className="space-y-2">
-        <div className="flex items-center gap-2 text-brand-400 text-xs font-semibold uppercase tracking-wider">
+        <div className="flex items-center gap-2 text-brand-700 text-xs font-bold uppercase tracking-wider">
           <Sparkles className="w-3.5 h-3.5" />
           <span>Catalog Explorer</span>
         </div>
-        <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+        <h1 className="text-2xl sm:text-4xl font-black text-charcoal-950 tracking-tight">
           {title}
         </h1>
-        <p className="text-xs sm:text-sm text-slate-400 max-w-2xl">
+        <p className="text-xs sm:text-sm text-charcoal-600 max-w-2xl font-medium">
           {subtitle}
         </p>
       </div>
@@ -301,12 +279,12 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
           <button
             type="button"
             onClick={() => setIsMobileFilterOpen(true)}
-            className="flex lg:hidden items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-200 hover:bg-slate-850 transition-colors shadow-sm"
+            className="flex lg:hidden items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-charcoal-200 text-xs font-bold text-charcoal-800 hover:bg-charcoal-50 transition-colors shadow-soft"
           >
-            <FilterIcon className="w-4 h-4 text-brand-400" />
+            <FilterIcon className="w-4 h-4 text-brand-600" />
             <span>Filters</span>
             {activeChips.length > 0 && (
-              <span className="w-4 h-4 rounded-full bg-brand-600 text-white text-[10px] flex items-center justify-center font-bold">
+              <span className="w-4 h-4 rounded-full bg-brand-500 text-charcoal-950 text-[10px] flex items-center justify-center font-bold">
                 {activeChips.length}
               </span>
             )}
@@ -342,10 +320,10 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
         {/* Product Results */}
         <div className="lg:col-span-3 space-y-6">
           {/* Results Count Bar */}
-          <div className="flex items-center justify-between text-xs text-slate-400 px-1">
+          <div className="flex items-center justify-between text-xs text-charcoal-500 font-medium px-1">
             <span>
-              Showing <strong className="text-white">{data?.items.length || 0}</strong> of{' '}
-              <strong className="text-white">{totalCount}</strong> laptops
+              Showing <strong className="text-charcoal-950 font-bold">{data?.items.length || 0}</strong> of{' '}
+              <strong className="text-charcoal-950 font-bold">{totalCount}</strong> laptops
             </span>
           </div>
 

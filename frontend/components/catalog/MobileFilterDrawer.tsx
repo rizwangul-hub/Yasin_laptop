@@ -61,18 +61,18 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
       {/* Backdrop */}
       <div
         onClick={onClose}
-        className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
       />
 
       {/* Drawer Container */}
-      <div className="relative z-10 w-full max-h-[85vh] bg-slate-950 border-t border-slate-800 rounded-t-3xl flex flex-col shadow-2xl overflow-hidden animate-in slide-in-from-bottom duration-300">
+      <div className="relative z-10 w-full max-h-[85vh] bg-white border-t border-charcoal-200 rounded-t-3xl flex flex-col shadow-2xl overflow-hidden animate-in slide-in-from-bottom duration-300">
         {/* Drawer Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800 bg-slate-900/60">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-charcoal-200 bg-charcoal-50/80">
           <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-brand-400" />
-            <h3 className="text-base font-bold text-white">Filter Catalog</h3>
+            <Filter className="w-4 h-4 text-brand-600" />
+            <h3 className="text-base font-black text-charcoal-950">Filter Catalog</h3>
             {activeCount > 0 && (
-              <span className="w-5 h-5 rounded-full bg-brand-600 text-white text-xs flex items-center justify-center font-bold">
+              <span className="w-5 h-5 rounded-full bg-brand-500 text-charcoal-950 text-xs flex items-center justify-center font-bold">
                 {activeCount}
               </span>
             )}
@@ -81,14 +81,14 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
             type="button"
             onClick={onClose}
             aria-label="Close filters"
-            className="p-1 rounded-lg text-slate-400 hover:text-white"
+            className="p-1.5 rounded-lg text-charcoal-500 hover:text-charcoal-950 hover:bg-charcoal-200/60 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Drawer Content */}
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="flex-1 overflow-y-auto p-4 bg-white">
           <FilterSidebar
             metadata={metadata}
             selectedFilters={tempFilters}
@@ -98,13 +98,13 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
         </div>
 
         {/* Drawer Bottom Actions */}
-        <div className="p-4 border-t border-slate-800 bg-slate-900/90 grid grid-cols-2 gap-3">
+        <div className="p-4 border-t border-charcoal-200 bg-charcoal-50/90 grid grid-cols-2 gap-3">
           <Button
             type="button"
             variant="outline"
             size="md"
             onClick={handleClear}
-            className="text-xs"
+            className="text-xs font-bold"
           >
             <RotateCcw className="w-3.5 h-3.5 mr-1" />
             <span>Reset All</span>
@@ -115,7 +115,7 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
             variant="primary"
             size="md"
             onClick={handleApply}
-            className="text-xs"
+            className="text-xs font-bold"
           >
             <span>Apply Filters</span>
           </Button>

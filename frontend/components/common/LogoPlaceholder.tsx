@@ -7,17 +7,19 @@ interface LogoProps {
   className?: string;
   showTagline?: boolean;
   size?: 'sm' | 'md' | 'lg';
+  variant?: 'light' | 'dark';
 }
 
 export const Logo: React.FC<LogoProps> = ({
   className = '',
   showTagline = false,
   size = 'md',
+  variant = 'light',
 }) => {
   const sizeClasses = {
     sm: 'w-10 h-10',
-    md: 'w-14 h-14 sm:w-16 sm:h-16',
-    lg: 'w-16 h-16 sm:w-20 sm:h-20',
+    md: 'w-12 h-12 sm:w-14 sm:h-14',
+    lg: 'w-14 h-14 sm:w-16 sm:h-16',
   };
 
   const textClasses = {
@@ -26,11 +28,17 @@ export const Logo: React.FC<LogoProps> = ({
     lg: 'text-xl sm:text-2xl',
   };
 
+  const isDark = variant === 'dark';
+
   return (
-    <Link href="/" className={`inline-flex items-center gap-3.5 group select-none ${className}`}>
-      {/* 3D X-Axis Rotating Logo Container */}
+    <Link href="/" className={`inline-flex items-center gap-3 group select-none ${className}`}>
+      {/* 3D Rotating Logo Container */}
       <div
-        className={`relative ${sizeClasses[size]} shrink-0 overflow-hidden rounded-2xl bg-slate-900/90 border border-slate-700/60 shadow-lg shadow-black/40 animate-rotate-x`}
+        className={`relative ${sizeClasses[size]} shrink-0 overflow-hidden rounded-2xl ${
+          isDark
+            ? 'bg-charcoal-900 border border-charcoal-700 shadow-md'
+            : 'bg-white border border-charcoal-200/90 shadow-soft'
+        } animate-rotate-x`}
       >
         <Image
           src={logoImage}
@@ -46,19 +54,28 @@ export const Logo: React.FC<LogoProps> = ({
       <div className="flex flex-col justify-center">
         <div className="flex items-center gap-1.5 leading-none">
           <span
-            className={`font-black tracking-tight text-white group-hover:text-brand-400 transition-colors ${textClasses[size]}`}
+            className={`font-black tracking-tight ${
+              isDark ? 'text-white' : 'text-charcoal-950'
+            } group-hover:text-brand-600 transition-colors ${textClasses[size]}`}
           >
             YASIN
           </span>
           <span
-            className={`font-medium tracking-tight text-slate-200 ${textClasses[size]}`}
+            className={`font-semibold tracking-tight ${
+              isDark ? 'text-charcoal-300' : 'text-charcoal-700'
+            } ${textClasses[size]}`}
           >
             LAPTOP HUB
           </span>
         </div>
         {showTagline && (
-          <span className="text-[11px] text-slate-400 font-semibold tracking-wider uppercase mt-1">
-            Lakki Marwat • KPK
+          <span
+            className={`text-[11px] ${
+              isDark ? 'text-charcoal-400' : 'text-charcoal-500'
+            } font-medium tracking-wider uppercase mt-1 flex items-center gap-1`}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-brand-500 inline-block"></span>
+            <span>Lakki Marwat • KPK</span>
           </span>
         )}
       </div>

@@ -61,7 +61,7 @@ export default function RootLayout({
   const webSiteJsonLd = generateWebSiteJsonLd();
 
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <head>
         <script
           type="application/ld+json"
@@ -72,7 +72,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }}
         />
       </head>
-      <body className="min-h-screen flex flex-col bg-slate-950 text-slate-100 antialiased selection:bg-brand-600 selection:text-white">
+      <body className="min-h-screen flex flex-col bg-warm-bg text-charcoal-900 antialiased selection:bg-brand-400 selection:text-charcoal-950 font-sans">
         <Navbar />
         <main className="flex-1">{children}</main>
         <FloatingWhatsApp />

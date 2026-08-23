@@ -13,20 +13,31 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const mainImage = product.images?.find((img: IProductImage) => img.isPrimary || img.isMain) || product.images?.[0];
-  const brandName = typeof product.brand === 'object' && product.brand !== null ? product.brand.name : product.brand || 'Laptop';
+  const mainImage =
+    product.images?.find((img: IProductImage) => img.isPrimary || img.isMain) ||
+    product.images?.[0];
+  const brandName =
+    typeof product.brand === 'object' && product.brand !== null
+      ? product.brand.name
+      : product.brand || 'Laptop';
   const isAvailable = product.stockStatus === 'available';
   const isFeatured = Boolean(product.featured ?? product.isFeatured);
   const isBestDeal = Boolean(product.bestDeal ?? product.isBestDeal);
   const isLatestArrival = Boolean(product.latestArrival ?? product.isLatestArrival);
 
   const productUrl = `/laptops/${product.slug}`;
-  const whatsappInquiryUrl = buildProductWhatsAppUrl(DEFAULT_BUSINESS_CONFIG.whatsappNumber, product);
+  const whatsappInquiryUrl = buildProductWhatsAppUrl(
+    DEFAULT_BUSINESS_CONFIG.whatsappNumber,
+    product
+  );
 
   return (
-    <Card hover className="flex flex-col h-full overflow-hidden bg-slate-900/80 border-slate-800">
+    <Card
+      hover
+      className="flex flex-col h-full overflow-hidden bg-white border border-charcoal-200/90 shadow-soft hover:shadow-soft-md hover:border-brand-500/80 transition-all duration-300 group rounded-3xl"
+    >
       {/* Image & Badges Container */}
-      <div className="relative w-full aspect-[4/3] bg-slate-950/60 flex items-center justify-center overflow-hidden border-b border-slate-800/80">
+      <div className="relative w-full aspect-[4/3] bg-[#F8F8F4] flex items-center justify-center overflow-hidden border-b border-charcoal-100">
         {mainImage?.url ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -36,35 +47,37 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             loading="lazy"
           />
         ) : (
-          <div className="flex flex-col items-center justify-center text-slate-600 gap-2">
-            <Laptop className="w-12 h-12" />
-            <span className="text-[11px] font-medium tracking-wider uppercase">Photo Studio Ready</span>
+          <div className="flex flex-col items-center justify-center text-charcoal-400 gap-2">
+            <Laptop className="w-12 h-12 text-charcoal-300" />
+            <span className="text-[11px] font-medium tracking-wider uppercase text-charcoal-400">
+              Tested Hardware
+            </span>
           </div>
         )}
 
         {/* Top Badges */}
-        <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5 z-10">
+        <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
           {isFeatured && (
             <Badge variant="brand" size="sm">
               Featured
             </Badge>
           )}
           {isBestDeal && (
-            <Badge variant="accent" size="sm">
+            <Badge variant="warning" size="sm">
               Best Deal
             </Badge>
           )}
           {isLatestArrival && (
-            <Badge variant="warning" size="sm">
+            <Badge variant="dark" size="sm">
               New Arrival
             </Badge>
           )}
         </div>
 
-        {/* Stock / Condition Pill */}
-        <div className="absolute top-2.5 right-2.5 z-10">
+        {/* Stock / Availability Pill */}
+        <div className="absolute top-3 right-3 z-10">
           <Badge variant={isAvailable ? 'success' : 'danger'} size="sm">
-            {isAvailable ? 'Available' : 'Sold Out'}
+            {isAvailable ? 'In Stock' : 'Sold Out'}
           </Badge>
         </div>
       </div>
@@ -74,42 +87,42 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <div className="space-y-2.5">
           {/* Brand & Condition */}
           <div className="flex items-center justify-between text-xs">
-            <span className="font-semibold uppercase tracking-wider text-brand-400">
+            <span className="font-bold uppercase tracking-wider text-brand-700 bg-brand-50 px-2 py-0.5 rounded-md border border-brand-200">
               {brandName}
             </span>
             {product.condition && (
-              <span className="text-slate-400 capitalize">
+              <span className="text-charcoal-500 font-medium capitalize text-[11px]">
                 {product.condition.replace('-', ' ')}
               </span>
             )}
           </div>
 
           {/* Product Name */}
-          <Link href={productUrl} className="block group">
-            <h3 className="text-sm sm:text-base font-semibold text-slate-100 group-hover:text-brand-300 transition-colors line-clamp-2">
+          <Link href={productUrl} className="block group/title">
+            <h3 className="text-sm sm:text-base font-bold text-charcoal-950 group-hover/title:text-brand-700 transition-colors line-clamp-2 leading-snug">
               {product.name}
             </h3>
           </Link>
 
-          {/* Short Specs Matrix */}
-          <div className="grid grid-cols-2 gap-1.5 pt-1 text-[11px] text-slate-300">
+          {/* Quick Specs Matrix */}
+          <div className="grid grid-cols-2 gap-1.5 pt-1 text-[11px] text-charcoal-700 font-medium">
             {product.specs?.processor && (
-              <div className="flex items-center gap-1 bg-slate-950/60 px-2 py-1 rounded border border-slate-800/60 truncate">
-                <Cpu className="w-3 h-3 text-brand-400 shrink-0" />
+              <div className="flex items-center gap-1.5 bg-charcoal-50/80 px-2.5 py-1.5 rounded-lg border border-charcoal-200/60 truncate">
+                <Cpu className="w-3.5 h-3.5 text-brand-600 shrink-0" />
                 <span className="truncate">{product.specs.processor}</span>
               </div>
             )}
 
             {product.specs?.ram && (
-              <div className="flex items-center gap-1 bg-slate-950/60 px-2 py-1 rounded border border-slate-800/60 truncate">
-                <MemoryStick className="w-3 h-3 text-brand-400 shrink-0" />
+              <div className="flex items-center gap-1.5 bg-charcoal-50/80 px-2.5 py-1.5 rounded-lg border border-charcoal-200/60 truncate">
+                <MemoryStick className="w-3.5 h-3.5 text-brand-600 shrink-0" />
                 <span className="truncate">{product.specs.ram}</span>
               </div>
             )}
 
             {product.specs?.storage && (
-              <div className="flex items-center gap-1 bg-slate-950/60 px-2 py-1 rounded border border-slate-800/60 col-span-2 truncate">
-                <HardDrive className="w-3 h-3 text-brand-400 shrink-0" />
+              <div className="flex items-center gap-1.5 bg-charcoal-50/80 px-2.5 py-1.5 rounded-lg border border-charcoal-200/60 col-span-2 truncate">
+                <HardDrive className="w-3.5 h-3.5 text-brand-600 shrink-0" />
                 <span className="truncate">
                   {product.specs.storage} {product.specs.storageType || 'SSD'}
                 </span>
@@ -118,14 +131,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </div>
         </div>
 
-        {/* Price & Actions */}
-        <div className="pt-3 border-t border-slate-800/80 space-y-3">
+        {/* Price & Action Buttons */}
+        <div className="pt-3 border-t border-charcoal-100 space-y-3">
           <div className="flex items-baseline justify-between">
-            <span className="text-base sm:text-lg font-bold text-white">
-              {formatPrice(product.price)}
-            </span>
+            <div>
+              <span className="text-xs text-charcoal-400 block font-medium">
+                {isAvailable ? 'PKR Price' : 'Last Price'}
+              </span>
+              <span className="text-lg sm:text-xl font-black text-charcoal-950">
+                {formatPrice(product.price)}
+              </span>
+            </div>
             {product.previousPrice && product.previousPrice > product.price && (
-              <span className="text-xs text-slate-500 line-through">
+              <span className="text-xs text-charcoal-400 line-through">
                 {formatPrice(product.previousPrice)}
               </span>
             )}
@@ -133,9 +151,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
           <div className="grid grid-cols-2 gap-2">
             <Link href={productUrl} className="w-full">
-              <Button variant="secondary" size="sm" className="w-full text-xs">
+              <Button
+                variant="secondary"
+                size="sm"
+                className="w-full text-xs font-semibold"
+              >
                 <span>Details</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="w-3.5 h-3.5 ml-1" />
               </Button>
             </Link>
 
@@ -145,8 +167,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               rel="noopener noreferrer"
               className="w-full"
             >
-              <Button variant="whatsapp" size="sm" className="w-full text-xs">
-                <MessageCircle className="w-3.5 h-3.5" />
+              <Button
+                variant="whatsapp"
+                size="sm"
+                className="w-full text-xs font-bold"
+              >
+                <MessageCircle className="w-3.5 h-3.5 mr-1" />
                 <span>WhatsApp</span>
               </Button>
             </a>

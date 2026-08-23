@@ -5,13 +5,13 @@ import { Laptop, Home } from 'lucide-react';
 
 export default function NotFound() {
   return (
-    <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4 py-16 space-y-6">
-      <div className="w-16 h-16 rounded-2xl bg-brand-950/60 border border-brand-800/40 text-brand-400 flex items-center justify-center">
+    <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4 py-16 space-y-6 bg-warm-bg">
+      <div className="w-16 h-16 rounded-2xl bg-brand-50 border border-brand-200 text-brand-700 flex items-center justify-center shadow-xs">
         <Laptop className="w-8 h-8" />
       </div>
       <div className="space-y-2 max-w-md">
-        <h1 className="text-3xl font-extrabold text-white">Page Not Found</h1>
-        <p className="text-sm text-slate-400">
+        <h1 className="text-3xl font-black text-charcoal-950">Page Not Found</h1>
+        <p className="text-sm text-charcoal-500 font-medium">
           The requested page could not be located. You can return to the storefront homepage or browse available laptops.
         </p>
       </div>

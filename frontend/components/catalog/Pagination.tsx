@@ -45,28 +45,28 @@ export const Pagination: React.FC<PaginationProps> = ({
   };
 
   return (
-    <div className="flex items-center justify-between border-t border-slate-800 pt-6 mt-8">
+    <div className="flex items-center justify-between border-t border-charcoal-200/80 pt-6 mt-8">
       {/* Mobile view */}
       <div className="flex sm:hidden items-center justify-between w-full">
         <button
           type="button"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage <= 1}
-          className="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-xs font-medium text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-800 transition-colors"
+          className="inline-flex items-center gap-1 px-3.5 py-2 rounded-xl bg-white border border-charcoal-200 text-xs font-bold text-charcoal-800 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-charcoal-50 transition-colors shadow-soft"
         >
           <ChevronLeft className="w-4 h-4" />
           <span>Previous</span>
         </button>
 
-        <span className="text-xs text-slate-400 font-medium">
-          Page <strong className="text-white">{currentPage}</strong> of <strong className="text-white">{totalPages}</strong>
+        <span className="text-xs text-charcoal-600 font-medium">
+          Page <strong className="text-charcoal-950 font-bold">{currentPage}</strong> of <strong className="text-charcoal-950 font-bold">{totalPages}</strong>
         </span>
 
         <button
           type="button"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage >= totalPages}
-          className="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-xs font-medium text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-800 transition-colors"
+          className="inline-flex items-center gap-1 px-3.5 py-2 rounded-xl bg-white border border-charcoal-200 text-xs font-bold text-charcoal-800 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-charcoal-50 transition-colors shadow-soft"
         >
           <span>Next</span>
           <ChevronRight className="w-4 h-4" />
@@ -79,7 +79,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           type="button"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage <= 1}
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-900 border border-slate-800 text-xs font-medium text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-800 hover:text-white transition-colors"
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white border border-charcoal-200 text-xs font-bold text-charcoal-800 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-charcoal-50 hover:text-charcoal-950 transition-colors shadow-soft"
         >
           <ChevronLeft className="w-4 h-4" />
           <span>Previous</span>
@@ -89,7 +89,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           {getPageNumbers().map((page, index) => {
             if (page === '...') {
               return (
-                <span key={`dots-${index}`} className="px-2 text-xs text-slate-600 font-bold select-none">
+                <span key={`dots-${index}`} className="px-2 text-xs text-charcoal-400 font-bold select-none">
                   •••
                 </span>
               );
@@ -103,10 +103,10 @@ export const Pagination: React.FC<PaginationProps> = ({
                 key={pageNum}
                 type="button"
                 onClick={() => onPageChange(pageNum)}
-                className={`w-9 h-9 rounded-lg text-xs font-semibold transition-all ${
+                className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${
                   isActive
-                    ? 'bg-brand-600 text-white shadow-md shadow-brand-600/30'
-                    : 'bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-brand-500 text-charcoal-950 border border-brand-500 shadow-xs'
+                    : 'bg-white border border-charcoal-200 text-charcoal-800 hover:bg-charcoal-50 hover:text-charcoal-950'
                 }`}
               >
                 {pageNum}
@@ -119,7 +119,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           type="button"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage >= totalPages}
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-900 border border-slate-800 text-xs font-medium text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-800 hover:text-white transition-colors"
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white border border-charcoal-200 text-xs font-bold text-charcoal-800 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-charcoal-50 hover:text-charcoal-950 transition-colors shadow-soft"
         >
           <span>Next</span>
           <ChevronRight className="w-4 h-4" />

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function AccessoriesPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-950" />}>
+    <Suspense fallback={<div className="min-h-screen bg-warm-bg" />}>
       <ProductCatalog
         title="Laptop Accessories & Upgrades"
         subtitle="Complete your computing setup with original power adapters, ergonomic stands, protective sleeves, and high-speed SSDs."

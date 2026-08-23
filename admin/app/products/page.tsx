@@ -14,13 +14,10 @@ import {
   Sparkles,
   Tag,
   Check,
-  AlertCircle,
   Loader2,
   RefreshCw,
   CheckSquare,
   Square,
-  Archive,
-  Eye,
 } from 'lucide-react';
 
 interface IAdminProduct {
@@ -49,7 +46,6 @@ export default function AdminProductsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [stockFilter, setStockFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   // Bulk selection state
@@ -97,7 +93,7 @@ export default function AdminProductsPage() {
         setTotalCount(pag.total ?? items.length);
         setTotalPages(pag.totalPages ?? (Math.ceil(items.length / 20) || 1));
       }
-    } catch (err) {
+    } catch {
       // Fallback
     } finally {
       setIsLoading(false);
@@ -108,14 +104,37 @@ export default function AdminProductsPage() {
     loadProducts();
   }, [loadProducts]);
 
-  // Quick field toggle handler
-  const handleToggle = async (id: string, field: 'featured' | 'bestDeal' | 'stockStatus', currentValue: any) => {
-    const newValue = field === 'stockStatus' ? (currentValue === 'available' ? 'sold_out' : 'available') : !currentValue;
+  // Handle inline price update
+  const handleSavePrice = async (id: string) => {
+    try {
+      const res = await adminApiClient<IAdminProduct>(`/products/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ price: tempPrice }),
+      });
+      if (res.success) {
+        setProducts((prev) =>
+          prev.map((p) => (p._id === id ? { ...p, price: tempPrice } : p))
+        );
+        setEditingPriceId(null);
+      }
+    } catch {
+      // Ignore
+    }
+  };
+
+  // Quick toggle stock or boolean flags
+  const handleToggle = async (id: string, field: 'stockStatus' | 'featured' | 'bestDeal', currentValue: unknown) => {
+    let newValue: unknown;
+    if (field === 'stockStatus') {
+      newValue = currentValue === 'available' ? 'sold_out' : 'available';
+    } else {
+      newValue = !currentValue;
+    }
 
     try {
-      const res = await adminApiClient(`/products/${id}/toggle`, {
-        method: 'PATCH',
-        body: JSON.stringify({ field, value: newValue }),
+      const res = await adminApiClient<IAdminProduct>(`/products/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ [field]: newValue }),
       });
 
       if (res.success) {
@@ -123,25 +142,9 @@ export default function AdminProductsPage() {
           prev.map((p) => (p._id === id ? { ...p, [field]: newValue } : p))
         );
       }
-    } catch (err) {}
-  };
-
-  // Quick price save
-  const handleSavePrice = async (id: string) => {
-    if (tempPrice < 0) return;
-    try {
-      const res = await adminApiClient(`/products/${id}/toggle`, {
-        method: 'PATCH',
-        body: JSON.stringify({ field: 'price', value: tempPrice }),
-      });
-
-      if (res.success) {
-        setProducts((prev) =>
-          prev.map((p) => (p._id === id ? { ...p, price: tempPrice } : p))
-        );
-        setEditingPriceId(null);
-      }
-    } catch (err) {}
+    } catch {
+      // Ignore
+    }
   };
 
   // Duplicate Product
@@ -153,7 +156,9 @@ export default function AdminProductsPage() {
       if (res.success && res.data) {
         loadProducts();
       }
-    } catch (err) {}
+    } catch {
+      // Ignore
+    }
   };
 
   // Bulk Actions
@@ -172,7 +177,8 @@ export default function AdminProductsPage() {
         setSelectedIds([]);
         loadProducts();
       }
-    } catch (err) {
+    } catch {
+      // Ignore
     } finally {
       setIsBulkExecuting(false);
     }
@@ -192,7 +198,8 @@ export default function AdminProductsPage() {
         setProducts((prev) => prev.filter((p) => p._id !== deleteModalProduct._id));
         setDeleteModalProduct(null);
       }
-    } catch (err) {
+    } catch {
+      // Ignore
     } finally {
       setIsDeleting(false);
     }
@@ -215,10 +222,10 @@ export default function AdminProductsPage() {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black text-charcoal-950 tracking-tight">
             Inventory &amp; Product CMS
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400">
+          <p className="text-xs sm:text-sm text-charcoal-500 font-medium">
             {totalCount} total laptop units, Chromebooks and accessories cataloged.
           </p>
         </div>
@@ -227,7 +234,7 @@ export default function AdminProductsPage() {
           <button
             onClick={loadProducts}
             disabled={isLoading}
-            className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white"
+            className="p-2.5 rounded-xl bg-white border border-charcoal-200 text-charcoal-700 hover:text-charcoal-950 shadow-soft transition-colors"
             title="Refresh list"
           >
             <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
@@ -235,7 +242,7 @@ export default function AdminProductsPage() {
 
           <Link
             href="/products/new"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs shadow-md shadow-brand-600/30 transition-all"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-400 text-charcoal-950 font-bold text-xs shadow-sm transition-all hover:scale-105 active:scale-95"
           >
             <Plus className="w-4 h-4" />
             <span>Add New Product</span>
@@ -244,9 +251,9 @@ export default function AdminProductsPage() {
       </div>
 
       {/* Filter & Search Toolbar */}
-      <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+      <div className="p-4 rounded-3xl bg-white border border-charcoal-200/90 shadow-soft grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-3">
         <div className="relative sm:col-span-2">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-charcoal-400" />
           <input
             type="text"
             value={searchTerm}
@@ -255,7 +262,7 @@ export default function AdminProductsPage() {
               setPage(1);
             }}
             placeholder="Search by title, brand, model, SKU, processor..."
-            className="w-full pl-9 pr-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-500"
+            className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-950 placeholder:text-charcoal-400 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-400/30 transition-all font-medium"
           />
         </div>
 
@@ -266,7 +273,7 @@ export default function AdminProductsPage() {
               setTypeFilter(e.target.value);
               setPage(1);
             }}
-            className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 focus:outline-none focus:border-brand-500"
+            className="w-full px-3.5 py-2.5 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-950 focus:outline-none focus:border-brand-500 font-medium"
           >
             <option value="">All Types (Laptops &amp; Accessories)</option>
             <option value="laptop">Laptops Only</option>
@@ -282,7 +289,7 @@ export default function AdminProductsPage() {
               setStockFilter(e.target.value);
               setPage(1);
             }}
-            className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 focus:outline-none focus:border-brand-500"
+            className="w-full px-3.5 py-2.5 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-950 focus:outline-none focus:border-brand-500 font-medium"
           >
             <option value="">All Inventory Status</option>
             <option value="available">In Stock (Available)</option>
@@ -293,8 +300,8 @@ export default function AdminProductsPage() {
 
       {/* Bulk Actions Floating Bar */}
       {selectedIds.length > 0 && (
-        <div className="p-3.5 rounded-2xl bg-brand-950/80 border border-brand-800/80 flex flex-wrap items-center justify-between gap-3 text-xs shadow-xl animate-in fade-in">
-          <div className="flex items-center gap-2 text-brand-300 font-semibold">
+        <div className="p-4 rounded-2xl bg-brand-50 border border-brand-300 flex flex-wrap items-center justify-between gap-3 text-xs shadow-soft animate-in fade-in">
+          <div className="flex items-center gap-2 text-brand-900 font-bold">
             <CheckSquare className="w-4 h-4" />
             <span>{selectedIds.length} products selected</span>
           </div>
@@ -303,7 +310,7 @@ export default function AdminProductsPage() {
             <button
               onClick={() => handleBulkAction('mark_available')}
               disabled={isBulkExecuting}
-              className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium shadow"
+              className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow-xs"
             >
               Mark In Stock
             </button>
@@ -311,7 +318,7 @@ export default function AdminProductsPage() {
             <button
               onClick={() => handleBulkAction('mark_sold')}
               disabled={isBulkExecuting}
-              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-rose-300 font-medium"
+              className="px-3.5 py-1.5 rounded-xl bg-charcoal-800 hover:bg-charcoal-700 text-rose-300 font-bold"
             >
               Mark Sold Out
             </button>
@@ -319,7 +326,7 @@ export default function AdminProductsPage() {
             <button
               onClick={() => handleBulkAction('archive')}
               disabled={isBulkExecuting}
-              className="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-medium shadow"
+              className="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold shadow-xs"
             >
               Bulk Archive
             </button>
@@ -328,37 +335,37 @@ export default function AdminProductsPage() {
       )}
 
       {/* Main Data Table */}
-      <div className="rounded-2xl bg-slate-900/60 border border-slate-800 overflow-hidden shadow-sm">
+      <div className="rounded-3xl bg-white border border-charcoal-200/90 shadow-soft overflow-hidden">
         {isLoading ? (
-          <div className="py-20 text-center text-xs text-slate-400 flex items-center justify-center gap-2">
-            <Loader2 className="w-4 h-4 animate-spin text-brand-400" />
+          <div className="py-20 text-center text-xs text-charcoal-500 flex items-center justify-center gap-2 font-medium">
+            <Loader2 className="w-4 h-4 animate-spin text-brand-600" />
             <span>Loading inventory database records...</span>
           </div>
         ) : products.length > 0 ? (
           <>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-950/80 border-b border-slate-800 text-slate-400 uppercase text-[10px] tracking-wider">
+                <thead className="bg-charcoal-50/80 border-b border-charcoal-200 text-charcoal-500 uppercase text-[10px] font-bold tracking-wider">
                   <tr>
-                    <th className="py-3.5 px-3 w-8">
-                      <button onClick={toggleSelectAll} className="text-slate-400 hover:text-white">
+                    <th className="py-3.5 px-3.5 w-8">
+                      <button onClick={toggleSelectAll} className="text-charcoal-400 hover:text-charcoal-950">
                         {selectedIds.length === products.length ? (
-                          <CheckSquare className="w-4 h-4 text-brand-400" />
+                          <CheckSquare className="w-4 h-4 text-brand-600" />
                         ) : (
                           <Square className="w-4 h-4" />
                         )}
                       </button>
                     </th>
-                    <th className="py-3.5 px-3">Item</th>
-                    <th className="py-3.5 px-3">Brand / Type</th>
-                    <th className="py-3.5 px-3">Price (PKR)</th>
-                    <th className="py-3.5 px-3">Condition</th>
-                    <th className="py-3.5 px-3">Stock Status</th>
-                    <th className="py-3.5 px-3">Promotions</th>
-                    <th className="py-3.5 px-3 text-right">Actions</th>
+                    <th className="py-3.5 px-3.5">Item</th>
+                    <th className="py-3.5 px-3.5">Brand / Type</th>
+                    <th className="py-3.5 px-3.5">Price (PKR)</th>
+                    <th className="py-3.5 px-3.5">Condition</th>
+                    <th className="py-3.5 px-3.5">Stock Status</th>
+                    <th className="py-3.5 px-3.5">Promotions</th>
+                    <th className="py-3.5 px-3.5 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60">
+                <tbody className="divide-y divide-charcoal-100 font-medium">
                   {products.map((p) => {
                     const primaryImg = p.images?.find((img) => img.isPrimary) || p.images?.[0];
                     const isSelected = selectedIds.includes(p._id);
@@ -367,26 +374,26 @@ export default function AdminProductsPage() {
                     return (
                       <tr
                         key={p._id}
-                        className={`hover:bg-slate-900/40 transition-colors ${
-                          isSelected ? 'bg-brand-950/20' : ''
+                        className={`hover:bg-charcoal-50/60 transition-colors ${
+                          isSelected ? 'bg-brand-50/40' : ''
                         }`}
                       >
-                        <td className="py-3 px-3">
+                        <td className="py-3.5 px-3.5">
                           <button
                             onClick={() => toggleSelectId(p._id)}
-                            className="text-slate-400 hover:text-white"
+                            className="text-charcoal-400 hover:text-charcoal-950"
                           >
                             {isSelected ? (
-                              <CheckSquare className="w-4 h-4 text-brand-400" />
+                              <CheckSquare className="w-4 h-4 text-brand-600" />
                             ) : (
                               <Square className="w-4 h-4" />
                             )}
                           </button>
                         </td>
 
-                        <td className="py-3 px-3">
+                        <td className="py-3.5 px-3.5">
                           <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center shrink-0 overflow-hidden">
+                            <div className="w-12 h-12 rounded-2xl bg-charcoal-50 border border-charcoal-200 flex items-center justify-center shrink-0 overflow-hidden shadow-xs">
                               {primaryImg?.url ? (
                                 // eslint-disable-next-line @next/next/no-img-element
                                 <img
@@ -395,37 +402,37 @@ export default function AdminProductsPage() {
                                   className="w-full h-full object-contain p-1"
                                 />
                               ) : (
-                                <Laptop className="w-5 h-5 text-slate-600" />
+                                <Laptop className="w-5 h-5 text-charcoal-400" />
                               )}
                             </div>
                             <div className="min-w-0 max-w-xs">
-                              <h4 className="font-bold text-slate-100 truncate">{p.name}</h4>
-                              <span className="text-[10px] text-slate-500 truncate block">
+                              <h4 className="font-bold text-charcoal-950 truncate">{p.name}</h4>
+                              <span className="text-[10px] text-charcoal-400 truncate block">
                                 SKU: {p.sku || p.slug}
                               </span>
                             </div>
                           </div>
                         </td>
 
-                        <td className="py-3 px-3">
-                          <span className="font-semibold text-slate-300 block">
+                        <td className="py-3.5 px-3.5">
+                          <span className="font-bold text-charcoal-900 block">
                             {p.brand?.name || '—'}
                           </span>
-                          <span className="text-[10px] text-slate-500 uppercase">{p.productType}</span>
+                          <span className="text-[10px] text-charcoal-500 uppercase">{p.productType}</span>
                         </td>
 
-                        <td className="py-3 px-3 font-bold text-white">
+                        <td className="py-3.5 px-3.5 font-black text-charcoal-950">
                           {isEditingPrice ? (
                             <div className="flex items-center gap-1">
                               <input
                                 type="number"
                                 value={tempPrice}
                                 onChange={(e) => setTempPrice(Number(e.target.value))}
-                                className="w-24 px-2 py-1 rounded bg-slate-950 border border-brand-500 text-xs font-bold text-white focus:outline-none"
+                                className="w-24 px-2 py-1 rounded-lg bg-white border border-brand-500 text-xs font-bold text-charcoal-950 focus:outline-none"
                               />
                               <button
                                 onClick={() => handleSavePrice(p._id)}
-                                className="p-1 rounded bg-brand-600 text-white"
+                                className="p-1 rounded-lg bg-brand-500 text-charcoal-950"
                               >
                                 <Check className="w-3 h-3" />
                               </button>
@@ -444,18 +451,18 @@ export default function AdminProductsPage() {
                           )}
                         </td>
 
-                        <td className="py-3 px-3 capitalize text-slate-300">
+                        <td className="py-3.5 px-3.5 capitalize text-charcoal-600">
                           {p.condition?.replace('-', ' ') || '—'}
                         </td>
 
-                        <td className="py-3 px-3">
+                        <td className="py-3.5 px-3.5">
                           <button
                             type="button"
                             onClick={() => handleToggle(p._id, 'stockStatus', p.stockStatus)}
                             className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold border transition-colors cursor-pointer ${
                               p.stockStatus === 'available'
-                                ? 'bg-emerald-950/80 text-emerald-300 border-emerald-800 hover:bg-rose-950/80'
-                                : 'bg-rose-950/80 text-rose-300 border-rose-800 hover:bg-emerald-950/80'
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-rose-50 hover:text-rose-700'
+                                : 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-emerald-50 hover:text-emerald-700'
                             }`}
                             title="Click to toggle Stock Status"
                           >
@@ -463,15 +470,15 @@ export default function AdminProductsPage() {
                           </button>
                         </td>
 
-                        <td className="py-3 px-3">
+                        <td className="py-3.5 px-3.5">
                           <div className="flex items-center gap-1.5">
                             <button
                               type="button"
                               onClick={() => handleToggle(p._id, 'featured', p.featured)}
-                              className={`p-1.5 rounded-lg border text-xs transition-colors ${
+                              className={`p-1.5 rounded-xl border text-xs transition-colors ${
                                 p.featured
-                                  ? 'bg-brand-600/20 text-brand-400 border-brand-500/40'
-                                  : 'text-slate-600 border-slate-800 hover:text-slate-400'
+                                  ? 'bg-brand-100 text-brand-900 border-brand-300 shadow-xs'
+                                  : 'text-charcoal-400 border-charcoal-200 hover:text-charcoal-700'
                               }`}
                               title="Toggle Featured"
                             >
@@ -481,10 +488,10 @@ export default function AdminProductsPage() {
                             <button
                               type="button"
                               onClick={() => handleToggle(p._id, 'bestDeal', p.bestDeal)}
-                              className={`p-1.5 rounded-lg border text-xs transition-colors ${
+                              className={`p-1.5 rounded-xl border text-xs transition-colors ${
                                 p.bestDeal
-                                  ? 'bg-amber-600/20 text-amber-400 border-amber-500/40'
-                                  : 'text-slate-600 border-slate-800 hover:text-slate-400'
+                                  ? 'bg-amber-100 text-amber-900 border-amber-300 shadow-xs'
+                                  : 'text-charcoal-400 border-charcoal-200 hover:text-charcoal-700'
                               }`}
                               title="Toggle Best Deal"
                             >
@@ -493,12 +500,12 @@ export default function AdminProductsPage() {
                           </div>
                         </td>
 
-                        <td className="py-3 px-3 text-right">
+                        <td className="py-3.5 px-3.5 text-right">
                           <div className="flex items-center justify-end gap-1.5">
                             <button
                               type="button"
                               onClick={() => handleDuplicate(p._id)}
-                              className="p-1.5 rounded-lg bg-slate-950 border border-slate-800 text-slate-400 hover:text-brand-300"
+                              className="p-1.5 rounded-xl bg-charcoal-50 border border-charcoal-200 text-charcoal-600 hover:text-charcoal-950 transition-colors"
                               title="Duplicate Product"
                             >
                               <Copy className="w-3.5 h-3.5" />
@@ -508,7 +515,7 @@ export default function AdminProductsPage() {
                               href={`${process.env.NEXT_PUBLIC_SITE_URL || 'https://yasin-laptop-hub.vercel.app'}/laptops/${p.slug}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="p-1.5 rounded-lg bg-slate-950 border border-slate-800 text-slate-400 hover:text-white"
+                              className="p-1.5 rounded-xl bg-charcoal-50 border border-charcoal-200 text-charcoal-600 hover:text-charcoal-950 transition-colors"
                               title="Preview on Public Storefront"
                             >
                               <ExternalLink className="w-3.5 h-3.5" />
@@ -516,7 +523,7 @@ export default function AdminProductsPage() {
 
                             <Link
                               href={`/products/${p._id}/edit`}
-                              className="p-1.5 rounded-lg bg-brand-600/20 border border-brand-500/30 text-brand-400 hover:text-brand-300"
+                              className="p-1.5 rounded-xl bg-brand-50 border border-brand-200 text-brand-900 hover:bg-brand-500 hover:text-charcoal-950 transition-colors"
                               title="Edit Product"
                             >
                               <Edit className="w-3.5 h-3.5" />
@@ -525,7 +532,7 @@ export default function AdminProductsPage() {
                             <button
                               type="button"
                               onClick={() => setDeleteModalProduct(p)}
-                              className="p-1.5 rounded-lg bg-rose-950/40 border border-rose-800/40 text-rose-400 hover:text-rose-300"
+                              className="p-1.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-100 transition-colors"
                               title="Archive Product"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -541,7 +548,7 @@ export default function AdminProductsPage() {
 
             {/* Pagination Toolbar */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between p-4 border-t border-slate-800 text-xs text-slate-400 bg-slate-950/40">
+              <div className="flex items-center justify-between p-4 border-t border-charcoal-200 text-xs text-charcoal-500 bg-charcoal-50/50 font-medium">
                 <span>
                   Page <strong>{page}</strong> of <strong>{totalPages}</strong> ({totalCount} items)
                 </span>
@@ -550,7 +557,7 @@ export default function AdminProductsPage() {
                     type="button"
                     disabled={page <= 1}
                     onClick={() => setPage((prev) => Math.max(1, prev - 1))}
-                    className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:text-white disabled:opacity-40"
+                    className="px-3.5 py-1.5 rounded-xl bg-white border border-charcoal-200 text-charcoal-800 hover:text-charcoal-950 disabled:opacity-40 font-bold shadow-xs"
                   >
                     Previous
                   </button>
@@ -558,7 +565,7 @@ export default function AdminProductsPage() {
                     type="button"
                     disabled={page >= totalPages}
                     onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
-                    className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:text-white disabled:opacity-40"
+                    className="px-3.5 py-1.5 rounded-xl bg-white border border-charcoal-200 text-charcoal-800 hover:text-charcoal-950 disabled:opacity-40 font-bold shadow-xs"
                   >
                     Next
                   </button>
@@ -568,14 +575,14 @@ export default function AdminProductsPage() {
           </>
         ) : (
           <div className="py-16 text-center space-y-3">
-            <Laptop className="w-12 h-12 text-slate-700 mx-auto" />
-            <h3 className="text-base font-bold text-white">No products found</h3>
-            <p className="text-xs text-slate-400">
+            <Laptop className="w-12 h-12 text-charcoal-300 mx-auto" />
+            <h3 className="text-base font-black text-charcoal-950">No products found</h3>
+            <p className="text-xs text-charcoal-500 font-medium">
               Try adjusting your search terms or add a new laptop to the catalog.
             </p>
             <Link
               href="/products/new"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-600 text-white text-xs font-semibold shadow-md"
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-400 text-charcoal-950 text-xs font-bold shadow-xs"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Add First Laptop</span>
@@ -586,18 +593,18 @@ export default function AdminProductsPage() {
 
       {/* Delete Confirmation Modal */}
       {deleteModalProduct && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="max-w-md w-full p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-2xl">
-            <div className="w-12 h-12 rounded-xl bg-rose-950/60 border border-rose-800/80 text-rose-400 flex items-center justify-center">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="max-w-md w-full p-8 rounded-3xl bg-white border border-charcoal-200 shadow-soft-lg space-y-4">
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center shadow-xs">
               <Trash2 className="w-6 h-6" />
             </div>
 
             <div className="space-y-1">
-              <h3 className="text-lg font-bold text-white">
+              <h3 className="text-lg font-black text-charcoal-950">
                 Archive Product?
               </h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Are you sure you want to remove <strong className="text-white">&ldquo;{deleteModalProduct.name}&rdquo;</strong> from public view? This unit will be marked as archived.
+              <p className="text-xs text-charcoal-600 leading-relaxed font-medium">
+                Are you sure you want to remove <strong className="text-charcoal-950">&ldquo;{deleteModalProduct.name}&rdquo;</strong> from public view? This unit will be marked as archived.
               </p>
             </div>
 
@@ -605,7 +612,7 @@ export default function AdminProductsPage() {
               <button
                 type="button"
                 onClick={() => setDeleteModalProduct(null)}
-                className="py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-semibold text-slate-300 hover:text-white"
+                className="py-3 rounded-xl bg-charcoal-100 hover:bg-charcoal-200 text-xs font-bold text-charcoal-800 transition-colors"
               >
                 Cancel
               </button>
@@ -614,7 +621,7 @@ export default function AdminProductsPage() {
                 type="button"
                 disabled={isDeleting}
                 onClick={handleDeleteConfirm}
-                className="py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold shadow-md flex items-center justify-center gap-1.5"
+                className="py-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold shadow-xs flex items-center justify-center gap-1.5"
               >
                 {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <span>Confirm Archive</span>}
               </button>

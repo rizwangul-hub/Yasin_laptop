@@ -9,11 +9,11 @@ export const ProductDescription: React.FC<ProductDescriptionProps> = ({ descript
   if (!description) return null;
 
   return (
-    <section className="p-6 sm:p-8 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
-      <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+    <section className="p-8 rounded-3xl bg-white border border-charcoal-200/90 shadow-soft space-y-3">
+      <h2 className="text-xl font-black text-charcoal-950 tracking-tight">
         About {name}
       </h2>
-      <div className="text-xs sm:text-sm text-slate-300 leading-relaxed whitespace-pre-line">
+      <div className="text-xs sm:text-sm text-charcoal-700 leading-relaxed whitespace-pre-line font-normal">
         {description}
       </div>
     </section>

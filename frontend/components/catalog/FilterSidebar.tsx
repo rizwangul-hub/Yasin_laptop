@@ -90,14 +90,6 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
     { name: 'Accessories', slug: 'accessories' },
   ];
 
-  const useCases = metadata?.useCases || [
-    { name: 'Business', slug: 'business' },
-    { name: 'Student', slug: 'student' },
-    { name: 'Programming', slug: 'programming' },
-    { name: 'Gaming', slug: 'gaming' },
-    { name: 'Freelancing', slug: 'freelancing' },
-  ];
-
   const processors = metadata?.processors || [
     'Intel Core i3',
     'Intel Core i5',
@@ -123,13 +115,13 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
   const conditions = metadata?.conditions || ['new', 'like-new', 'excellent', 'very-good', 'good', 'fair'];
 
   return (
-    <div className="w-full bg-slate-900/60 border border-slate-800 rounded-2xl p-5 space-y-2">
-      <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-        <h3 className="text-sm font-bold text-white tracking-wide">Filters</h3>
+    <div className="w-full bg-white border border-charcoal-200/90 rounded-3xl p-5 shadow-soft space-y-2">
+      <div className="flex items-center justify-between pb-3 border-b border-charcoal-200/80">
+        <h3 className="text-sm font-black text-charcoal-950 tracking-wide uppercase">Filters</h3>
         <button
           type="button"
           onClick={onClearAll}
-          className="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1 font-medium transition-colors"
+          className="text-xs text-rose-600 hover:text-rose-700 flex items-center gap-1 font-bold transition-colors"
         >
           <RotateCcw className="w-3 h-3" />
           <span>Clear All</span>
@@ -144,12 +136,14 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
             return (
               <label
                 key={b.slug}
-                className="flex items-center justify-between text-xs text-slate-300 hover:text-white cursor-pointer select-none py-1"
+                className="flex items-center justify-between text-xs text-charcoal-700 hover:text-charcoal-950 cursor-pointer select-none py-1 font-medium"
               >
                 <div className="flex items-center gap-2">
                   <div
                     className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
-                      isChecked ? 'bg-brand-600 border-brand-500 text-white' : 'border-slate-700 bg-slate-950'
+                      isChecked
+                        ? 'bg-brand-500 border-brand-600 text-charcoal-950'
+                        : 'border-charcoal-300 bg-white'
                     }`}
                   >
                     {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
@@ -176,12 +170,14 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
             return (
               <label
                 key={c.slug}
-                className="flex items-center justify-between text-xs text-slate-300 hover:text-white cursor-pointer select-none py-1"
+                className="flex items-center justify-between text-xs text-charcoal-700 hover:text-charcoal-950 cursor-pointer select-none py-1 font-medium"
               >
                 <div className="flex items-center gap-2">
                   <div
                     className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
-                      isChecked ? 'bg-brand-600 border-brand-500 text-white' : 'border-slate-700 bg-slate-950'
+                      isChecked
+                        ? 'bg-brand-500 border-brand-600 text-charcoal-950'
+                        : 'border-charcoal-300 bg-white'
                     }`}
                   >
                     {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
@@ -202,65 +198,65 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
       {/* 3. PRICE RANGE FILTER */}
       <FilterGroup title="Price Range (PKR)" defaultOpen={true}>
-        <div className="space-y-2 text-xs">
+        <div className="space-y-1.5 text-xs font-medium">
           <button
             type="button"
             onClick={() => handlePriceRangeSelect(0, 30000)}
-            className="w-full text-left py-1 text-slate-400 hover:text-brand-300"
+            className="w-full text-left py-1 text-charcoal-600 hover:text-brand-800"
           >
             Under Rs. 30,000
           </button>
           <button
             type="button"
             onClick={() => handlePriceRangeSelect(30000, 50000)}
-            className="w-full text-left py-1 text-slate-400 hover:text-brand-300"
+            className="w-full text-left py-1 text-charcoal-600 hover:text-brand-800"
           >
             Rs. 30,000 – Rs. 50,000
           </button>
           <button
             type="button"
             onClick={() => handlePriceRangeSelect(50000, 75000)}
-            className="w-full text-left py-1 text-slate-400 hover:text-brand-300"
+            className="w-full text-left py-1 text-charcoal-600 hover:text-brand-800"
           >
             Rs. 50,000 – Rs. 75,000
           </button>
           <button
             type="button"
             onClick={() => handlePriceRangeSelect(75000, 100000)}
-            className="w-full text-left py-1 text-slate-400 hover:text-brand-300"
+            className="w-full text-left py-1 text-charcoal-600 hover:text-brand-800"
           >
             Rs. 75,000 – Rs. 100,000
           </button>
           <button
             type="button"
             onClick={() => handlePriceRangeSelect(100000, 9999999)}
-            className="w-full text-left py-1 text-slate-400 hover:text-brand-300"
+            className="w-full text-left py-1 text-charcoal-600 hover:text-brand-800"
           >
             Above Rs. 100,000
           </button>
 
           {/* Custom Price Range Form */}
-          <form onSubmit={handleApplyCustomPrice} className="pt-2 border-t border-slate-800 space-y-2">
-            <span className="text-[11px] text-slate-400 block font-medium">Custom Range:</span>
+          <form onSubmit={handleApplyCustomPrice} className="pt-2 border-t border-charcoal-200/80 space-y-2">
+            <span className="text-[11px] text-charcoal-500 block font-bold">Custom Range:</span>
             <div className="grid grid-cols-2 gap-2">
               <input
                 type="number"
                 placeholder="Min"
                 value={customMin}
                 onChange={(e) => setCustomMin(e.target.value)}
-                className="w-full px-2.5 py-1.5 rounded-lg bg-slate-950 border border-slate-800 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-500"
+                className="w-full px-2.5 py-1.5 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-950 placeholder:text-charcoal-400 focus:outline-none focus:border-brand-500"
               />
               <input
                 type="number"
                 placeholder="Max"
                 value={customMax}
                 onChange={(e) => setCustomMax(e.target.value)}
-                className="w-full px-2.5 py-1.5 rounded-lg bg-slate-950 border border-slate-800 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-500"
+                className="w-full px-2.5 py-1.5 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-950 placeholder:text-charcoal-400 focus:outline-none focus:border-brand-500"
               />
             </div>
             <button
               type="submit"
-              className="w-full py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition-colors"
+              className="w-full py-2 rounded-xl bg-charcoal-900 hover:bg-charcoal-800 text-white text-xs font-bold transition-colors"
             >
               Apply Price
             </button>
@@ -276,12 +272,14 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
             return (
               <label
                 key={proc}
-                className="flex items-center justify-between text-xs text-slate-300 hover:text-white cursor-pointer select-none py-1"
+                className="flex items-center justify-between text-xs text-charcoal-700 hover:text-charcoal-950 cursor-pointer select-none py-1 font-medium"
               >
                 <div className="flex items-center gap-2">
                   <div
                     className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
-                      isChecked ? 'bg-brand-600 border-brand-500 text-white' : 'border-slate-700 bg-slate-950'
+                      isChecked
+                        ? 'bg-brand-500 border-brand-600 text-charcoal-950'
+                        : 'border-charcoal-300 bg-white'
                     }`}
                   >
                     {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
@@ -310,10 +308,10 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                 key={gen}
                 type="button"
                 onClick={() => toggleMultiSelect('generation', gen)}
-                className={`px-2 py-1.5 rounded-lg text-xs font-medium border text-center transition-all ${
+                className={`px-2 py-1.5 rounded-xl text-xs font-bold border text-center transition-all ${
                   isChecked
-                    ? 'bg-brand-600 text-white border-brand-500 shadow-sm'
-                    : 'bg-slate-950 text-slate-300 border-slate-800 hover:border-slate-700'
+                    ? 'bg-brand-500 text-charcoal-950 border-brand-600 shadow-xs'
+                    : 'bg-charcoal-50 text-charcoal-700 border-charcoal-200 hover:border-charcoal-300'
                 }`}
               >
                 {gen}
@@ -333,10 +331,10 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                 key={ram}
                 type="button"
                 onClick={() => toggleMultiSelect('ram', ram)}
-                className={`px-2 py-1.5 rounded-lg text-xs font-medium border text-center transition-all ${
+                className={`px-2 py-1.5 rounded-xl text-xs font-bold border text-center transition-all ${
                   isChecked
-                    ? 'bg-brand-600 text-white border-brand-500 shadow-sm'
-                    : 'bg-slate-950 text-slate-300 border-slate-800 hover:border-slate-700'
+                    ? 'bg-brand-500 text-charcoal-950 border-brand-600 shadow-xs'
+                    : 'bg-charcoal-50 text-charcoal-700 border-charcoal-200 hover:border-charcoal-300'
                 }`}
               >
                 {ram}
@@ -356,10 +354,10 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                 key={st}
                 type="button"
                 onClick={() => toggleMultiSelect('storage', st)}
-                className={`px-2 py-1.5 rounded-lg text-xs font-medium border text-center transition-all ${
+                className={`px-2 py-1.5 rounded-xl text-xs font-bold border text-center transition-all ${
                   isChecked
-                    ? 'bg-brand-600 text-white border-brand-500 shadow-sm'
-                    : 'bg-slate-950 text-slate-300 border-slate-800 hover:border-slate-700'
+                    ? 'bg-brand-500 text-charcoal-950 border-brand-600 shadow-xs'
+                    : 'bg-charcoal-50 text-charcoal-700 border-charcoal-200 hover:border-charcoal-300'
                 }`}
               >
                 {st}
@@ -377,12 +375,14 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
             return (
               <label
                 key={cond}
-                className="flex items-center justify-between text-xs text-slate-300 hover:text-white cursor-pointer select-none py-1"
+                className="flex items-center justify-between text-xs text-charcoal-700 hover:text-charcoal-950 cursor-pointer select-none py-1 font-medium"
               >
                 <div className="flex items-center gap-2">
                   <div
                     className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
-                      isChecked ? 'bg-brand-600 border-brand-500 text-white' : 'border-slate-700 bg-slate-950'
+                      isChecked
+                        ? 'bg-brand-500 border-brand-600 text-charcoal-950'
+                        : 'border-charcoal-300 bg-white'
                     }`}
                   >
                     {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
@@ -403,34 +403,34 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
       {/* 9. STOCK STATUS FILTER */}
       <FilterGroup title="Stock Availability" defaultOpen={false}>
-        <div className="space-y-1.5 text-xs">
-          <label className="flex items-center gap-2 text-slate-300 hover:text-white cursor-pointer select-none">
+        <div className="space-y-1.5 text-xs font-medium">
+          <label className="flex items-center gap-2 text-charcoal-700 hover:text-charcoal-950 cursor-pointer select-none">
             <input
               type="radio"
               name="stockStatus"
               checked={!selectedFilters.stockStatus}
               onChange={() => onFilterChange({ ...selectedFilters, stockStatus: undefined })}
-              className="text-brand-500"
+              className="accent-brand-600"
             />
             <span>All Units</span>
           </label>
-          <label className="flex items-center gap-2 text-slate-300 hover:text-white cursor-pointer select-none">
+          <label className="flex items-center gap-2 text-charcoal-700 hover:text-charcoal-950 cursor-pointer select-none">
             <input
               type="radio"
               name="stockStatus"
               checked={selectedFilters.stockStatus === 'available'}
               onChange={() => onFilterChange({ ...selectedFilters, stockStatus: 'available' })}
-              className="text-brand-500"
+              className="accent-brand-600"
             />
             <span>In Stock Only</span>
           </label>
-          <label className="flex items-center gap-2 text-slate-300 hover:text-white cursor-pointer select-none">
+          <label className="flex items-center gap-2 text-charcoal-700 hover:text-charcoal-950 cursor-pointer select-none">
             <input
               type="radio"
               name="stockStatus"
               checked={selectedFilters.stockStatus === 'sold_out'}
               onChange={() => onFilterChange({ ...selectedFilters, stockStatus: 'sold_out' })}
-              className="text-brand-500"
+              className="accent-brand-600"
             />
             <span>Sold Out Only</span>
           </label>

@@ -2,27 +2,37 @@ import React, { ButtonHTMLAttributes } from 'react';
 import { cn } from '@/lib/formatters';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'whatsapp';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'whatsapp' | 'danger' | 'dark';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', isLoading, children, disabled, ...props }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-[0.98]';
-    
+    const baseStyles =
+      'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-[0.98]';
+
     const variants = {
-      primary: 'bg-brand-600 hover:bg-brand-500 text-white focus:ring-brand-500 shadow-md shadow-brand-600/20',
-      secondary: 'bg-slate-800 hover:bg-slate-700 text-slate-100 focus:ring-slate-600 border border-slate-700',
-      outline: 'border border-slate-700 hover:bg-slate-800/60 text-slate-200 focus:ring-slate-500',
-      ghost: 'text-slate-300 hover:bg-slate-800/50 hover:text-white',
-      whatsapp: 'bg-emerald-600 hover:bg-emerald-500 text-white focus:ring-emerald-500 shadow-md shadow-emerald-600/20',
+      primary:
+        'bg-brand-500 hover:bg-brand-400 text-charcoal-950 font-bold focus:ring-brand-500 shadow-sm hover:shadow border border-brand-500 hover:border-brand-400',
+      secondary:
+        'bg-white hover:bg-charcoal-100 text-charcoal-800 focus:ring-charcoal-400 border border-charcoal-200 shadow-sm hover:border-charcoal-300',
+      outline:
+        'border border-charcoal-300 hover:bg-charcoal-100 text-charcoal-800 focus:ring-charcoal-500',
+      ghost:
+        'text-charcoal-600 hover:text-charcoal-900 hover:bg-charcoal-100/70',
+      whatsapp:
+        'bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold focus:ring-[#25D366] shadow-sm shadow-[#25D366]/20',
+      danger:
+        'bg-rose-600 hover:bg-rose-500 text-white focus:ring-rose-500 shadow-sm',
+      dark:
+        'bg-charcoal-900 hover:bg-charcoal-800 text-white font-medium focus:ring-charcoal-700 shadow-sm',
     };
 
     const sizes = {
-      sm: 'text-xs px-3 py-1.5 gap-1.5',
-      md: 'text-sm px-4 py-2 gap-2',
-      lg: 'text-base px-6 py-3 gap-2.5',
+      sm: 'text-xs px-3.5 py-2 gap-1.5 rounded-lg',
+      md: 'text-sm px-5 py-2.5 gap-2 rounded-xl',
+      lg: 'text-base px-6 py-3.5 gap-2.5 rounded-xl font-semibold',
     };
 
     return (

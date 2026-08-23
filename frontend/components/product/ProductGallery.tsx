@@ -8,7 +8,6 @@ import {
   Maximize2,
   X,
   Laptop,
-  ZoomIn,
 } from 'lucide-react';
 
 interface ProductGalleryProps {
@@ -92,9 +91,9 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
 
   if (validImages.length === 0) {
     return (
-      <div className="w-full aspect-[4/3] rounded-3xl bg-slate-900 border border-slate-800 flex flex-col items-center justify-center text-slate-500 gap-3 p-8">
-        <Laptop className="w-16 h-16 text-slate-700" />
-        <span className="text-sm font-medium tracking-wide">Detailed Photographs Coming Soon</span>
+      <div className="w-full aspect-[4/3] rounded-3xl bg-white border border-charcoal-200 shadow-soft flex flex-col items-center justify-center text-charcoal-400 gap-3 p-8">
+        <Laptop className="w-16 h-16 text-charcoal-300" />
+        <span className="text-sm font-bold tracking-wide text-charcoal-500">Photographs Coming Soon</span>
       </div>
     );
   }
@@ -105,7 +104,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
     <div className="space-y-4">
       {/* 1. MAIN DISPLAY FRAME */}
       <div
-        className="relative w-full aspect-[4/3] sm:aspect-[16/11] rounded-3xl bg-slate-900/90 border border-slate-800 overflow-hidden flex items-center justify-center group cursor-zoom-in"
+        className="relative w-full aspect-[4/3] sm:aspect-[16/11] rounded-3xl bg-[#F9F9F5] border border-charcoal-200/90 shadow-soft overflow-hidden flex items-center justify-center group cursor-zoom-in"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onMouseMove={handleMouseMove}
@@ -131,7 +130,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
         />
 
         {/* Zoom Hint Icon */}
-        <div className="absolute top-4 right-4 p-2 rounded-xl bg-slate-950/70 border border-slate-800 text-slate-300 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="absolute top-4 right-4 p-2.5 rounded-xl bg-white/90 border border-charcoal-200 text-charcoal-700 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity shadow-sm">
           <Maximize2 className="w-4 h-4" />
         </div>
 
@@ -145,7 +144,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
                 handlePrev();
               }}
               aria-label="Previous photograph"
-              className="absolute left-3 top-1/2 -translate-y-1/2 p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-slate-200 hover:text-white hover:bg-slate-900 transition-all opacity-90 sm:opacity-0 sm:group-hover:opacity-100 shadow-lg"
+              className="absolute left-3 top-1/2 -translate-y-1/2 p-2.5 rounded-xl bg-white/90 border border-charcoal-200 text-charcoal-800 hover:text-charcoal-950 hover:bg-white transition-all opacity-90 sm:opacity-0 sm:group-hover:opacity-100 shadow-md"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -157,7 +156,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
                 handleNext();
               }}
               aria-label="Next photograph"
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-slate-200 hover:text-white hover:bg-slate-900 transition-all opacity-90 sm:opacity-0 sm:group-hover:opacity-100 shadow-lg"
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-2.5 rounded-xl bg-white/90 border border-charcoal-200 text-charcoal-800 hover:text-charcoal-950 hover:bg-white transition-all opacity-90 sm:opacity-0 sm:group-hover:opacity-100 shadow-md"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
@@ -165,7 +164,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
         )}
 
         {/* Counter Pill */}
-        <div className="absolute bottom-3 right-3 px-3 py-1 rounded-full bg-slate-950/80 border border-slate-800 text-[11px] font-semibold text-slate-300 backdrop-blur-sm">
+        <div className="absolute bottom-3 right-3 px-3 py-1 rounded-full bg-white/90 border border-charcoal-200 text-[11px] font-bold text-charcoal-800 backdrop-blur-sm shadow-xs">
           {selectedIndex + 1} / {validImages.length}
         </div>
       </div>
@@ -182,10 +181,10 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
                 type="button"
                 onClick={() => setSelectedIndex(idx)}
                 aria-label={`View photo ${idx + 1}`}
-                className={`relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-slate-900 border flex-shrink-0 overflow-hidden transition-all duration-200 ${
+                className={`relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white border flex-shrink-0 overflow-hidden transition-all duration-200 shadow-soft ${
                   isSelected
-                    ? 'border-brand-500 ring-2 ring-brand-500/40 shadow-lg'
-                    : 'border-slate-800 hover:border-slate-700 opacity-70 hover:opacity-100'
+                    ? 'border-brand-500 ring-2 ring-brand-400/50 shadow-md'
+                    : 'border-charcoal-200 hover:border-charcoal-300 opacity-70 hover:opacity-100'
                 }`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -203,38 +202,43 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
 
       {/* 3. FULLSCREEN LIGHTBOX MODAL */}
       {isLightboxOpen && (
-        <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex flex-col justify-between p-4 sm:p-8 animate-in fade-in duration-200">
-          {/* Top Bar */}
-          <div className="flex items-center justify-between text-white max-w-7xl mx-auto w-full">
-            <div className="text-xs sm:text-sm font-semibold truncate max-w-[70vw] text-slate-200">
-              {productName} • ({selectedIndex + 1} of {validImages.length})
-            </div>
-            <button
-              type="button"
-              onClick={() => setIsLightboxOpen(false)}
-              aria-label="Close fullscreen"
-              className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Image gallery lightbox"
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 animate-fade-in"
+          onClick={() => setIsLightboxOpen(false)}
+        >
+          {/* Close button */}
+          <button
+            type="button"
+            onClick={() => setIsLightboxOpen(false)}
+            aria-label="Close lightbox"
+            className="absolute top-4 right-4 p-3 rounded-full bg-charcoal-800/80 text-white hover:bg-charcoal-700 transition-colors z-20"
+          >
+            <X className="w-6 h-6" />
+          </button>
 
-          {/* Large Center Image with Arrows */}
-          <div className="relative flex-1 flex items-center justify-center my-4 max-w-5xl mx-auto w-full">
+          {/* Lightbox Image Container */}
+          <div
+            className="relative max-w-5xl max-h-[85vh] w-full h-full flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={currentImage.url}
               alt={altText}
-              className="max-h-[75vh] max-w-full object-contain drop-shadow-2xl"
+              className="max-w-full max-h-full object-contain select-none rounded-2xl"
             />
 
+            {/* Navigation in Lightbox */}
             {validImages.length > 1 && (
               <>
                 <button
                   type="button"
                   onClick={handlePrev}
-                  aria-label="Previous photograph"
-                  className="absolute left-2 sm:left-4 p-3 rounded-full bg-slate-900/80 border border-slate-700 text-white hover:bg-slate-800 transition-colors shadow-2xl"
+                  aria-label="Previous image"
+                  className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-charcoal-800/80 text-white hover:bg-charcoal-700 transition-colors"
                 >
                   <ChevronLeft className="w-6 h-6" />
                 </button>
@@ -242,33 +246,14 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
                 <button
                   type="button"
                   onClick={handleNext}
-                  aria-label="Next photograph"
-                  className="absolute right-2 sm:right-4 p-3 rounded-full bg-slate-900/80 border border-slate-700 text-white hover:bg-slate-800 transition-colors shadow-2xl"
+                  aria-label="Next image"
+                  className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-charcoal-800/80 text-white hover:bg-charcoal-700 transition-colors"
                 >
                   <ChevronRight className="w-6 h-6" />
                 </button>
               </>
             )}
           </div>
-
-          {/* Bottom Thumbnails Strip */}
-          {validImages.length > 1 && (
-            <div className="flex items-center justify-center gap-2 overflow-x-auto py-2 max-w-3xl mx-auto w-full">
-              {validImages.map((img, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => setSelectedIndex(idx)}
-                  className={`w-14 h-14 rounded-xl bg-slate-900 border flex-shrink-0 overflow-hidden transition-all ${
-                    idx === selectedIndex ? 'border-brand-500 ring-2 ring-brand-500' : 'border-slate-800 opacity-60'
-                  }`}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={img.url} alt="" className="w-full h-full object-contain p-1" />
-                </button>
-              ))}
-            </div>
-          )}
         </div>
       )}
     </div>

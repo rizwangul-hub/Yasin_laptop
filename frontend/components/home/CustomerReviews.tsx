@@ -57,15 +57,15 @@ export const CustomerReviews: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 gap-4">
         <div>
-          <div className="flex items-center gap-2 text-amber-400 text-xs font-semibold uppercase tracking-wider mb-1">
-            <Star className="w-3.5 h-3.5 fill-amber-400" />
+          <div className="flex items-center gap-2 text-brand-700 text-xs font-bold uppercase tracking-wider mb-1">
+            <Star className="w-3.5 h-3.5 fill-brand-500 text-brand-500" />
             <span>Verified Customer Feedback</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight flex items-center gap-2.5">
+          <h2 className="text-2xl sm:text-3xl font-black text-charcoal-950 tracking-tight flex items-center gap-2.5">
             <span>Customer Reviews &amp; Video Testimonials</span>
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-xl">
-            Real reviews from doctors, engineers, university students, and freelancers who bought verified laptops from Yasin Laptop Hub.
+          <p className="text-xs sm:text-sm text-charcoal-500 mt-1 max-w-xl font-medium">
+            Real feedback from verified buyers across Lakki Marwat, Bannu, Peshawar and all over Pakistan.
           </p>
         </div>
 
@@ -73,9 +73,9 @@ export const CustomerReviews: React.FC = () => {
           href={whatsappFeedbackUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-slate-200 text-xs font-semibold transition-all hover:scale-105 self-start sm:self-auto shrink-0 shadow-md"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-charcoal-50 border border-charcoal-200 text-charcoal-800 text-xs font-bold transition-all hover:scale-105 self-start sm:self-auto shrink-0 shadow-soft"
         >
-          <MessageCircle className="w-4 h-4 text-emerald-400" />
+          <MessageCircle className="w-4 h-4 text-emerald-600" />
           <span>Share Your Feedback</span>
         </a>
       </div>
@@ -85,7 +85,7 @@ export const CustomerReviews: React.FC = () => {
         {reviews.map((r) => (
           <div
             key={r._id}
-            className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800/80 hover:border-slate-700 transition-all flex flex-col justify-between space-y-4 relative group/card"
+            className="p-6 rounded-3xl bg-white border border-charcoal-200/90 shadow-soft hover:shadow-soft-md hover:border-brand-400/80 transition-all flex flex-col justify-between space-y-4 relative group/card"
           >
             {/* Top Stars & Video Badge */}
             <div className="space-y-3">
@@ -97,14 +97,14 @@ export const CustomerReviews: React.FC = () => {
                       className={`w-3.5 h-3.5 ${
                         i < r.rating
                           ? 'text-amber-400 fill-amber-400'
-                          : 'text-slate-700 fill-slate-700'
+                          : 'text-charcoal-200 fill-charcoal-200'
                       }`}
                     />
                   ))}
                 </div>
 
                 {r.videoUrl && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 text-[10px] font-semibold border border-rose-500/30">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 text-[10px] font-bold border border-rose-200">
                     <Video className="w-3 h-3" />
                     <span>Video</span>
                   </span>
@@ -112,22 +112,22 @@ export const CustomerReviews: React.FC = () => {
               </div>
 
               {/* Review Text */}
-              <p className="text-xs sm:text-sm text-slate-300 italic leading-relaxed line-clamp-4">
+              <p className="text-xs sm:text-sm text-charcoal-700 italic leading-relaxed line-clamp-4 font-normal">
                 &quot;{r.comment}&quot;
               </p>
             </div>
 
             {/* Bottom Customer Info & Video Button */}
-            <div className="pt-3 border-t border-slate-800/80 space-y-3">
+            <div className="pt-3 border-t border-charcoal-100 space-y-3">
               <div>
-                <h4 className="text-sm font-bold text-white flex items-center gap-1.5">
+                <h4 className="text-sm font-bold text-charcoal-950 flex items-center gap-1.5">
                   <span>{r.customerName}</span>
                   {r.verifiedPurchase && (
-                    <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
                   )}
                 </h4>
-                <p className="text-[11px] text-slate-400">
-                  {r.city} • <span className="text-brand-400">{r.laptopPurchased || 'Laptop Buyer'}</span>
+                <p className="text-[11px] text-charcoal-500 font-medium">
+                  {r.city} • <span className="text-brand-800 font-bold">{r.laptopPurchased || 'Laptop Buyer'}</span>
                 </p>
               </div>
 
@@ -142,9 +142,9 @@ export const CustomerReviews: React.FC = () => {
                       description: `${r.laptopPurchased ? `Purchased: ${r.laptopPurchased} • ` : ''}"${r.comment}"`,
                     })
                   }
-                  className="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/50 text-rose-300 text-xs font-semibold transition-all hover:scale-[1.02]"
+                  className="w-full inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-charcoal-900 hover:bg-charcoal-800 text-white text-xs font-bold transition-all hover:scale-[1.02] shadow-xs"
                 >
-                  <Play className="w-3.5 h-3.5 fill-rose-300" />
+                  <Play className="w-3.5 h-3.5 fill-brand-400 text-brand-400" />
                   <span>Watch Video Review</span>
                 </button>
               )}
