@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { adminApiClient } from '@/lib/api-client';
-import { Settings, ShieldCheck, Check, AlertCircle, Loader2, Save, Video, PlayCircle } from 'lucide-react';
+import { Settings, ShieldCheck, Check, AlertCircle, Loader2, Save, Video, PlayCircle, Share2 } from 'lucide-react';
 
 interface IBusinessSettings {
   businessName: string;
@@ -54,8 +54,8 @@ export default function AdminSettingsPage() {
     googleMapsUrl: '',
     socialLinks: {
       facebook: '',
-      instagram: '',
-      tiktok: '',
+      instagram: 'https://www.instagram.com/yasinwahab6',
+      tiktok: 'https://www.tiktok.com/@yasinlaptopslakkimarwat',
       youtube: '',
     },
     openingHours: 'Monday – Saturday: 9:00 AM – 9:00 PM',
@@ -75,7 +75,9 @@ export default function AdminSettingsPage() {
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    adminApiClient<IBusinessSettings & { phone?: string }>('/settings')
+    adminApiClient<IBusinessSettings & { phone?: string; instagramUrl?: string; tiktokUrl?: string }>(
+      '/settings'
+    )
       .then((res) => {
         if (res.success && res.data) {
           const raw = res.data;
@@ -85,7 +87,18 @@ export default function AdminSettingsPage() {
             whatsappNumber: raw.whatsappNumber || '+923427709129',
             phoneNumber: raw.phoneNumber || raw.phone || '03427709129',
             address: { ...prev.address, ...raw?.address },
-            socialLinks: { ...prev.socialLinks, ...raw?.socialLinks },
+            socialLinks: {
+              facebook: raw?.socialLinks?.facebook || '',
+              instagram:
+                raw?.socialLinks?.instagram ||
+                raw?.instagramUrl ||
+                'https://www.instagram.com/yasinwahab6',
+              tiktok:
+                raw?.socialLinks?.tiktok ||
+                raw?.tiktokUrl ||
+                'https://www.tiktok.com/@yasinlaptopslakkimarwat',
+              youtube: raw?.socialLinks?.youtube || '',
+            },
             dailyStockVideo: {
               ...prev.dailyStockVideo,
               ...raw?.dailyStockVideo,
@@ -114,7 +127,7 @@ export default function AdminSettingsPage() {
       } else {
         setError(res.message || 'Failed to update settings');
       }
-    } catch (err) {
+    } catch {
       setError('Connection failure while saving business settings');
     } finally {
       setIsSaving(false);
@@ -133,7 +146,7 @@ export default function AdminSettingsPage() {
             Business Settings &amp; Store Metadata
           </h1>
           <p className="text-xs sm:text-sm text-slate-400">
-            Control contact details, store hours, Google Maps, and daily stock videos.
+            Control contact details, store hours, Google Maps, social media, and daily stock videos.
           </p>
         </div>
 
@@ -182,7 +195,7 @@ export default function AdminSettingsPage() {
                 Daily Stock Video Showcase (Hero Section Button)
               </h2>
               <p className="text-xs text-slate-400">
-                Upload your daily status video (YouTube, Cloudinary, or MP4 URL) to show on the website.
+                Upload your daily status video (TikTok, YouTube Shorts, YouTube, or MP4) to show on the website.
               </p>
             </div>
           </div>
@@ -223,7 +236,7 @@ export default function AdminSettingsPage() {
                   },
                 })
               }
-              placeholder="e.g. https://www.tiktok.com/@user/video/... or https://www.youtube.com/watch?v=..."
+              placeholder="e.g. https://www.tiktok.com/@yasinlaptopslakkimarwat/video/... or https://www.youtube.com/watch?v=..."
               className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-brand-500 font-mono"
             />
           </div>
@@ -382,10 +395,96 @@ export default function AdminSettingsPage() {
         </div>
       </div>
 
-      {/* 4. PHYSICAL STORE LOCATION */}
+      {/* 4. SOCIAL MEDIA PROFILES */}
+      <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-pink-500/20 text-pink-400 flex items-center justify-center">
+            <Share2 className="w-5 h-5" />
+          </div>
+          <h2 className="text-sm font-bold text-white uppercase tracking-wider">
+            4. Social Media Channels (TikTok, Instagram, YouTube)
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1">
+              TikTok Profile URL
+            </label>
+            <input
+              type="text"
+              value={formData.socialLinks?.tiktok || ''}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  socialLinks: { ...formData.socialLinks, tiktok: e.target.value },
+                })
+              }
+              placeholder="https://www.tiktok.com/@yasinlaptopslakkimarwat"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-brand-500 font-mono"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1">
+              Instagram Profile URL
+            </label>
+            <input
+              type="text"
+              value={formData.socialLinks?.instagram || ''}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  socialLinks: { ...formData.socialLinks, instagram: e.target.value },
+                })
+              }
+              placeholder="https://www.instagram.com/yasinwahab6"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-brand-500 font-mono"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1">
+              YouTube Channel URL (Optional)
+            </label>
+            <input
+              type="text"
+              value={formData.socialLinks?.youtube || ''}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  socialLinks: { ...formData.socialLinks, youtube: e.target.value },
+                })
+              }
+              placeholder="https://www.youtube.com/@..."
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-brand-500 font-mono"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1">
+              Facebook Page URL (Optional)
+            </label>
+            <input
+              type="text"
+              value={formData.socialLinks?.facebook || ''}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  socialLinks: { ...formData.socialLinks, facebook: e.target.value },
+                })
+              }
+              placeholder="https://facebook.com/..."
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-brand-500 font-mono"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* 5. PHYSICAL STORE LOCATION */}
       <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
         <h2 className="text-sm font-bold text-white uppercase tracking-wider">
-          4. Physical Store Address (Lakki Marwat, KPK)
+          5. Physical Store Address (Lakki Marwat, KPK)
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -394,7 +493,12 @@ export default function AdminSettingsPage() {
             <input
               type="text"
               value={formData.address.street}
-              onChange={(e) => setFormData({ ...formData, address: { ...formData.address, street: e.target.value } })}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  address: { ...formData.address, street: e.target.value },
+                })
+              }
               className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-brand-500"
             />
           </div>
@@ -404,7 +508,12 @@ export default function AdminSettingsPage() {
             <input
               type="text"
               value={formData.address.city}
-              onChange={(e) => setFormData({ ...formData, address: { ...formData.address, city: e.target.value } })}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  address: { ...formData.address, city: e.target.value },
+                })
+              }
               className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-brand-500"
             />
           </div>
@@ -414,13 +523,20 @@ export default function AdminSettingsPage() {
             <input
               type="text"
               value={formData.address.province}
-              onChange={(e) => setFormData({ ...formData, address: { ...formData.address, province: e.target.value } })}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  address: { ...formData.address, province: e.target.value },
+                })
+              }
               className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-brand-500"
             />
           </div>
 
           <div className="sm:col-span-3">
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Google Maps Pin URL</label>
+            <label className="block text-xs font-semibold text-slate-300 mb-1">
+              Google Maps Pin URL
+            </label>
             <input
               type="text"
               value={formData.googleMapsUrl || ''}
