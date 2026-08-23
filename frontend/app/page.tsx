@@ -21,58 +21,110 @@ import {
   Layers,
   Sparkles,
   ArrowRight,
-  Briefcase,
-  GraduationCap,
-  Code2,
-  Gamepad2,
   Cpu,
   ChevronRight,
   Tag,
-  Zap,
+  ArrowDownUp,
+  ArrowDownNarrowWide,
+  ArrowUpNarrowWide,
+  Wallet,
+  Building2,
+  CheckCircle2,
 } from 'lucide-react';
 
-const CATEGORY_CARDS = [
+const BRAND_CARDS = [
   {
-    name: 'Business',
-    desc: 'HP EliteBooks, Dell Latitudes & ThinkPads.',
-    href: '/laptops?category=business-laptops',
-    icon: Briefcase,
+    name: 'HP Laptops',
+    desc: 'EliteBook, ProBook, Pavilion & ZBook series.',
+    href: '/laptops?brand=hp',
     badge: 'Popular',
+    tag: 'EliteBook / ProBook',
+    color: 'from-blue-50 to-white',
   },
   {
-    name: 'Student',
-    desc: 'Affordable, fast machines for study.',
-    href: '/laptops?category=student-budget-laptops',
-    icon: GraduationCap,
-    badge: 'Budget',
+    name: 'Dell Laptops',
+    desc: 'Latitude, XPS, Precision & Inspiron series.',
+    href: '/laptops?brand=dell',
+    badge: 'Durable',
+    tag: 'Latitude / XPS',
+    color: 'from-slate-50 to-white',
   },
   {
-    name: 'Programming',
-    desc: 'Core i7, 16GB–32GB RAM & NVMe SSDs.',
-    href: '/laptops?category=programming-laptops',
-    icon: Code2,
-    badge: 'Speed',
+    name: 'Lenovo Laptops',
+    desc: 'ThinkPad T, X, L series & IdeaPads.',
+    href: '/laptops?brand=lenovo',
+    badge: 'Top Keyboard',
+    tag: 'ThinkPad / Yoga',
+    color: 'from-amber-50 to-white',
   },
   {
     name: 'Chromebooks',
-    desc: 'Long battery life & cloud efficiency.',
+    desc: 'Fast boot, long battery life, cloud laptops.',
     href: '/chromebooks',
-    icon: Cpu,
-    badge: 'Lightweight',
+    badge: 'Budget Friendly',
+    tag: 'HP / Dell / Acer',
+    color: 'from-emerald-50 to-white',
   },
   {
-    name: 'Workstation',
-    desc: 'Dedicated NVIDIA/AMD graphics.',
-    href: '/laptops?category=gaming-heavy-workstations',
-    icon: Gamepad2,
-    badge: 'GPU',
+    name: 'Apple MacBooks',
+    desc: 'MacBook Air & MacBook Pro Retina units.',
+    href: '/laptops?brand=apple',
+    badge: 'Premium',
+    tag: 'Air / Pro',
+    color: 'from-charcoal-50 to-white',
   },
   {
-    name: 'Accessories',
-    desc: 'Original power adapters & backpacks.',
+    name: 'Laptop Accessories',
+    desc: 'Original chargers, backpacks, RAM & SSDs.',
     href: '/accessories',
-    icon: Layers,
     badge: 'Original',
+    tag: 'Power & Gear',
+    color: 'from-brand-50 to-white',
+  },
+];
+
+const PRICE_RANGE_CARDS = [
+  {
+    title: 'Under Rs. 30,000',
+    subtitle: 'Budget friendly & student laptops',
+    href: '/laptops?maxPrice=30000',
+    badge: 'Entry Level',
+    icon: Wallet,
+  },
+  {
+    title: 'Rs. 30,000 – 40,000',
+    subtitle: 'Core i5 6th, 7th & 8th Gen laptops',
+    href: '/laptops?minPrice=30000&maxPrice=40000',
+    badge: 'Best Value',
+    icon: Tag,
+  },
+  {
+    title: 'Rs. 40,000 – 50,000',
+    subtitle: 'Core i5 / i7 8th Gen with SSD storage',
+    href: '/laptops?minPrice=40000&maxPrice=50000',
+    badge: 'Most Popular',
+    icon: Sparkles,
+  },
+  {
+    title: 'Rs. 50,000 – 70,000',
+    subtitle: 'Core i7, 16GB RAM, NVMe high speed',
+    href: '/laptops?minPrice=50000&maxPrice=70000',
+    badge: 'Fast Performance',
+    icon: Cpu,
+  },
+  {
+    title: 'Rs. 70,000 – 100,000',
+    subtitle: 'Premium slim business & touch screens',
+    href: '/laptops?minPrice=70000&maxPrice=100000',
+    badge: 'Premium Business',
+    icon: Laptop,
+  },
+  {
+    title: 'Above Rs. 100,000',
+    subtitle: 'High-end workstations & Retina MacBooks',
+    href: '/laptops?minPrice=100000',
+    badge: 'Flagship',
+    icon: Layers,
   },
 ];
 
@@ -151,51 +203,112 @@ export default function HomePage() {
       {/* 3. COMPACT TRUST STRIP */}
       <TrustStrip />
 
-      {/* 4. EXPLORE BY CATEGORY (2-COL ON MOBILE) */}
+      {/* 4. SHOP BY BRAND (HP, DELL, LENOVO, APPLE, CHROMEBOOKS) */}
       <section className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <div>
             <div className="flex items-center gap-1.5 text-brand-700 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-0.5">
-              <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-              <span>Tailored For Your Needs</span>
+              <Building2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+              <span>Top Laptop Manufacturers</span>
             </div>
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-charcoal-950 tracking-tight">
-              Explore by Category
+              Shop by Brand
             </h2>
           </div>
           <Link
-            href="/categories"
+            href="/brands"
             className="text-xs sm:text-sm font-bold text-charcoal-800 hover:text-brand-700 inline-flex items-center gap-1 transition-colors shrink-0"
           >
-            <span>All Categories</span>
+            <span>All Brands</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-4">
-          {CATEGORY_CARDS.map((cat, i) => {
-            const Icon = cat.icon;
+          {BRAND_CARDS.map((brand, i) => (
+            <Link
+              key={i}
+              href={brand.href}
+              className="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-white border border-charcoal-200/90 shadow-soft hover:shadow-soft-md hover:border-brand-500/80 hover:-translate-y-0.5 transition-all duration-200 group flex flex-col justify-between space-y-2.5 text-left"
+            >
+              <div className="flex items-center justify-between">
+                <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-brand-50 border border-brand-200 text-brand-900 font-black text-xs sm:text-sm flex items-center justify-center group-hover:bg-brand-500 group-hover:text-charcoal-950 transition-colors shadow-xs">
+                  {brand.name.split(' ')[0]}
+                </div>
+                <span className="text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full bg-charcoal-100 text-charcoal-700 border border-charcoal-200">
+                  {brand.badge}
+                </span>
+              </div>
+
+              <div>
+                <h3 className="text-xs sm:text-sm font-bold text-charcoal-950 group-hover:text-brand-700 transition-colors truncate">
+                  {brand.name}
+                </h3>
+                <p className="text-[10px] sm:text-xs text-charcoal-500 line-clamp-1 font-medium mt-0.5">
+                  {brand.tag}
+                </p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* 5. SHOP BY BUDGET & PRICE RANGE */}
+      <section className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-4 sm:mb-6 gap-2">
+          <div>
+            <div className="flex items-center gap-1.5 text-brand-700 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-0.5">
+              <Wallet className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+              <span>Budget &amp; Price Filter</span>
+            </div>
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-charcoal-950 tracking-tight">
+              Shop by Price Range
+            </h2>
+          </div>
+
+          {/* Quick Sort Links */}
+          <div className="flex items-center gap-2 text-xs">
+            <Link
+              href="/laptops?sort=price_asc"
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white border border-charcoal-200 text-charcoal-800 font-bold hover:bg-brand-50 hover:border-brand-300 transition-colors shadow-xs"
+            >
+              <ArrowDownNarrowWide className="w-3.5 h-3.5 text-brand-700" />
+              <span>Low to High</span>
+            </Link>
+            <Link
+              href="/laptops?sort=price_desc"
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white border border-charcoal-200 text-charcoal-800 font-bold hover:bg-brand-50 hover:border-brand-300 transition-colors shadow-xs"
+            >
+              <ArrowUpNarrowWide className="w-3.5 h-3.5 text-brand-700" />
+              <span>High to Low</span>
+            </Link>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-4">
+          {PRICE_RANGE_CARDS.map((price, i) => {
+            const Icon = price.icon;
             return (
               <Link
                 key={i}
-                href={cat.href}
+                href={price.href}
                 className="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-white border border-charcoal-200/90 shadow-soft hover:shadow-soft-md hover:border-brand-500/80 hover:-translate-y-0.5 transition-all duration-200 group flex flex-col justify-between space-y-2.5 text-left"
               >
                 <div className="flex items-center justify-between">
-                  <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-brand-50 border border-brand-200 text-brand-800 flex items-center justify-center group-hover:bg-brand-500 group-hover:text-charcoal-950 transition-colors shadow-xs">
+                  <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 flex items-center justify-center group-hover:bg-brand-500 group-hover:text-charcoal-950 transition-colors shadow-xs">
                     <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
                   <span className="text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full bg-charcoal-100 text-charcoal-700 border border-charcoal-200">
-                    {cat.badge}
+                    {price.badge}
                   </span>
                 </div>
 
                 <div>
-                  <h3 className="text-xs sm:text-sm font-bold text-charcoal-950 group-hover:text-brand-700 transition-colors truncate">
-                    {cat.name}
+                  <h3 className="text-xs sm:text-sm font-black text-charcoal-950 group-hover:text-brand-700 transition-colors truncate">
+                    {price.title}
                   </h3>
                   <p className="text-[10px] sm:text-xs text-charcoal-500 line-clamp-1 font-medium mt-0.5">
-                    {cat.desc}
+                    {price.subtitle}
                   </p>
                 </div>
               </Link>
@@ -204,7 +317,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 5. FEATURED LAPTOPS (2-COL ON MOBILE) */}
+      {/* 6. FEATURED LAPTOPS (2-COL ON MOBILE) */}
       <section className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <div>
@@ -252,7 +365,7 @@ export default function HomePage() {
         )}
       </section>
 
-      {/* 6. BEST DEALS & DISCOUNTED UNITS (Soft Warm Yellow Tint) */}
+      {/* 7. BEST DEALS & DISCOUNTED UNITS (Soft Warm Yellow Tint) */}
       {bestDeals.length > 0 && (
         <section className="py-8 sm:py-12 bg-brand-50/60 border-y border-brand-200/70">
           <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
@@ -284,7 +397,7 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* 7. CHROMEBOOKS (2-COL ON MOBILE) */}
+      {/* 8. CHROMEBOOKS (2-COL ON MOBILE) */}
       {chromebooks.length > 0 && (
         <section className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-4 sm:mb-6">
@@ -314,7 +427,7 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* 8. LAPTOP ACCESSORIES (2-COL ON MOBILE) */}
+      {/* 9. LAPTOP ACCESSORIES (2-COL ON MOBILE) */}
       <section className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <div>
@@ -362,13 +475,13 @@ export default function HomePage() {
         )}
       </section>
 
-      {/* 9. CUSTOMER REVIEWS & VIDEO TESTIMONIALS */}
+      {/* 10. CUSTOMER REVIEWS & VIDEO TESTIMONIALS */}
       <CustomerReviews />
 
-      {/* 10. WHATSAPP GUIDANCE CTA */}
+      {/* 11. WHATSAPP GUIDANCE CTA */}
       <WhatsAppCta />
 
-      {/* 11. CONTACT & STORE LOCATION PREVIEW */}
+      {/* 12. CONTACT & STORE LOCATION PREVIEW */}
       <ContactPreview />
     </div>
   );

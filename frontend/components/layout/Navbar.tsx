@@ -19,13 +19,15 @@ const NAV_LINKS = [
 ];
 
 const CATEGORY_SHORTCUTS = [
-  { label: 'Business Laptops', href: '/laptops?category=business-laptops' },
-  { label: 'Student Laptops', href: '/laptops?category=student-budget-laptops' },
-  { label: 'Programming', href: '/laptops?category=programming-laptops' },
+  { label: 'HP Laptops', href: '/laptops?brand=hp' },
+  { label: 'Dell Laptops', href: '/laptops?brand=dell' },
+  { label: 'Lenovo Laptops', href: '/laptops?brand=lenovo' },
   { label: 'Chromebooks', href: '/chromebooks' },
-  { label: 'HP', href: '/laptops?brand=hp' },
-  { label: 'Dell', href: '/laptops?brand=dell' },
-  { label: 'Lenovo', href: '/laptops?brand=lenovo' },
+  { label: 'Under 30K', href: '/laptops?maxPrice=30000' },
+  { label: '30K – 40K', href: '/laptops?minPrice=30000&maxPrice=40000' },
+  { label: '40K – 50K', href: '/laptops?minPrice=40000&maxPrice=50000' },
+  { label: '50K – 70K', href: '/laptops?minPrice=50000&maxPrice=70000' },
+  { label: 'Low to High', href: '/laptops?sort=price_asc' },
 ];
 
 export const Navbar: React.FC = () => {
