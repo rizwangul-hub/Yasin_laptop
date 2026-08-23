@@ -74,7 +74,7 @@ export const generateLocalBusinessJsonLd = () => {
     name: 'Yasin Laptop Hub',
     image: `${SITE_URL}/logo.png`,
     url: SITE_URL,
-    telephone: process.env.NEXT_PUBLIC_PHONE_NUMBER || '+923000000000',
+    telephone: process.env.NEXT_PUBLIC_PHONE_NUMBER || '+923130957398',
     priceRange: 'PKR',
     currenciesAccepted: 'PKR',
     paymentAccepted: 'Cash, Bank Transfer',

@@ -5,8 +5,8 @@ export const DEFAULT_BUSINESS_CONFIG: IBusinessSettings = {
   ownerName: 'Yasin Wahab',
   logoUrl: '', // To be provided by owner
   tagline: 'Quality Laptops • Chromebooks • Accessories',
-  whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '', // Configurable via environment or admin settings
-  phoneNumber: process.env.NEXT_PUBLIC_PHONE_NUMBER || '',
+  whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '+923130957398',
+  phoneNumber: process.env.NEXT_PUBLIC_PHONE_NUMBER || '03130957398',
   email: '',
   address: {
     street: '',

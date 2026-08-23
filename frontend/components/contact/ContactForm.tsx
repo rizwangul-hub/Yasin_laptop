@@ -57,7 +57,7 @@ export const ContactForm: React.FC = () => {
   };
 
   const handleWhatsAppDirect = () => {
-    const cleanNum = (DEFAULT_BUSINESS_CONFIG.whatsappNumber || '+923000000000').replace(/[^0-9]/g, '');
+    const cleanNum = (DEFAULT_BUSINESS_CONFIG.whatsappNumber || '+923130957398').replace(/[^0-9]/g, '');
     const text = encodeURIComponent(
       `Assalam o Alaikum, My name is ${name || 'a customer'}. ${message || 'I would like to inquire about laptops in Lakki Marwat.'}`
     );

@@ -5,7 +5,7 @@ import { MessageCircle } from 'lucide-react';
 import { DEFAULT_BUSINESS_CONFIG } from '@/lib/business-config';
 
 export const FloatingWhatsApp: React.FC = () => {
-  const cleanNumber = (DEFAULT_BUSINESS_CONFIG.whatsappNumber || '+923000000000').replace(/[^0-9]/g, '');
+  const cleanNumber = (DEFAULT_BUSINESS_CONFIG.whatsappNumber || '+923130957398').replace(/[^0-9]/g, '');
   const message = encodeURIComponent(
     'Assalam o Alaikum, I would like to inquire about available laptops and prices at Yasin Laptop Hub.'
   );
