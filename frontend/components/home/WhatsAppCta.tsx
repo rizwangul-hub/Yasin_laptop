@@ -4,9 +4,22 @@ import { MessageCircle, ArrowRight } from 'lucide-react';
 import { DEFAULT_BUSINESS_CONFIG } from '@/lib/business-config';
 
 export const WhatsAppCta: React.FC = () => {
-  const whatsappUrl = DEFAULT_BUSINESS_CONFIG.whatsappNumber
-    ? `https://wa.me/${DEFAULT_BUSINESS_CONFIG.whatsappNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Assalam o Alaikum, I am looking for a laptop recommendation for my budget.')}`
-    : '#';
+  const [whatsappNumber, setWhatsappNumber] = React.useState(
+    DEFAULT_BUSINESS_CONFIG.whatsappNumber || '+923427709129'
+  );
+
+  React.useEffect(() => {
+    import('@/services/settingsService').then(({ settingsService }) => {
+      settingsService.getSettings().then((res) => {
+        if (res.success && res.data?.whatsappNumber) {
+          setWhatsappNumber(res.data.whatsappNumber);
+        }
+      }).catch(() => {});
+    });
+  }, []);
+
+  const cleanNumber = whatsappNumber.replace(/[^0-9]/g, '') || '923427709129';
+  const whatsappUrl = `https://wa.me/${cleanNumber}?text=${encodeURIComponent('Assalam o Alaikum, I am looking for a laptop recommendation for my budget.')}`;
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -19,11 +19,23 @@ const NAV_LINKS = [
 
 export const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [whatsappNumber, setWhatsappNumber] = useState(
+    DEFAULT_BUSINESS_CONFIG.whatsappNumber || '+923427709129'
+  );
   const pathname = usePathname();
 
-  const whatsappUrl = DEFAULT_BUSINESS_CONFIG.whatsappNumber
-    ? `https://wa.me/${DEFAULT_BUSINESS_CONFIG.whatsappNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Assalam o Alaikum, I would like to inquire about laptops at Yasin Laptop Hub.')}`
-    : '#';
+  React.useEffect(() => {
+    import('@/services/settingsService').then(({ settingsService }) => {
+      settingsService.getSettings().then((res) => {
+        if (res.success && res.data?.whatsappNumber) {
+          setWhatsappNumber(res.data.whatsappNumber);
+        }
+      }).catch(() => {});
+    });
+  }, []);
+
+  const cleanNumber = whatsappNumber.replace(/[^0-9]/g, '') || '923427709129';
+  const whatsappUrl = `https://wa.me/${cleanNumber}?text=${encodeURIComponent('Assalam o Alaikum, I would like to inquire about laptops at Yasin Laptop Hub.')}`;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">

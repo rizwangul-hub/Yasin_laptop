@@ -33,9 +33,9 @@ export default function AdminSettingsPage() {
     businessName: 'Yasin Laptop Hub',
     ownerName: 'Yasin Wahab',
     tagline: 'Quality Laptops • Chromebooks • Accessories in Lakki Marwat',
-    whatsappNumber: '',
-    phoneNumber: '',
-    email: '',
+    whatsappNumber: '+923427709129',
+    phoneNumber: '03427709129',
+    email: 'info@yasinlaptophub.com',
     address: {
       street: 'Main Bazaar',
       city: 'Lakki Marwat',
@@ -59,14 +59,17 @@ export default function AdminSettingsPage() {
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    adminApiClient<IBusinessSettings>('/settings')
+    adminApiClient<IBusinessSettings & { phone?: string }>('/settings')
       .then((res) => {
         if (res.success && res.data) {
+          const raw = res.data;
           setFormData((prev) => ({
             ...prev,
-            ...res.data,
-            address: { ...prev.address, ...res.data?.address },
-            socialLinks: { ...prev.socialLinks, ...res.data?.socialLinks },
+            ...raw,
+            whatsappNumber: raw.whatsappNumber || '+923427709129',
+            phoneNumber: raw.phoneNumber || raw.phone || '03427709129',
+            address: { ...prev.address, ...raw?.address },
+            socialLinks: { ...prev.socialLinks, ...raw?.socialLinks },
           }));
         }
       })
@@ -203,7 +206,7 @@ export default function AdminSettingsPage() {
               type="text"
               value={formData.whatsappNumber || ''}
               onChange={(e) => setFormData({ ...formData, whatsappNumber: e.target.value })}
-              placeholder="+92 300 0000000"
+              placeholder="+923427709129"
               className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-emerald-400 font-bold focus:outline-none focus:border-brand-500"
             />
           </div>
@@ -216,7 +219,7 @@ export default function AdminSettingsPage() {
               type="text"
               value={formData.phoneNumber || ''}
               onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-              placeholder="0300-0000000"
+              placeholder="03427709129"
               className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-brand-500"
             />
           </div>

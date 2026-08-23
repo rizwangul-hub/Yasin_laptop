@@ -25,14 +25,31 @@ interface ProductInfoProps {
 
 export const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
   const [copied, setCopied] = useState(false);
+  const [whatsappNumber, setWhatsappNumber] = useState(
+    DEFAULT_BUSINESS_CONFIG.whatsappNumber || '+923427709129'
+  );
+  const [phoneNumber, setPhoneNumber] = useState(
+    DEFAULT_BUSINESS_CONFIG.phoneNumber || '03427709129'
+  );
+
+  React.useEffect(() => {
+    import('@/services/settingsService').then(({ settingsService }) => {
+      settingsService.getSettings().then((res) => {
+        if (res.success && res.data) {
+          if (res.data.whatsappNumber) setWhatsappNumber(res.data.whatsappNumber);
+          if (res.data.phoneNumber) setPhoneNumber(res.data.phoneNumber);
+        }
+      }).catch(() => {});
+    });
+  }, []);
 
   const brandName = typeof product.brand === 'object' && product.brand !== null ? product.brand.name : product.brand;
   const isAvailable = product.stockStatus === 'available';
   const hasSavings = product.previousPrice && product.previousPrice > product.price;
   const savingsAmount = hasSavings && product.previousPrice ? product.previousPrice - product.price : 0;
 
-  const whatsappUrl = buildProductWhatsAppUrl(DEFAULT_BUSINESS_CONFIG.whatsappNumber, product);
-  const phoneUrl = buildPhoneUrl(DEFAULT_BUSINESS_CONFIG.phoneNumber);
+  const whatsappUrl = buildProductWhatsAppUrl(whatsappNumber, product);
+  const phoneUrl = buildPhoneUrl(phoneNumber);
 
   const handleShare = async () => {
     const shareData = {
