@@ -2,8 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { ArrowRight, ChevronLeft, ChevronRight, MessageCircle } from 'lucide-react';
-import { DEFAULT_BUSINESS_CONFIG } from '@/lib/business-config';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface HeroSlide {
   id: number;
@@ -54,11 +53,15 @@ export const Hero: React.FC<HeroProps> = () => {
     return () => clearInterval(timer);
   }, [isPaused]);
 
-  const handlePrev = () => {
+  const handlePrev = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
     setCurrentSlide((prev) => (prev === 0 ? HERO_SLIDES.length - 1 : prev - 1));
   };
 
-  const handleNext = () => {
+  const handleNext = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
     setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
   };
 
@@ -72,16 +75,12 @@ export const Hero: React.FC<HeroProps> = () => {
     const diff = touchStartX.current - touchEndX;
 
     if (diff > 50) {
-      handleNext(); // Swiped left
+      setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
     } else if (diff < -50) {
-      handlePrev(); // Swiped right
+      setCurrentSlide((prev) => (prev === 0 ? HERO_SLIDES.length - 1 : prev - 1));
     }
     touchStartX.current = null;
   };
-
-  const whatsappUrl = DEFAULT_BUSINESS_CONFIG.whatsappNumber
-    ? `https://wa.me/${DEFAULT_BUSINESS_CONFIG.whatsappNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Assalam o Alaikum Yasin Wahab, I am interested in inquiring about available laptops at Yasin Laptop Hub.')}`
-    : '#';
 
   const slide = HERO_SLIDES[currentSlide];
 
@@ -98,9 +97,11 @@ export const Hero: React.FC<HeroProps> = () => {
         {HERO_SLIDES.map((s, index) => {
           const isActive = currentSlide === index;
           return (
-            <div
+            <Link
               key={s.id}
-              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+              href={s.link}
+              aria-label={`Explore Laptops — Banner ${s.id}`}
+              className={`absolute inset-0 block cursor-pointer transition-opacity duration-1000 ease-in-out ${
                 isActive ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'
               }`}
             >
@@ -123,59 +124,45 @@ export const Hero: React.FC<HeroProps> = () => {
                   className="w-full h-full object-cover object-center"
                 />
               </div>
-            </div>
+            </Link>
           );
         })}
 
-        {/* Clean Action Button Overlay (Positioned neatly at bottom-left / bottom-center) */}
-        <div className="absolute z-20 bottom-8 sm:bottom-12 left-4 sm:left-12 lg:left-16 flex flex-wrap items-center gap-3">
-          <Link
-            href={slide.link}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs sm:text-sm shadow-2xl shadow-brand-600/60 hover:scale-105 active:scale-95 transition-all"
-          >
-            <span>Explore Laptops</span>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-
-          <a
-            href={whatsappUrl}
-            target={DEFAULT_BUSINESS_CONFIG.whatsappNumber ? '_blank' : '_self'}
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow-2xl shadow-emerald-950/80 hover:scale-105 active:scale-95 transition-all"
-          >
-            <MessageCircle className="w-4 h-4" />
-            <span className="hidden xs:inline">WhatsApp Inquiries</span>
-          </a>
-        </div>
-
-        {/* Left Arrow Button */}
-        <div className="absolute z-20 inset-y-0 left-3 sm:left-6 hidden sm:flex items-center">
+        {/* Left Arrow Navigation Button */}
+        <div className="absolute z-20 inset-y-0 left-3 sm:left-6 hidden sm:flex items-center pointer-events-none">
           <button
+            type="button"
             onClick={handlePrev}
             aria-label="Previous Slide"
-            className="p-2.5 sm:p-3 rounded-full bg-slate-900/80 hover:bg-slate-800 border border-slate-700/70 text-white backdrop-blur-md transition-all shadow-xl hover:scale-110"
+            className="pointer-events-auto p-2.5 sm:p-3 rounded-full bg-slate-900/80 hover:bg-slate-800 border border-slate-700/70 text-white backdrop-blur-md transition-all shadow-xl hover:scale-110"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Right Arrow Button */}
-        <div className="absolute z-20 inset-y-0 right-3 sm:right-6 hidden sm:flex items-center">
+        {/* Right Arrow Navigation Button */}
+        <div className="absolute z-20 inset-y-0 right-3 sm:right-6 hidden sm:flex items-center pointer-events-none">
           <button
+            type="button"
             onClick={handleNext}
             aria-label="Next Slide"
-            className="p-2.5 sm:p-3 rounded-full bg-slate-900/80 hover:bg-slate-800 border border-slate-700/70 text-white backdrop-blur-md transition-all shadow-xl hover:scale-110"
+            className="pointer-events-auto p-2.5 sm:p-3 rounded-full bg-slate-900/80 hover:bg-slate-800 border border-slate-700/70 text-white backdrop-blur-md transition-all shadow-xl hover:scale-110"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
         </div>
 
         {/* 3-Dot Indicators */}
-        <div className="absolute z-20 bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-slate-950/60 backdrop-blur-sm px-3 py-1.5 rounded-full border border-slate-800/60">
+        <div className="absolute z-20 bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-slate-950/60 backdrop-blur-sm px-3 py-1.5 rounded-full border border-slate-800/60 pointer-events-auto">
           {HERO_SLIDES.map((_, index) => (
             <button
               key={index}
-              onClick={() => setCurrentSlide(index)}
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                setCurrentSlide(index);
+              }}
               aria-label={`Slide ${index + 1}`}
               className={`h-1.5 rounded-full transition-all duration-300 ${
                 currentSlide === index
