@@ -11,7 +11,7 @@ export default function AdminSeoPage() {
       'Explore genuine business laptops, Chromebooks, and original accessories at Yasin Laptop Hub in Lakki Marwat, KPK, Pakistan. Checking warranty and WhatsApp inquiries.',
     googleSiteVerification: '',
     googleAnalyticsId: '',
-    canonicalDomain: 'https://yasinlaptophub.com',
+    canonicalDomain: 'https://yasin-laptop-hub.vercel.app',
   });
 
   const [isLoading, setIsLoading] = useState(false);

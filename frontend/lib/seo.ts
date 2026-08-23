@@ -1,4 +1,6 @@
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://yasinlaptophub.com').replace(/\/$/, '');
+export const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL || 'https://yasin-laptop-hub.vercel.app'
+).replace(/\/$/, '');
 
 export const SEO_CONFIG = {
   siteName: 'Yasin Laptop Hub',

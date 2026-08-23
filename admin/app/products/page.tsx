@@ -493,7 +493,7 @@ export default function AdminProductsPage() {
                             </button>
 
                             <a
-                              href={`http://localhost:3000/laptops/${p.slug}`}
+                              href={`${process.env.NEXT_PUBLIC_SITE_URL || 'https://yasin-laptop-hub.vercel.app'}/laptops/${p.slug}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="p-1.5 rounded-lg bg-slate-950 border border-slate-800 text-slate-400 hover:text-white"

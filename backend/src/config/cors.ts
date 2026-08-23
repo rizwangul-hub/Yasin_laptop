@@ -2,6 +2,9 @@ import { CorsOptions } from 'cors';
 import { ENV } from './env';
 
 const allowedOrigins: string[] = [
+  'https://yasin-laptop-hub.vercel.app',
+  'https://yasin-laptop-admin.vercel.app',
+  'https://yasin-laptop-backend.vercel.app',
   ENV.FRONTEND_URL,
   ENV.ADMIN_URL,
   'http://localhost:3000',
@@ -11,10 +14,17 @@ const allowedOrigins: string[] = [
 
 export const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps, curl, server-to-server) in development
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Allow requests with no origin (mobile, curl, Postman, SSR server-to-server)
+    if (!origin) {
       callback(null, true);
-    } else if (ENV.NODE_ENV !== 'production') {
+      return;
+    }
+
+    if (
+      allowedOrigins.includes(origin) ||
+      origin.endsWith('.vercel.app') ||
+      ENV.NODE_ENV !== 'production'
+    ) {
       callback(null, true);
     } else {
       callback(new Error(`Origin ${origin} not allowed by CORS`));
