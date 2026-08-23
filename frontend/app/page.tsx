@@ -95,17 +95,27 @@ export default function HomePage() {
 
         if (!isMounted) return;
 
-        if (featuredRes.status === 'fulfilled' && Array.isArray(featuredRes.value.data)) {
-          setFeaturedProducts(featuredRes.value.data);
+        const extractItems = <T,>(data: unknown): T[] => {
+          if (!data) return [];
+          if (Array.isArray(data)) return data;
+          const obj = data as Record<string, unknown>;
+          if (Array.isArray(obj.items)) return obj.items as T[];
+          if (Array.isArray(obj.products)) return obj.products as T[];
+          if (Array.isArray(obj.accessories)) return obj.accessories as T[];
+          return [];
+        };
+
+        if (featuredRes.status === 'fulfilled' && featuredRes.value.success) {
+          setFeaturedProducts(extractItems<IProduct>(featuredRes.value.data));
         }
-        if (latestRes.status === 'fulfilled' && Array.isArray(latestRes.value.data)) {
-          setLatestProducts(latestRes.value.data);
+        if (latestRes.status === 'fulfilled' && latestRes.value.success) {
+          setLatestProducts(extractItems<IProduct>(latestRes.value.data));
         }
-        if (dealsRes.status === 'fulfilled' && Array.isArray(dealsRes.value.data)) {
-          setBestDeals(dealsRes.value.data);
+        if (dealsRes.status === 'fulfilled' && dealsRes.value.success) {
+          setBestDeals(extractItems<IProduct>(dealsRes.value.data));
         }
-        if (accRes.status === 'fulfilled' && Array.isArray(accRes.value.data)) {
-          setAccessories(accRes.value.data as unknown as IAccessory[]);
+        if (accRes.status === 'fulfilled' && accRes.value.success) {
+          setAccessories(extractItems<IAccessory>(accRes.value.data));
         }
       } catch (err) {
         if (isMounted) {

@@ -125,7 +125,25 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
     try {
       const res = await productService.getProducts(query);
       if (res.success && res.data) {
-        setData(res.data);
+        const rawData = res.data as unknown as Record<string, unknown>;
+        const items = Array.isArray(rawData)
+          ? (rawData as IProduct[])
+          : Array.isArray(rawData.items)
+          ? (rawData.items as IProduct[])
+          : Array.isArray(rawData.products)
+          ? (rawData.products as IProduct[])
+          : [];
+
+        const pagination = (rawData.pagination as PaginatedResponse<IProduct>['pagination']) || {
+          page: 1,
+          limit: 12,
+          total: items.length,
+          totalPages: Math.ceil(items.length / 12) || 1,
+          hasNextPage: false,
+          hasPreviousPage: false,
+        };
+
+        setData({ items, pagination });
       } else {
         setData({
           items: [],

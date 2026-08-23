@@ -63,8 +63,18 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
           if (relRes.status === 'fulfilled' && Array.isArray(relRes.value.data)) {
             setRelatedProducts(relRes.value.data);
           }
-          if (accRes.status === 'fulfilled' && Array.isArray(accRes.value.data?.items)) {
-            setAccessories(accRes.value.data.items as unknown as IAccessory[]);
+          if (accRes.status === 'fulfilled' && accRes.value.success && accRes.value.data) {
+            const rawAcc = accRes.value.data as unknown as Record<string, unknown>;
+            const items = (
+              Array.isArray(rawAcc)
+                ? rawAcc
+                : Array.isArray(rawAcc.items)
+                ? rawAcc.items
+                : Array.isArray(rawAcc.products)
+                ? rawAcc.products
+                : []
+            ) as IAccessory[];
+            setAccessories(items);
           }
         }
       } catch (err) {

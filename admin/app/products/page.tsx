@@ -81,9 +81,21 @@ export default function AdminProductsPage() {
       }>(`/products?${queryParams.toString()}`);
 
       if (res.success && res.data) {
-        setProducts(res.data.items);
-        setTotalCount(res.data.pagination.total);
-        setTotalPages(res.data.pagination.totalPages);
+        const raw = res.data as Record<string, unknown>;
+        const items = (
+          Array.isArray(raw)
+            ? raw
+            : Array.isArray(raw.items)
+            ? raw.items
+            : Array.isArray(raw.products)
+            ? raw.products
+            : []
+        ) as IAdminProduct[];
+
+        const pag = (raw.pagination as { total?: number; totalPages?: number }) || {};
+        setProducts(items);
+        setTotalCount(pag.total ?? items.length);
+        setTotalPages(pag.totalPages ?? (Math.ceil(items.length / 20) || 1));
       }
     } catch (err) {
       // Fallback
