@@ -14,6 +14,7 @@ import uploadRoutes from './uploadRoutes';
 import dashboardRoutes from './dashboardRoutes';
 import activityRoutes from './activityRoutes';
 import mediaRoutes from './mediaRoutes';
+import reviewRoutes from './reviewRoutes';
 
 const apiRouter = Router();
 
@@ -32,5 +33,6 @@ apiRouter.use('/upload', uploadRoutes);
 apiRouter.use('/dashboard', dashboardRoutes);
 apiRouter.use('/activity', activityRoutes);
 apiRouter.use('/media', mediaRoutes);
+apiRouter.use('/reviews', reviewRoutes);
 
 export default apiRouter;

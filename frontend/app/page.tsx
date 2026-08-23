@@ -6,6 +6,7 @@ import { Hero } from '@/components/hero/Hero';
 import { TrustStrip } from '@/components/home/TrustStrip';
 import { WhatsAppCta } from '@/components/home/WhatsAppCta';
 import { ContactPreview } from '@/components/home/ContactPreview';
+import { CustomerReviews } from '@/components/home/CustomerReviews';
 import { ProductCard } from '@/components/products/ProductCard';
 import { ProductCardSkeleton } from '@/components/products/ProductCardSkeleton';
 import { AccessoryCard } from '@/components/accessories/AccessoryCard';
@@ -182,10 +183,13 @@ export default function HomePage() {
         )}
       </section>
 
-      {/* 5. WHATSAPP GUIDANCE CTA */}
+      {/* 5. CUSTOMER REVIEWS & VIDEO TESTIMONIALS */}
+      <CustomerReviews />
+
+      {/* 6. WHATSAPP GUIDANCE CTA */}
       <WhatsAppCta />
 
-      {/* 6. CONTACT & STORE LOCATION PREVIEW */}
+      {/* 7. CONTACT & STORE LOCATION PREVIEW */}
       <ContactPreview />
     </div>
   );
