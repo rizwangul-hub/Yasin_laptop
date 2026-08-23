@@ -146,6 +146,14 @@ export interface IBusinessSettings {
   };
   businessDescription: string;
   openingHours: string;
+  dailyStockVideo?: {
+    title?: string;
+    videoUrl?: string;
+    thumbnailUrl?: string;
+    description?: string;
+    isActive?: boolean;
+    buttonText?: string;
+  };
 }
 
 export interface ApiResponse<T = unknown> {

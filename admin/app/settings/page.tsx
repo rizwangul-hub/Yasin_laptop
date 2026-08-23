@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { adminApiClient } from '@/lib/api-client';
-import { Settings, ShieldCheck, Check, AlertCircle, Loader2, Save } from 'lucide-react';
+import { Settings, ShieldCheck, Check, AlertCircle, Loader2, Save, Video, PlayCircle } from 'lucide-react';
 
 interface IBusinessSettings {
   businessName: string;
@@ -26,6 +26,14 @@ interface IBusinessSettings {
     youtube?: string;
   };
   openingHours?: string;
+  dailyStockVideo?: {
+    title?: string;
+    videoUrl?: string;
+    thumbnailUrl?: string;
+    description?: string;
+    isActive?: boolean;
+    buttonText?: string;
+  };
 }
 
 export default function AdminSettingsPage() {
@@ -51,6 +59,14 @@ export default function AdminSettingsPage() {
       youtube: '',
     },
     openingHours: 'Monday – Saturday: 9:00 AM – 9:00 PM',
+    dailyStockVideo: {
+      title: "Today's Fresh Stock Arrival",
+      videoUrl: '',
+      thumbnailUrl: '',
+      description: 'Check out our fresh container stock arrival with 1-month warranty in Lakki Marwat.',
+      isActive: true,
+      buttonText: 'Watch Daily Stock Video',
+    },
   });
 
   const [isLoading, setIsLoading] = useState(true);
@@ -70,6 +86,10 @@ export default function AdminSettingsPage() {
             phoneNumber: raw.phoneNumber || raw.phone || '03427709129',
             address: { ...prev.address, ...raw?.address },
             socialLinks: { ...prev.socialLinks, ...raw?.socialLinks },
+            dailyStockVideo: {
+              ...prev.dailyStockVideo,
+              ...raw?.dailyStockVideo,
+            },
           }));
         }
       })
@@ -113,7 +133,7 @@ export default function AdminSettingsPage() {
             Business Settings &amp; Store Metadata
           </h1>
           <p className="text-xs sm:text-sm text-slate-400">
-            Control contact details, store hours, Google Maps, and social media channels.
+            Control contact details, store hours, Google Maps, and daily stock videos.
           </p>
         </div>
 
@@ -150,10 +170,133 @@ export default function AdminSettingsPage() {
         </div>
       )}
 
-      {/* 1. STORE IDENTITY */}
+      {/* 1. DAILY STOCK VIDEO & STATUS SHOWCASE */}
+      <div className="p-6 rounded-2xl bg-slate-900/80 border border-brand-500/30 space-y-4 shadow-xl shadow-brand-950/40">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center">
+              <PlayCircle className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-sm font-bold text-white uppercase tracking-wider">
+                Daily Stock Video Showcase (Hero Section Button)
+              </h2>
+              <p className="text-xs text-slate-400">
+                Upload your daily status video (YouTube, Cloudinary, or MP4 URL) to show on the website.
+              </p>
+            </div>
+          </div>
+
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={formData.dailyStockVideo?.isActive ?? true}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  dailyStockVideo: {
+                    ...formData.dailyStockVideo,
+                    isActive: e.target.checked,
+                  },
+                })
+              }
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+          </label>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+          <div className="sm:col-span-2">
+            <label className="block text-xs font-semibold text-slate-300 mb-1">
+              Video URL (YouTube URL, MP4 link, or Cloudinary Video Link) <span className="text-rose-400">*</span>
+            </label>
+            <input
+              type="text"
+              value={formData.dailyStockVideo?.videoUrl || ''}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  dailyStockVideo: {
+                    ...formData.dailyStockVideo,
+                    videoUrl: e.target.value,
+                  },
+                })
+              }
+              placeholder="e.g. https://www.youtube.com/watch?v=... or https://res.cloudinary.com/.../video.mp4"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-brand-500 font-mono"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1">
+              Video Title
+            </label>
+            <input
+              type="text"
+              value={formData.dailyStockVideo?.title || ''}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  dailyStockVideo: {
+                    ...formData.dailyStockVideo,
+                    title: e.target.value,
+                  },
+                })
+              }
+              placeholder="e.g. Today's Fresh Stock Arrival"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-brand-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1">
+              Button Text on Hero Banner
+            </label>
+            <input
+              type="text"
+              value={formData.dailyStockVideo?.buttonText || ''}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  dailyStockVideo: {
+                    ...formData.dailyStockVideo,
+                    buttonText: e.target.value,
+                  },
+                })
+              }
+              placeholder="Watch Daily Stock Video"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-brand-500"
+            />
+          </div>
+
+          <div className="sm:col-span-2">
+            <label className="block text-xs font-semibold text-slate-300 mb-1">
+              Video Description / Stock Notes
+            </label>
+            <textarea
+              rows={2}
+              value={formData.dailyStockVideo?.description || ''}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  dailyStockVideo: {
+                    ...formData.dailyStockVideo,
+                    description: e.target.value,
+                  },
+                })
+              }
+              placeholder="e.g. Today's arrival includes HP EliteBooks, Dell Latitudes, and Lenovo ThinkPads with original chargers."
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-brand-500 resize-none"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* 2. STORE IDENTITY */}
       <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
         <h2 className="text-sm font-bold text-white uppercase tracking-wider">
-          1. Brand Identity
+          2. Brand Identity
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -191,10 +334,10 @@ export default function AdminSettingsPage() {
         </div>
       </div>
 
-      {/* 2. DIRECT CONTACT CHANNELS */}
+      {/* 3. DIRECT CONTACT CHANNELS */}
       <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
         <h2 className="text-sm font-bold text-white uppercase tracking-wider">
-          2. Direct Customer Channels (WhatsApp &amp; Phone)
+          3. Direct Customer Channels (WhatsApp &amp; Phone)
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -239,10 +382,10 @@ export default function AdminSettingsPage() {
         </div>
       </div>
 
-      {/* 3. PHYSICAL STORE LOCATION */}
+      {/* 4. PHYSICAL STORE LOCATION */}
       <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
         <h2 className="text-sm font-bold text-white uppercase tracking-wider">
-          3. Physical Store Address (Lakki Marwat, KPK)
+          4. Physical Store Address (Lakki Marwat, KPK)
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

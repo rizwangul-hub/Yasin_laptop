@@ -1,6 +1,15 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { ICloudinaryImage } from '../types';
 
+export interface IDailyStockVideo {
+  title?: string;
+  videoUrl?: string;
+  thumbnailUrl?: string;
+  description?: string;
+  isActive?: boolean;
+  buttonText?: string;
+}
+
 export interface IBusinessSettingsDocument extends Document {
   businessName: string;
   ownerName: string;
@@ -25,6 +34,7 @@ export interface IBusinessSettingsDocument extends Document {
   description?: string;
   businessHours?: string;
   openingHours?: string;
+  dailyStockVideo?: IDailyStockVideo;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -51,6 +61,22 @@ const AddressSchema = new Schema(
   { _id: false }
 );
 
+const DailyStockVideoSchema = new Schema<IDailyStockVideo>(
+  {
+    title: { type: String, default: "Today's Fresh Stock Arrival" },
+    videoUrl: { type: String, default: '' },
+    thumbnailUrl: { type: String, default: '' },
+    description: {
+      type: String,
+      default:
+        'Watch our latest stock unboxing and tested laptops arrival at Yasin Laptop Hub in Lakki Marwat.',
+    },
+    isActive: { type: Boolean, default: true },
+    buttonText: { type: String, default: 'Watch Daily Stock Video' },
+  },
+  { _id: false }
+);
+
 const BusinessSettingsSchema = new Schema<IBusinessSettingsDocument>(
   {
     businessName: { type: String, required: true, default: 'Yasin Laptop Hub' },
@@ -70,6 +96,7 @@ const BusinessSettingsSchema = new Schema<IBusinessSettingsDocument>(
     description: { type: String, default: 'Your trusted laptop destination in Lakki Marwat, KPK.' },
     businessHours: { type: String, default: 'Monday – Saturday: 9:00 AM – 9:00 PM' },
     openingHours: { type: String, default: 'Monday – Saturday: 9:00 AM – 9:00 PM' },
+    dailyStockVideo: { type: DailyStockVideoSchema, default: () => ({}) },
   },
   {
     timestamps: true,
