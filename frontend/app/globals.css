@@ -13,46 +13,28 @@ body {
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
 }
 
-@keyframes logo-flag-wave {
-  0%,
-  100% {
-    transform: perspective(180px) rotateY(-3deg) skewY(1deg);
-  }
-  50% {
-    transform: perspective(180px) rotateY(3deg) skewY(-1deg);
-  }
-}
-
-.logo-flag-wave {
-  transform-origin: left center;
-  animation: logo-flag-wave 3.2s ease-in-out infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .logo-flag-wave {
-    animation: none;
-  }
-}
-
 @layer base {
   * {
     @apply border-slate-800;
   }
+  body {
+    @apply bg-slate-950 text-slate-100 antialiased;
+  }
 }
 
-/* Custom subtle scrollbar */
+/* Custom modern scrollbars */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0f1d;
+  background: #020617;
 }
 
 ::-webkit-scrollbar-thumb {
   background: #1e293b;
-  border-radius: 4px;
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {

@@ -51,7 +51,7 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand Col */}
           <div className="space-y-4">
-            <Logo showTagline />
+            <Logo showTagline size="lg" />
             <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
               {DEFAULT_BUSINESS_CONFIG.businessDescription}
             </p>

@@ -68,9 +68,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         {/* Brand Header */}
         <div>
           <div className="flex items-center justify-between h-16 px-5 border-b border-slate-800">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center text-white font-bold text-sm shadow-md shadow-brand-600/30">
-                Y
+            <div className="flex items-center gap-3">
+              <div className="relative w-9 h-9 shrink-0 overflow-hidden rounded-xl bg-slate-900 border border-slate-700/60 shadow-md">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/logo.jpg"
+                  alt="Yasin Laptop Hub Logo"
+                  className="w-full h-full object-contain p-0.5"
+                />
               </div>
               <div className="flex flex-col">
                 <span className="text-xs font-bold tracking-tight text-white">Yasin Laptop Hub</span>
