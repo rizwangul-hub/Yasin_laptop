@@ -28,9 +28,9 @@ export const Logo: React.FC<LogoProps> = ({
 
   return (
     <Link href="/" className={`inline-flex items-center gap-3.5 group select-none ${className}`}>
-      {/* High-res Clean Logo Container */}
+      {/* 3D X-Axis Rotating Logo Container */}
       <div
-        className={`relative ${sizeClasses[size]} shrink-0 overflow-hidden rounded-2xl bg-slate-900/90 border border-slate-700/60 shadow-lg shadow-black/40 transition-all duration-300 group-hover:scale-105 group-hover:border-slate-500`}
+        className={`relative ${sizeClasses[size]} shrink-0 overflow-hidden rounded-2xl bg-slate-900/90 border border-slate-700/60 shadow-lg shadow-black/40 animate-rotate-x`}
       >
         <Image
           src={logoImage}

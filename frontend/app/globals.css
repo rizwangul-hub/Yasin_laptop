@@ -22,6 +22,29 @@ body {
   }
 }
 
+/* 3D X-Axis Rotation Animation */
+@keyframes rotate-x-3d {
+  0% {
+    transform: perspective(600px) rotateX(0deg);
+  }
+  45% {
+    transform: perspective(600px) rotateX(180deg);
+  }
+  90%, 100% {
+    transform: perspective(600px) rotateX(360deg);
+  }
+}
+
+.animate-rotate-x {
+  animation: rotate-x-3d 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.group:hover .animate-rotate-x {
+  animation: rotate-x-3d 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
 /* Custom modern scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
