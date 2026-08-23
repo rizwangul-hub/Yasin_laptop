@@ -14,20 +14,20 @@ interface HeroSlide {
 const HERO_SLIDES: HeroSlide[] = [
   {
     id: 1,
-    desktopImage: '/image/L-hero-1.jpg',
-    mobileImage: '/image/m-hero-1.jpg',
+    desktopImage: '/image/L-hero-1.jpeg',
+    mobileImage: '/image/m-hero-1.jpeg',
     link: '/laptops',
   },
   {
     id: 2,
-    desktopImage: '/image/L-hero-2.jpg',
-    mobileImage: '/image/m-hero-2.jpg',
+    desktopImage: '/image/L-hero-2.jpeg',
+    mobileImage: '/image/m-hero-2.jpeg',
     link: '/laptops?category=business-laptops',
   },
   {
     id: 3,
-    desktopImage: '/image/L-hero-3.jpg',
-    mobileImage: '/image/m-hero-3.jpg',
+    desktopImage: '/image/L-hero-3.jpeg',
+    mobileImage: '/image/m-hero-3.jpeg',
     link: '/laptops',
   },
 ];
@@ -82,16 +82,18 @@ export const Hero: React.FC<HeroProps> = () => {
     touchStartX.current = null;
   };
 
+  const slide = HERO_SLIDES[currentSlide];
+
   return (
     <section
-      className="relative w-full h-[calc(100dvh-64px)] sm:h-[calc(100dvh-80px)] min-h-[500px] overflow-hidden bg-slate-950 border-b border-slate-800 select-none group"
+      className="relative overflow-hidden bg-slate-950 border-b border-slate-800 select-none group"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Full-Screen Slideshow Frame */}
-      <div className="relative w-full h-full bg-slate-950 flex items-center justify-center">
+      {/* Slideshow Frame */}
+      <div className="relative w-full h-[380px] xs:h-[440px] sm:h-[520px] md:h-[600px] lg:h-[660px] xl:h-[720px] bg-slate-950 flex items-center justify-center">
         {HERO_SLIDES.map((s, index) => {
           const isActive = currentSlide === index;
           return (
@@ -99,7 +101,7 @@ export const Hero: React.FC<HeroProps> = () => {
               key={s.id}
               href={s.link}
               aria-label={`Explore Laptops — Banner ${s.id}`}
-              className={`absolute inset-0 w-full h-full block cursor-pointer transition-opacity duration-1000 ease-in-out ${
+              className={`absolute inset-0 block cursor-pointer transition-opacity duration-1000 ease-in-out ${
                 isActive ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'
               }`}
             >
@@ -110,7 +112,6 @@ export const Hero: React.FC<HeroProps> = () => {
                   src={s.desktopImage}
                   alt={`Yasin Laptop Hub Banner ${s.id}`}
                   className="w-full h-full object-cover object-center"
-                  loading={index === 0 ? 'eager' : 'lazy'}
                 />
               </div>
 
@@ -121,7 +122,6 @@ export const Hero: React.FC<HeroProps> = () => {
                   src={s.mobileImage}
                   alt={`Yasin Laptop Hub Mobile Banner ${s.id}`}
                   className="w-full h-full object-cover object-center"
-                  loading={index === 0 ? 'eager' : 'lazy'}
                 />
               </div>
             </Link>
@@ -153,7 +153,7 @@ export const Hero: React.FC<HeroProps> = () => {
         </div>
 
         {/* 3-Dot Indicators */}
-        <div className="absolute z-20 bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-slate-950/70 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-slate-800/80 pointer-events-auto shadow-lg">
+        <div className="absolute z-20 bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-slate-950/60 backdrop-blur-sm px-3 py-1.5 rounded-full border border-slate-800/60 pointer-events-auto">
           {HERO_SLIDES.map((_, index) => (
             <button
               key={index}
@@ -166,7 +166,7 @@ export const Hero: React.FC<HeroProps> = () => {
               aria-label={`Slide ${index + 1}`}
               className={`h-1.5 rounded-full transition-all duration-300 ${
                 currentSlide === index
-                  ? 'w-8 bg-brand-400 shadow-md shadow-brand-500/50'
+                  ? 'w-7 bg-brand-400 shadow-md shadow-brand-500/50'
                   : 'w-2 bg-slate-600 hover:bg-slate-400'
               }`}
             />

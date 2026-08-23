@@ -1,6 +1,7 @@
 import React from 'react';
-import { Laptop } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
+import logoImage from '../../image/logo.jpg';
 
 interface LogoProps {
   className?: string;
@@ -10,8 +11,15 @@ interface LogoProps {
 export const Logo: React.FC<LogoProps> = ({ className = '', showTagline = false }) => {
   return (
     <Link href="/" className={`inline-flex items-center gap-3 group select-none ${className}`}>
-      <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-lg shadow-brand-600/30 group-hover:scale-105 transition-transform duration-200">
-        <Laptop className="w-5 h-5" />
+      <div className="relative w-12 h-12 shrink-0 overflow-hidden rounded-xl shadow-lg shadow-brand-600/30 ring-1 ring-white/10 transition-transform duration-200 group-hover:scale-105">
+        <Image
+          src={logoImage}
+          alt="Yasin Laptop Hub logo"
+          fill
+          sizes="48px"
+          className="logo-flag-wave object-cover"
+          priority
+        />
       </div>
       <div className="flex flex-col">
         <div className="flex items-center gap-1.5">

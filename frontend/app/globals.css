@@ -13,6 +13,27 @@ body {
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
 }
 
+@keyframes logo-flag-wave {
+  0%,
+  100% {
+    transform: perspective(180px) rotateY(-3deg) skewY(1deg);
+  }
+  50% {
+    transform: perspective(180px) rotateY(3deg) skewY(-1deg);
+  }
+}
+
+.logo-flag-wave {
+  transform-origin: left center;
+  animation: logo-flag-wave 3.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-flag-wave {
+    animation: none;
+  }
+}
+
 @layer base {
   * {
     @apply border-slate-800;
