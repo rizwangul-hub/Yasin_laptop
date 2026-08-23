@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { MessageCircle } from 'lucide-react';
 import { DEFAULT_BUSINESS_CONFIG } from '@/lib/business-config';
 import { settingsService } from '@/services/settingsService';
@@ -9,6 +10,7 @@ export const FloatingWhatsApp: React.FC = () => {
   const [whatsappNumber, setWhatsappNumber] = useState(
     DEFAULT_BUSINESS_CONFIG.whatsappNumber || '+923427709129'
   );
+  const pathname = usePathname();
 
   useEffect(() => {
     settingsService
@@ -29,6 +31,9 @@ export const FloatingWhatsApp: React.FC = () => {
   );
   const whatsappUrl = `https://wa.me/${cleanNumber}?text=${message}`;
 
+  // Hide on mobile product detail pages to prevent overlapping StickyMobileCTA
+  const isProductDetailPage = pathname.startsWith('/laptops/') && pathname !== '/laptops';
+
   return (
     <aside aria-label="WhatsApp Contact Widget">
       <a
@@ -36,7 +41,9 @@ export const FloatingWhatsApp: React.FC = () => {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat directly on WhatsApp with Yasin Laptop Hub"
-        className="fixed bottom-6 right-6 z-40 flex items-center gap-2.5 px-4 py-3 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-2xl shadow-emerald-600/50 hover:scale-105 active:scale-95 transition-all focus:outline-none focus:ring-4 focus:ring-emerald-500/30 group"
+        className={`fixed bottom-5 right-5 z-40 items-center gap-2 px-3.5 py-3 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs shadow-soft-lg hover:scale-105 active:scale-95 transition-all focus:outline-none focus:ring-4 focus:ring-[#25D366]/30 group ${
+          isProductDetailPage ? 'hidden lg:flex' : 'flex'
+        }`}
       >
         <MessageCircle className="w-5 h-5 group-hover:rotate-12 transition-transform" />
         <span className="hidden sm:inline">WhatsApp Inquiries</span>

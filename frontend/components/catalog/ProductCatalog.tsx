@@ -15,7 +15,7 @@ import { ProductCard } from '../products/ProductCard';
 import { ProductCardSkeleton } from '../products/ProductCardSkeleton';
 import { productService, IFilterMetadata } from '@/services/productService';
 import { IProduct, PaginatedResponse } from '@/types';
-import { Filter as FilterIcon, Sparkles } from 'lucide-react';
+import { Filter as FilterIcon, Sparkles, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
 import { formatPrice } from '@/lib/formatters';
 
 interface ProductCatalogProps {
@@ -98,34 +98,34 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
     [pathname, router, searchParams]
   );
 
-  // Load products whenever query parameters change
+  // Fetch catalog data when params change
   const fetchProducts = useCallback(async () => {
     setIsLoading(true);
     setError(false);
 
-    const query: Record<string, string | number | boolean | undefined> = {
-      productType: defaultProductType,
-      page: currentPage,
-      limit: 12,
-      sort: currentSort,
-      search: currentSearch || undefined,
-      brand: currentFilters.brand?.join(','),
-      category: currentFilters.category?.join(','),
-      useCase: currentFilters.useCase?.join(','),
-      processor: currentFilters.processor?.join(','),
-      generation: currentFilters.generation?.join(','),
-      ram: currentFilters.ram?.join(','),
-      storage: currentFilters.storage?.join(','),
-      condition: currentFilters.condition?.join(','),
-      stockStatus: currentFilters.stockStatus,
-      minPrice: currentFilters.minPrice ? Number(currentFilters.minPrice) : undefined,
-      maxPrice: currentFilters.maxPrice ? Number(currentFilters.maxPrice) : undefined,
-    };
-
     try {
-      const response = await productService.getProducts(query);
-      if (response.success && response.data) {
-        setData(response.data);
+      const queryPayload = {
+        page: currentPage,
+        limit: 12,
+        search: currentSearch || undefined,
+        sort: currentSort,
+        productType: defaultProductType,
+        brand: currentFilters.brand ? currentFilters.brand.join(',') : undefined,
+        category: currentFilters.category ? currentFilters.category.join(',') : undefined,
+        useCase: currentFilters.useCase ? currentFilters.useCase.join(',') : undefined,
+        processor: currentFilters.processor ? currentFilters.processor.join(',') : undefined,
+        generation: currentFilters.generation ? currentFilters.generation.join(',') : undefined,
+        ram: currentFilters.ram ? currentFilters.ram.join(',') : undefined,
+        storage: currentFilters.storage ? currentFilters.storage.join(',') : undefined,
+        condition: currentFilters.condition ? currentFilters.condition.join(',') : undefined,
+        stockStatus: currentFilters.stockStatus,
+        minPrice: currentFilters.minPrice ? parseInt(currentFilters.minPrice, 10) : undefined,
+        maxPrice: currentFilters.maxPrice ? parseInt(currentFilters.maxPrice, 10) : undefined,
+      };
+
+      const res = await productService.getProducts(queryPayload);
+      if (res.success && res.data) {
+        setData(res.data);
       } else {
         setError(true);
       }
@@ -134,43 +134,36 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
     } finally {
       setIsLoading(false);
     }
-  }, [
-    defaultProductType,
-    currentPage,
-    currentSort,
-    currentSearch,
-    currentFilters,
-  ]);
+  }, [currentPage, currentSearch, currentSort, defaultProductType, currentFilters]);
 
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
 
-  // Handlers for filter interactions
+  // Handler for sidebar filter changes
   const handleFilterChange = (newFilters: FilterState) => {
-    const updates: Record<string, string | null> = {
-      page: '1', // Always reset page on filter update
-      brand: newFilters.brand?.join(',') || null,
-      category: newFilters.category?.join(',') || null,
-      useCase: newFilters.useCase?.join(',') || null,
-      processor: newFilters.processor?.join(',') || null,
-      generation: newFilters.generation?.join(',') || null,
-      ram: newFilters.ram?.join(',') || null,
-      storage: newFilters.storage?.join(',') || null,
-      condition: newFilters.condition?.join(',') || null,
-      stockStatus: newFilters.stockStatus || null,
-      minPrice: newFilters.minPrice || null,
-      maxPrice: newFilters.maxPrice || null,
-    };
-    updateUrlParams(updates);
+    updateUrlParams({
+      page: '1',
+      brand: newFilters.brand?.join(','),
+      category: newFilters.category?.join(','),
+      useCase: newFilters.useCase?.join(','),
+      processor: newFilters.processor?.join(','),
+      generation: newFilters.generation?.join(','),
+      ram: newFilters.ram?.join(','),
+      storage: newFilters.storage?.join(','),
+      condition: newFilters.condition?.join(','),
+      stockStatus: newFilters.stockStatus,
+      minPrice: newFilters.minPrice,
+      maxPrice: newFilters.maxPrice,
+    });
   };
 
+  // Handler to clear all filters
   const handleClearAllFilters = () => {
-    const updates: Record<string, string | null> = {
+    updateUrlParams({
       page: '1',
-      search: null,
-      brand: null,
-      category: null,
+      brand: fixedBrand ? fixedBrand : null,
+      category: fixedCategory ? fixedCategory : null,
       useCase: null,
       processor: null,
       generation: null,
@@ -180,24 +173,27 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
       stockStatus: null,
       minPrice: null,
       maxPrice: null,
-      sort: 'featured',
-    };
-    updateUrlParams(updates);
+      search: null,
+    });
   };
 
-  const handleRemoveSingleFilter = (key: string, value: string) => {
-    const currentVal = currentFilters[key as keyof FilterState];
-    if (Array.isArray(currentVal)) {
-      const updated = currentVal.filter((v) => v !== value);
-      updateUrlParams({
-        page: '1',
-        [key]: updated.length > 0 ? updated.join(',') : null,
-      });
+  // Handler to remove a single filter chip
+  const handleRemoveSingleFilter = (key: string, value?: string) => {
+    if (key === 'search') {
+      updateUrlParams({ search: null, page: '1' });
+    } else if (key === 'stockStatus') {
+      updateUrlParams({ stockStatus: null, page: '1' });
+    } else if (key === 'minPrice' || key === 'maxPrice') {
+      updateUrlParams({ minPrice: null, maxPrice: null, page: '1' });
     } else {
-      updateUrlParams({
-        page: '1',
-        [key]: null,
-      });
+      const currentList = currentFilters[key as keyof FilterState] as string[] | undefined;
+      if (currentList) {
+        const nextList = currentList.filter((item) => item !== value);
+        updateUrlParams({
+          [key]: nextList.length > 0 ? nextList.join(',') : null,
+          page: '1',
+        });
+      }
     }
   };
 
@@ -247,17 +243,17 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
   const totalCount = data?.pagination.total || 0;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-6">
+    <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-6 sm:py-12 space-y-5 sm:space-y-6">
       {/* 1. BREADCRUMBS */}
       <Breadcrumbs items={breadcrumbs} />
 
       {/* 2. CATALOG HEADER */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2 text-brand-700 text-xs font-bold uppercase tracking-wider">
-          <Sparkles className="w-3.5 h-3.5" />
+      <div className="space-y-1.5 sm:space-y-2">
+        <div className="flex items-center gap-1.5 text-brand-700 text-[10px] sm:text-xs font-bold uppercase tracking-wider">
+          <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
           <span>Catalog Explorer</span>
         </div>
-        <h1 className="text-2xl sm:text-4xl font-black text-charcoal-950 tracking-tight">
+        <h1 className="text-xl sm:text-3xl lg:text-4xl font-black text-charcoal-950 tracking-tight">
           {title}
         </h1>
         <p className="text-xs sm:text-sm text-charcoal-600 max-w-2xl font-medium">
@@ -266,7 +262,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
       </div>
 
       {/* 3. SEARCH & CONTROLS TOOLBAR */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 pt-2">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 pt-1">
         <div className="flex-1 max-w-xl">
           <CatalogSearch
             initialValue={currentSearch}
@@ -274,14 +270,14 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
           />
         </div>
 
-        <div className="flex items-center justify-between md:justify-end gap-3">
+        <div className="flex items-center justify-between md:justify-end gap-2.5">
           {/* Mobile Filter Button */}
           <button
             type="button"
             onClick={() => setIsMobileFilterOpen(true)}
-            className="flex lg:hidden items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-charcoal-200 text-xs font-bold text-charcoal-800 hover:bg-charcoal-50 transition-colors shadow-soft"
+            className="flex lg:hidden items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-charcoal-200 text-xs font-bold text-charcoal-900 hover:bg-charcoal-50 transition-colors shadow-soft"
           >
-            <FilterIcon className="w-4 h-4 text-brand-600" />
+            <FilterIcon className="w-4 h-4 text-brand-700" />
             <span>Filters</span>
             {activeChips.length > 0 && (
               <span className="w-4 h-4 rounded-full bg-brand-500 text-charcoal-950 text-[10px] flex items-center justify-center font-bold">
@@ -306,7 +302,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
       />
 
       {/* 5. MAIN CONTENT GRID (SIDEBAR + PRODUCTS) */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pt-2 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8 pt-1 items-start">
         {/* Desktop Sidebar */}
         <aside className="hidden lg:block lg:col-span-1 sticky top-24">
           <FilterSidebar
@@ -327,9 +323,9 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
             </span>
           </div>
 
-          {/* Loading Grid */}
+          {/* 2-Column Mobile Product Grid */}
           {isLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-2.5 sm:gap-5">
               {[...Array(6)].map((_, i) => (
                 <ProductCardSkeleton key={i} />
               ))}
@@ -338,7 +334,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
             <CatalogErrorState onRetry={fetchProducts} />
           ) : data && data.items.length > 0 ? (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-2.5 sm:gap-5">
                 {data.items.map((product) => (
                   <ProductCard key={product._id} product={product} />
                 ))}

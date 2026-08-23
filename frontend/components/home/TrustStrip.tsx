@@ -1,57 +1,55 @@
 import React from 'react';
-import { ShieldCheck, Grid, Tag, MessageCircle, Truck } from 'lucide-react';
+import { ShieldCheck, Award, MessageCircle, MapPin, Zap, CheckCircle2 } from 'lucide-react';
 
-const TRUST_ITEMS = [
+const TRUST_POINTS = [
   {
     icon: ShieldCheck,
-    title: '100% Quality Checked',
-    description: 'Hardware, screen & battery tested before shipment',
+    title: '1-Month Checking Warranty',
+    subtitle: 'Full testing & verification',
   },
   {
-    icon: Tag,
-    title: 'Fair & Transparent Prices',
-    description: 'Best rates in PKR with 1-month checking warranty',
-  },
-  {
-    icon: Truck,
-    title: 'Nationwide Delivery',
-    description: 'Safe packaging to Lakki Marwat, KPK & across Pakistan',
+    icon: Award,
+    title: 'Original Chargers Included',
+    subtitle: 'Authentic wattage adapters',
   },
   {
     icon: MessageCircle,
-    title: 'Direct WhatsApp Support',
-    description: 'Request live photos, video tests & quick guidance',
+    title: 'Live Video Testing',
+    subtitle: 'Inspect on WhatsApp first',
+  },
+  {
+    icon: MapPin,
+    title: 'Local Shop Lakki Marwat',
+    subtitle: 'Main Bazaar, KPK & Delivery',
   },
 ];
 
 export const TrustStrip: React.FC = () => {
   return (
-    <div className="border-y border-charcoal-200/80 bg-white py-6 sm:py-8 shadow-xs">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {TRUST_ITEMS.map((item, index) => {
-            const Icon = item.icon;
-            return (
-              <div
-                key={index}
-                className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-charcoal-50/70 border border-charcoal-200/80 hover:border-brand-400/80 hover:bg-brand-50/30 transition-all duration-200"
-              >
-                <div className="w-10 h-10 rounded-xl bg-brand-100 border border-brand-300/80 text-brand-900 flex items-center justify-center shrink-0 shadow-xs">
-                  <Icon className="w-5 h-5" />
-                </div>
-                <div className="min-w-0">
-                  <h4 className="text-xs sm:text-sm font-bold text-charcoal-900 truncate">
-                    {item.title}
-                  </h4>
-                  <p className="text-[11px] text-charcoal-500 line-clamp-1 mt-0.5 font-medium">
-                    {item.description}
-                  </p>
-                </div>
+    <section className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+        {TRUST_POINTS.map((item, idx) => {
+          const Icon = item.icon;
+          return (
+            <div
+              key={idx}
+              className="flex items-center gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-2xl bg-white border border-charcoal-200/90 shadow-xs hover:border-brand-500/80 transition-colors"
+            >
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-brand-50 border border-brand-200 text-brand-800 flex items-center justify-center shrink-0 shadow-xs">
+                <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-brand-900" />
               </div>
-            );
-          })}
-        </div>
+              <div className="min-w-0">
+                <h3 className="text-xs sm:text-sm font-bold text-charcoal-950 truncate leading-snug">
+                  {item.title}
+                </h3>
+                <p className="text-[10px] sm:text-xs text-charcoal-500 font-medium truncate">
+                  {item.subtitle}
+                </p>
+              </div>
+            </div>
+          );
+        })}
       </div>
-    </div>
+    </section>
   );
 };
