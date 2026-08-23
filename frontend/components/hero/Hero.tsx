@@ -6,28 +6,24 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface HeroSlide {
   id: number;
-  desktopImage: string;
-  mobileImage: string;
+  image: string;
   link: string;
 }
 
 const HERO_SLIDES: HeroSlide[] = [
   {
     id: 1,
-    desktopImage: '/image/L-hero-1.jpg',
-    mobileImage: '/image/m-hero-1.jpg',
+    image: '/image/L-hero-1.jpg',
     link: '/laptops',
   },
   {
     id: 2,
-    desktopImage: '/image/L-hero-2.jpg',
-    mobileImage: '/image/m-hero-2.jpg',
+    image: '/image/L-hero-2.jpg',
     link: '/laptops?category=business-laptops',
   },
   {
     id: 3,
-    desktopImage: '/image/L-hero-3.jpg',
-    mobileImage: '/image/m-hero-3.jpg',
+    image: '/image/L-hero-3.jpg',
     link: '/laptops',
   },
 ];
@@ -82,8 +78,6 @@ export const Hero: React.FC<HeroProps> = () => {
     touchStartX.current = null;
   };
 
-  const slide = HERO_SLIDES[currentSlide];
-
   return (
     <section
       className="relative overflow-hidden bg-slate-950 border-b border-slate-800 select-none group"
@@ -93,7 +87,7 @@ export const Hero: React.FC<HeroProps> = () => {
       onTouchEnd={handleTouchEnd}
     >
       {/* Slideshow Frame */}
-      <div className="relative w-full h-[380px] xs:h-[440px] sm:h-[520px] md:h-[600px] lg:h-[660px] xl:h-[720px] bg-slate-950 flex items-center justify-center">
+      <div className="relative w-full h-[280px] xs:h-[340px] sm:h-[480px] md:h-[580px] lg:h-[660px] xl:h-[720px] bg-slate-950 flex items-center justify-center">
         {HERO_SLIDES.map((s, index) => {
           const isActive = currentSlide === index;
           return (
@@ -105,22 +99,12 @@ export const Hero: React.FC<HeroProps> = () => {
                 isActive ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'
               }`}
             >
-              {/* Desktop / Laptop Screen Image (min-width: 640px) */}
-              <div className="hidden sm:block absolute inset-0 w-full h-full">
+              {/* Unified Image displayed on both mobile and laptop */}
+              <div className="absolute inset-0 w-full h-full">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={s.desktopImage}
+                  src={s.image}
                   alt={`Yasin Laptop Hub Banner ${s.id}`}
-                  className="w-full h-full object-cover object-center"
-                />
-              </div>
-
-              {/* Mobile Screen Image (under 640px) */}
-              <div className="block sm:hidden absolute inset-0 w-full h-full">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={s.mobileImage}
-                  alt={`Yasin Laptop Hub Mobile Banner ${s.id}`}
                   className="w-full h-full object-cover object-center"
                 />
               </div>
