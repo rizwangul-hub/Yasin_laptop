@@ -14,20 +14,20 @@ interface HeroSlide {
 const HERO_SLIDES: HeroSlide[] = [
   {
     id: 1,
-    desktopImage: '/image/L-hero-1.jpeg',
-    mobileImage: '/image/m-hero-1.jpeg',
+    desktopImage: '/image/L-hero-1.jpg',
+    mobileImage: '/image/m-hero-1.jpg',
     link: '/laptops',
   },
   {
     id: 2,
-    desktopImage: '/image/L-hero-2.jpeg',
-    mobileImage: '/image/m-hero-2.jpeg',
+    desktopImage: '/image/L-hero-2.jpg',
+    mobileImage: '/image/m-hero-2.jpg',
     link: '/laptops?category=business-laptops',
   },
   {
     id: 3,
-    desktopImage: '/image/L-hero-3.jpeg',
-    mobileImage: '/image/m-hero-3.jpeg',
+    desktopImage: '/image/L-hero-3.jpg',
+    mobileImage: '/image/m-hero-3.jpg',
     link: '/laptops',
   },
 ];
