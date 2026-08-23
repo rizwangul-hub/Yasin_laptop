@@ -5,8 +5,10 @@ export interface IBusinessSettingsDocument extends Document {
   businessName: string;
   ownerName: string;
   logo?: ICloudinaryImage;
+  tagline?: string;
   whatsappNumber?: string;
   phone?: string;
+  phoneNumber?: string;
   email?: string;
   address?: {
     street?: string;
@@ -19,8 +21,10 @@ export interface IBusinessSettingsDocument extends Document {
   facebookUrl?: string;
   instagramUrl?: string;
   tiktokUrl?: string;
+  youtubeUrl?: string;
   description?: string;
   businessHours?: string;
+  openingHours?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -38,7 +42,7 @@ const SettingsLogoSchema = new Schema<ICloudinaryImage>(
 
 const AddressSchema = new Schema(
   {
-    street: { type: String, default: '' },
+    street: { type: String, default: 'Main Bazaar' },
     city: { type: String, default: 'Lakki Marwat' },
     district: { type: String, default: 'Lakki Marwat' },
     province: { type: String, default: 'Khyber Pakhtunkhwa' },
@@ -51,21 +55,27 @@ const BusinessSettingsSchema = new Schema<IBusinessSettingsDocument>(
   {
     businessName: { type: String, required: true, default: 'Yasin Laptop Hub' },
     ownerName: { type: String, required: true, default: 'Yasin Wahab' },
+    tagline: { type: String, default: 'Quality Laptops • Chromebooks • Accessories' },
     logo: { type: SettingsLogoSchema },
-    whatsappNumber: { type: String, default: '+923130957398' },
-    phone: { type: String, default: '03130957398' },
-    email: { type: String, default: '' },
+    whatsappNumber: { type: String, default: '+923427709129' },
+    phone: { type: String, default: '03427709129' },
+    phoneNumber: { type: String, default: '03427709129' },
+    email: { type: String, default: 'info@yasinlaptophub.com' },
     address: { type: AddressSchema, default: () => ({}) },
     googleMapsUrl: { type: String, default: '' },
     facebookUrl: { type: String, default: '' },
     instagramUrl: { type: String, default: '' },
     tiktokUrl: { type: String, default: '' },
+    youtubeUrl: { type: String, default: '' },
     description: { type: String, default: 'Your trusted laptop destination in Lakki Marwat, KPK.' },
-    businessHours: { type: String, default: '' },
+    businessHours: { type: String, default: 'Monday – Saturday: 9:00 AM – 9:00 PM' },
+    openingHours: { type: String, default: 'Monday – Saturday: 9:00 AM – 9:00 PM' },
   },
   {
     timestamps: true,
   }
 );
 
-export const BusinessSettings = mongoose.models.BusinessSettings || mongoose.model<IBusinessSettingsDocument>('BusinessSettings', BusinessSettingsSchema);
+export const BusinessSettings =
+  mongoose.models.BusinessSettings ||
+  mongoose.model<IBusinessSettingsDocument>('BusinessSettings', BusinessSettingsSchema);

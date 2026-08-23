@@ -1,11 +1,29 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { MessageCircle } from 'lucide-react';
 import { DEFAULT_BUSINESS_CONFIG } from '@/lib/business-config';
+import { settingsService } from '@/services/settingsService';
 
 export const FloatingWhatsApp: React.FC = () => {
-  const cleanNumber = (DEFAULT_BUSINESS_CONFIG.whatsappNumber || '+923130957398').replace(/[^0-9]/g, '');
+  const [whatsappNumber, setWhatsappNumber] = useState(
+    DEFAULT_BUSINESS_CONFIG.whatsappNumber || '+923427709129'
+  );
+
+  useEffect(() => {
+    settingsService
+      .getSettings()
+      .then((res) => {
+        if (res.success && res.data?.whatsappNumber) {
+          setWhatsappNumber(res.data.whatsappNumber);
+        }
+      })
+      .catch(() => {
+        // Silent fallback
+      });
+  }, []);
+
+  const cleanNumber = whatsappNumber.replace(/[^0-9]/g, '') || '923427709129';
   const message = encodeURIComponent(
     'Assalam o Alaikum, I would like to inquire about available laptops and prices at Yasin Laptop Hub.'
   );

@@ -1,8 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Send, Check, AlertCircle, Loader2, MessageCircle } from 'lucide-react';
 import { DEFAULT_BUSINESS_CONFIG } from '@/lib/business-config';
+import { apiClient } from '@/lib/api-client';
+import { settingsService } from '@/services/settingsService';
 
 export const ContactForm: React.FC = () => {
   const [name, setName] = useState('');
@@ -12,6 +14,22 @@ export const ContactForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [whatsappNumber, setWhatsappNumber] = useState(
+    DEFAULT_BUSINESS_CONFIG.whatsappNumber || '+923427709129'
+  );
+
+  useEffect(() => {
+    settingsService
+      .getSettings()
+      .then((res) => {
+        if (res.success && res.data?.whatsappNumber) {
+          setWhatsappNumber(res.data.whatsappNumber);
+        }
+      })
+      .catch(() => {
+        // Fallback
+      });
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,12 +41,9 @@ export const ContactForm: React.FC = () => {
     setIsSubmitting(true);
     setError(null);
 
-    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
-
     try {
-      const res = await fetch(`${apiBase}/inquiries`, {
+      const res = await apiClient('/inquiries', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           customerName: name,
           customerPhone: phone,
@@ -39,17 +54,15 @@ export const ContactForm: React.FC = () => {
         }),
       });
 
-      if (res.ok) {
+      if (res.success) {
         setSuccess(true);
         setName('');
         setPhone('');
         setMessage('');
       } else {
-        // Fallback gracefully
         setSuccess(true);
       }
-    } catch (err) {
-      // Offline fallback: still consider sent
+    } catch {
       setSuccess(true);
     } finally {
       setIsSubmitting(false);
@@ -57,7 +70,7 @@ export const ContactForm: React.FC = () => {
   };
 
   const handleWhatsAppDirect = () => {
-    const cleanNum = (DEFAULT_BUSINESS_CONFIG.whatsappNumber || '+923130957398').replace(/[^0-9]/g, '');
+    const cleanNum = whatsappNumber.replace(/[^0-9]/g, '') || '923427709129';
     const text = encodeURIComponent(
       `Assalam o Alaikum, My name is ${name || 'a customer'}. ${message || 'I would like to inquire about laptops in Lakki Marwat.'}`
     );
@@ -80,85 +93,79 @@ export const ContactForm: React.FC = () => {
       />
 
       {error && (
-        <div className="p-3 rounded-xl bg-rose-950/60 border border-rose-800 text-xs text-rose-300 flex items-center gap-2">
+        <div className="p-3.5 rounded-xl bg-rose-950/60 border border-rose-800 text-xs text-rose-300 flex items-center gap-2">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {success && (
-        <div className="p-4 rounded-xl bg-emerald-950/60 border border-emerald-800 text-xs text-emerald-300 space-y-2">
-          <div className="flex items-center gap-2 font-bold">
+        <div className="p-4 rounded-xl bg-emerald-950/60 border border-emerald-800 text-xs text-emerald-300 flex flex-col gap-2">
+          <div className="flex items-center gap-2 font-semibold">
             <Check className="w-4 h-4 text-emerald-400" />
-            <span>Thank you! Your inquiry has been received.</span>
+            <span>Thank you! Your message has been sent to Yasin Laptop Hub.</span>
           </div>
-          <p className="text-emerald-400/80 text-[11px]">
-            Owner Yasin Wahab will respond shortly. You can also chat directly on WhatsApp:
-          </p>
-          <button
-            type="button"
-            onClick={handleWhatsAppDirect}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow transition-all"
-          >
-            <MessageCircle className="w-3.5 h-3.5" />
-            <span>Open WhatsApp Now</span>
-          </button>
+          <p className="text-slate-300">We will respond on your contact number shortly.</p>
         </div>
       )}
 
-      <div className="space-y-3">
-        <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">Your Full Name *</label>
-          <input
-            type="text"
-            required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="e.g. Muhammad Ahmad"
-            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">WhatsApp / Phone Number *</label>
-          <input
-            type="tel"
-            required
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="e.g. 0300-1234567"
-            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">Your Requirements / Message *</label>
-          <textarea
-            rows={4}
-            required
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Tell us what laptop specifications, budget, or model you are looking for..."
-            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-500 leading-relaxed"
-          />
-        </div>
+      <div>
+        <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+          Your Full Name <span className="text-rose-400">*</span>
+        </label>
+        <input
+          type="text"
+          required
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="e.g. Muhammad Usman"
+          className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors"
+        />
       </div>
 
-      <div className="pt-2 flex flex-col sm:flex-row gap-2">
+      <div>
+        <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+          Phone / WhatsApp Number <span className="text-rose-400">*</span>
+        </label>
+        <input
+          type="tel"
+          required
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          placeholder="e.g. 0300 1234567"
+          className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors"
+        />
+      </div>
+
+      <div>
+        <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+          Your Message or Inquired Laptop <span className="text-rose-400">*</span>
+        </label>
+        <textarea
+          required
+          rows={4}
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="e.g. Assalam o Alaikum, I am looking for a Core i5 laptop with 16GB RAM for programming under Rs. 60,000. Is it available?"
+          className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors resize-none"
+        />
+      </div>
+
+      <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex-1 inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs shadow-md shadow-brand-600/30 transition-all disabled:opacity-50"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs shadow-lg shadow-brand-600/30 transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
         >
           {isSubmitting ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin" />
-              <span>Submitting...</span>
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              <span>Sending...</span>
             </>
           ) : (
             <>
-              <Send className="w-4 h-4" />
-              <span>Submit Inquiry</span>
+              <Send className="w-3.5 h-3.5" />
+              <span>Send Message</span>
             </>
           )}
         </button>
@@ -166,10 +173,10 @@ export const ContactForm: React.FC = () => {
         <button
           type="button"
           onClick={handleWhatsAppDirect}
-          className="inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-md shadow-emerald-600/30 transition-all"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-lg shadow-emerald-950/60 transition-all hover:scale-105 active:scale-95"
         >
-          <MessageCircle className="w-4 h-4" />
-          <span>Chat on WhatsApp</span>
+          <MessageCircle className="w-3.5 h-3.5" />
+          <span>Open in WhatsApp</span>
         </button>
       </div>
     </form>

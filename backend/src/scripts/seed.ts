@@ -2869,8 +2869,8 @@ export async function runDatabaseSeed(): Promise<void> {
       await BusinessSettings.create({
         businessName: 'Yasin Laptop Hub',
         ownerName: 'Yasin Wahab',
-        whatsappNumber: '+923130957398',
-        phone: '03130957398',
+        whatsappNumber: '+923427709129',
+        phone: '03427709129',
         email: 'info@yasinlaptophub.com',
         address: {
           street: 'Main Bazaar',
