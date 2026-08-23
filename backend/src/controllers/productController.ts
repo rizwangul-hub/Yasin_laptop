@@ -1,0 +1,322 @@
+import { Request, Response } from 'express';
+import { productQueryService, ProductQueryParams } from '../services/productQueryService';
+import { Product, IProductDocument } from '../models/Product';
+import { sendSuccess, sendError } from '../utils/apiResponse';
+import { isDatabaseConnected } from '../config/database';
+import { PaginatedResponse, IProduct } from '../types';
+import { logActivity } from './activityController';
+
+export const getProducts = async (req: Request, res: Response): Promise<void> => {
+  if (!isDatabaseConnected()) {
+    const emptyResponse: PaginatedResponse<IProduct> = {
+      items: [],
+      pagination: {
+        page: Number(req.query.page) || 1,
+        limit: Number(req.query.limit) || 12,
+        total: 0,
+        totalPages: 0,
+        hasNextPage: false,
+        hasPreviousPage: false,
+      },
+    };
+    sendSuccess(res, 'Database offline; returning empty product structure', emptyResponse);
+    return;
+  }
+
+  const queryParams: ProductQueryParams = req.query as unknown as ProductQueryParams;
+  const result = await productQueryService.executeProductQuery(queryParams);
+
+  sendSuccess(res, 'Products fetched successfully', result);
+};
+
+export const getProductFilters = async (req: Request, res: Response): Promise<void> => {
+  if (!isDatabaseConnected()) {
+    const fallbackMetadata = await productQueryService.getFilterMetadata(String(req.query.productType || 'laptop'));
+    sendSuccess(res, 'Filter metadata fetched (defaults)', fallbackMetadata);
+    return;
+  }
+
+  const filterMeta = await productQueryService.getFilterMetadata(String(req.query.productType || 'laptop'));
+  sendSuccess(res, 'Filter metadata fetched successfully', filterMeta);
+};
+
+export const getProductBySlug = async (req: Request, res: Response): Promise<void> => {
+  const { slug } = req.params;
+
+  if (!isDatabaseConnected()) {
+    sendSuccess(res, 'Database offline; product lookup ready', null);
+    return;
+  }
+
+  const product = await Product.findOne({ slug: slug.toLowerCase(), isDeleted: false })
+    .populate('brand', 'name slug logo description')
+    .populate('categories', 'name slug description')
+    .populate('useCases', 'name slug description')
+    .lean();
+
+  if (!product) {
+    sendError(res, `Product not found for slug: ${slug}`, undefined, 404);
+    return;
+  }
+
+  sendSuccess(res, 'Product fetched successfully', product);
+};
+
+export const getProductById = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+
+  if (!isDatabaseConnected()) {
+    sendError(res, 'Database offline', undefined, 503);
+    return;
+  }
+
+  const product = await Product.findOne({ _id: id, isDeleted: false })
+    .populate('brand', 'name slug logo')
+    .populate('categories', 'name slug')
+    .populate('useCases', 'name slug')
+    .lean();
+
+  if (!product) {
+    sendError(res, `Product not found for ID: ${id}`, undefined, 404);
+    return;
+  }
+
+  sendSuccess(res, 'Product fetched successfully', product);
+};
+
+export const getRelatedProducts = async (req: Request, res: Response): Promise<void> => {
+  const { idOrSlug } = req.params;
+
+  if (!isDatabaseConnected()) {
+    sendSuccess(res, 'Database offline; returning empty related products', []);
+    return;
+  }
+
+  const isId = idOrSlug.match(/^[0-9a-fA-F]{24}$/);
+  const targetProduct = (await Product.findOne(
+    isId ? { _id: idOrSlug, isDeleted: false } : { slug: idOrSlug.toLowerCase(), isDeleted: false }
+  ).lean()) as (IProductDocument & { _id: unknown }) | null;
+
+  if (!targetProduct) {
+    sendSuccess(res, 'Target product not found; returning general products', []);
+    return;
+  }
+
+  const minPrice = Math.max(0, targetProduct.price * 0.7);
+  const maxPrice = targetProduct.price * 1.3;
+
+  const related = await Product.find({
+    _id: { $ne: targetProduct._id },
+    isDeleted: false,
+    productType: targetProduct.productType,
+    $or: [
+      { brand: targetProduct.brand },
+      { categories: { $in: targetProduct.categories } },
+      { price: { $gte: minPrice, $lte: maxPrice } },
+    ],
+  })
+    .populate('brand', 'name slug logo')
+    .populate('categories', 'name slug')
+    .sort({ stockStatus: 1, featured: -1, createdAt: -1 })
+    .limit(4)
+    .lean();
+
+  sendSuccess(res, 'Related products fetched successfully', related);
+};
+
+export const createProduct = async (req: Request, res: Response): Promise<void> => {
+  if (!isDatabaseConnected()) {
+    sendError(res, 'Database offline; unable to create product', undefined, 503);
+    return;
+  }
+
+  try {
+    const productData = req.body;
+
+    if (!productData.slug && productData.name) {
+      productData.slug = productData.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '');
+    }
+
+    let finalSlug = productData.slug;
+    let counter = 1;
+    while (await Product.findOne({ slug: finalSlug, isDeleted: false })) {
+      finalSlug = `${productData.slug}-${counter}`;
+      counter++;
+    }
+    productData.slug = finalSlug;
+
+    const product = new Product(productData);
+    await product.save();
+
+    await logActivity('Product Created', 'product', `Cataloged "${product.name}" at Rs. ${product.price.toLocaleString('en-PK')}`, product._id.toString());
+
+    sendSuccess(res, 'Product created successfully', product, 201);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Product creation failed';
+    sendError(res, message, undefined, 400);
+  }
+};
+
+export const updateProduct = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+
+  if (!isDatabaseConnected()) {
+    sendError(res, 'Database offline; unable to update product', undefined, 503);
+    return;
+  }
+
+  try {
+    const updates = req.body;
+
+    if (updates.slug) {
+      const existing = await Product.findOne({
+        slug: updates.slug,
+        _id: { $ne: id },
+        isDeleted: false,
+      });
+      if (existing) {
+        updates.slug = `${updates.slug}-${Date.now().toString().slice(-4)}`;
+      }
+    }
+
+    const product = await Product.findOneAndUpdate(
+      { _id: id, isDeleted: false },
+      { $set: updates },
+      { new: true, runValidators: true }
+    );
+
+    if (!product) {
+      sendError(res, `Product not found for ID: ${id}`, undefined, 404);
+      return;
+    }
+
+    await logActivity('Product Updated', 'product', `Updated "${product.name}" details / price / status`, product._id.toString());
+
+    sendSuccess(res, 'Product updated successfully', product);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Product update failed';
+    sendError(res, message, undefined, 400);
+  }
+};
+
+export const deleteProduct = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+
+  if (!isDatabaseConnected()) {
+    sendError(res, 'Database offline; unable to delete product', undefined, 503);
+    return;
+  }
+
+  const product = await Product.findOneAndUpdate(
+    { _id: id, isDeleted: false },
+    { $set: { isDeleted: true, deletedAt: new Date() } },
+    { new: true }
+  );
+
+  if (!product) {
+    sendError(res, `Product not found for ID: ${id}`, undefined, 404);
+    return;
+  }
+
+  await logActivity('Product Archived', 'product', `Archived product "${product.name}"`, product._id.toString());
+
+  sendSuccess(res, 'Product archived / soft deleted successfully', { id });
+};
+
+export const toggleProductField = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+  const { field, value } = req.body;
+
+  if (!['featured', 'bestDeal', 'latestArrival', 'stockStatus', 'price'].includes(field)) {
+    sendError(res, 'Invalid field toggle target', undefined, 400);
+    return;
+  }
+
+  const product = await Product.findOneAndUpdate(
+    { _id: id, isDeleted: false },
+    { $set: { [field]: value } },
+    { new: true }
+  );
+
+  if (!product) {
+    sendError(res, 'Product not found', undefined, 404);
+    return;
+  }
+
+  await logActivity(`Product ${field} changed`, 'product', `Changed ${field} of "${product.name}" to ${value}`, product._id.toString());
+
+  sendSuccess(res, `Product ${field} updated successfully`, product);
+};
+
+export const duplicateProduct = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+
+  if (!isDatabaseConnected()) {
+    sendError(res, 'Database offline', undefined, 503);
+    return;
+  }
+
+  const original = await Product.findOne({ _id: id, isDeleted: false }).lean();
+  if (!original) {
+    sendError(res, 'Original product not found', undefined, 404);
+    return;
+  }
+
+  const origObj = original as unknown as Record<string, unknown>;
+  const clonedData: Record<string, unknown> = { ...origObj };
+  delete clonedData._id;
+  delete clonedData.createdAt;
+  delete clonedData.updatedAt;
+  delete clonedData.sku;
+  clonedData.name = `${String(origObj.name || 'Laptop')} (Copy)`;
+  clonedData.slug = `${String(origObj.slug || 'laptop')}-copy-${Date.now().toString().slice(-4)}`;
+  clonedData.publicationStatus = 'draft';
+
+  const newProduct = new Product(clonedData);
+  await newProduct.save();
+
+  await logActivity('Product Duplicated', 'product', `Duplicated "${String(origObj.name || 'Product')}" to create "${newProduct.name}"`, newProduct._id.toString());
+
+  sendSuccess(res, 'Product duplicated successfully into Draft', newProduct, 201);
+};
+
+export const bulkActionProducts = async (req: Request, res: Response): Promise<void> => {
+  const { ids, action, value } = req.body;
+
+  if (!Array.isArray(ids) || ids.length === 0) {
+    sendError(res, 'No product IDs provided', undefined, 400);
+    return;
+  }
+
+  if (!isDatabaseConnected()) {
+    sendError(res, 'Database offline', undefined, 503);
+    return;
+  }
+
+  let updateQuery = {};
+  if (action === 'mark_available') {
+    updateQuery = { stockStatus: 'available' };
+  } else if (action === 'mark_sold') {
+    updateQuery = { stockStatus: 'sold_out' };
+  } else if (action === 'archive') {
+    updateQuery = { isDeleted: true, deletedAt: new Date() };
+  } else if (action === 'publish') {
+    updateQuery = { publicationStatus: 'published' };
+  } else if (action === 'draft') {
+    updateQuery = { publicationStatus: 'draft' };
+  } else if (action === 'set_featured') {
+    updateQuery = { featured: Boolean(value) };
+  } else {
+    sendError(res, 'Unknown bulk action', undefined, 400);
+    return;
+  }
+
+  const result = await Product.updateMany({ _id: { $in: ids } }, { $set: updateQuery });
+
+  await logActivity(`Bulk Action: ${action}`, 'product', `Applied ${action} across ${ids.length} product(s)`);
+
+  sendSuccess(res, `Bulk action '${action}' applied to ${result.modifiedCount} products`, { modifiedCount: result.modifiedCount });
+};

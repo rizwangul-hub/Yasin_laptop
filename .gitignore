@@ -1,0 +1,59 @@
+# Dependencies (Root and Sub-packages)
+node_modules/
+**/node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+**/coverage/
+
+# Next.js Build Outputs & Cache
+.next/
+**/.next/
+out/
+**/out/
+
+# TypeScript & Production Build Outputs
+dist/
+**/dist/
+build/
+**/build/
+*.tsbuildinfo
+**/*.tsbuildinfo
+
+# Environment Files (MUST NEVER BE COMMITTED)
+.env
+.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+**/.env
+**/.env.*
+**/.env.local
+**/.env.development.local
+**/.env.test.local
+**/.env.production.local
+
+# Explicitly Allow Example Templates
+!.env.example
+!**/.env.example
+
+# Debug Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs/
+**/logs/
+*.log
+
+# Operating System & IDE Files
+.DS_Store
+*.pem
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
