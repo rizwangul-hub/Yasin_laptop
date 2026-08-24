@@ -1,10 +1,31 @@
 import { ApiResponse } from '@/types';
 
+const FALLBACK_API_URL = 'https://yasin-laptop-backend.vercel.app/api';
+
 function getApiBaseUrl(): string {
+  if (typeof window !== 'undefined') {
+    const isLocalhost =
+      window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1' ||
+      window.location.hostname === '0.0.0.0';
+
+    // If website is accessed on a domain/preview (not localhost), never try localhost backend
+    if (!isLocalhost) {
+      if (
+        process.env.NEXT_PUBLIC_API_URL &&
+        !process.env.NEXT_PUBLIC_API_URL.includes('localhost') &&
+        !process.env.NEXT_PUBLIC_API_URL.includes('127.0.0.1')
+      ) {
+        return process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, '');
+      }
+      return FALLBACK_API_URL;
+    }
+  }
+
   if (process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, '');
   }
-  return 'https://yasin-laptop-backend.vercel.app/api';
+  return FALLBACK_API_URL;
 }
 
 export interface ApiClientOptions {
@@ -57,10 +78,10 @@ export async function apiClient<T>(
     return (await inFlightRequests.get(cacheKey)) as ApiResponse<T>;
   }
 
-  // 3. Execute network fetch
+  // 3. Execute network fetch with automatic fallback if primary connection fails
   const fetchPromise = (async (): Promise<ApiResponse<T>> => {
-    try {
-      const response = await fetch(url, {
+    const executeFetch = async (targetUrl: string): Promise<ApiResponse<T>> => {
+      const response = await fetch(targetUrl, {
         ...options,
         headers: {
           'Content-Type': 'application/json',
@@ -68,7 +89,11 @@ export async function apiClient<T>(
         },
       });
 
-      const data: ApiResponse<T> = await response.json();
+      return await response.json();
+    };
+
+    try {
+      const data = await executeFetch(url);
 
       // Store in client cache if successful GET request
       if (shouldCache && data.success) {
@@ -80,20 +105,40 @@ export async function apiClient<T>(
       }
 
       return data;
-    } catch (error) {
+    } catch (primaryError) {
       // If request was aborted by AbortController, return clean canceled response
-      if (error instanceof Error && error.name === 'AbortError') {
+      if (primaryError instanceof Error && primaryError.name === 'AbortError') {
         return {
           success: false,
           message: 'Request canceled',
         };
       }
 
-      console.warn(`[API Client Error] Failed to fetch from ${endpoint}:`, error);
+      // If primary endpoint failed (e.g. localhost offline) and wasn't already the fallback URL, retry with production backend!
+      if (!url.startsWith(FALLBACK_API_URL)) {
+        try {
+          const fallbackUrl = `${FALLBACK_API_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+          const fallbackData = await executeFetch(fallbackUrl);
+
+          if (shouldCache && fallbackData.success) {
+            responseCache.set(cacheKey, {
+              data: fallbackData,
+              timestamp: Date.now(),
+              ttlMs,
+            });
+          }
+
+          return fallbackData;
+        } catch (fallbackErr) {
+          console.warn(`[API Client Error] Fallback also failed for ${endpoint}:`, fallbackErr);
+        }
+      }
+
+      console.warn(`[API Client Error] Failed to fetch from ${endpoint}:`, primaryError);
       return {
         success: false,
         message: 'Network or server error',
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: primaryError instanceof Error ? primaryError.message : 'Unknown error',
       };
     } finally {
       inFlightRequests.delete(cacheKey);
