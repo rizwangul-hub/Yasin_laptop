@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Hero } from '@/components/hero/Hero';
 import { MobileSearchBar } from '@/components/home/MobileSearchBar';
-import { TrustStrip } from '@/components/home/TrustStrip';
 import { WhatsAppCta } from '@/components/home/WhatsAppCta';
 import { ContactPreview } from '@/components/home/ContactPreview';
 import { CustomerReviews } from '@/components/home/CustomerReviews';
@@ -231,10 +230,7 @@ export default function HomePage() {
       {/* 2. HERO BANNER WITH SLIDESHOW & DAILY STOCK VIDEO */}
       <Hero mode="carousel" />
 
-      {/* 3. COMPACT TRUST STRIP */}
-      <TrustStrip />
-
-      {/* 4. SHOP BY BRAND (HP, DELL, LENOVO, APPLE, CHROMEBOOKS) */}
+      {/* 3. SHOP BY BRAND (HP, DELL, LENOVO, APPLE, CHROMEBOOKS) */}
       <section className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <div>
