@@ -135,13 +135,6 @@ export default function HomePage() {
       }
 
       try {
-        const [productsRes, accRes] = await Promise.allSettled([
-          productService.getProducts({ limit: 24 }),
-          productService.getAccessories({ limit: 8 }),
-        ]);
-
-        if (!isMounted) return;
-
         const extractItems = <T,>(data: unknown): T[] => {
           if (!data) return [];
           if (Array.isArray(data)) return data;
@@ -149,15 +142,51 @@ export default function HomePage() {
           if (Array.isArray(obj.items)) return obj.items as T[];
           if (Array.isArray(obj.products)) return obj.products as T[];
           if (Array.isArray(obj.accessories)) return obj.accessories as T[];
+          if (obj.data) return extractItems<T>(obj.data);
           return [];
         };
 
-        if (productsRes.status === 'fulfilled' && productsRes.value.success) {
-          setAllLaptops(extractItems<IProduct>(productsRes.value.data));
+        const [laptopsRes, chromesRes, featuredRes, accRes] = await Promise.allSettled([
+          productService.getProducts({ productType: 'laptop', limit: 16 }),
+          productService.getProducts({ productType: 'chromebook', limit: 12 }),
+          productService.getFeatured(),
+          productService.getAccessories({ limit: 8 }),
+        ]);
+
+        if (!isMounted) return;
+
+        let laptopsList: IProduct[] = [];
+        let chromesList: IProduct[] = [];
+        let featuredList: IProduct[] = [];
+
+        if (laptopsRes.status === 'fulfilled' && laptopsRes.value?.success) {
+          laptopsList = extractItems<IProduct>(laptopsRes.value.data);
         }
 
-        if (accRes.status === 'fulfilled' && accRes.value.success) {
+        if (chromesRes.status === 'fulfilled' && chromesRes.value?.success) {
+          chromesList = extractItems<IProduct>(chromesRes.value.data);
+        }
+
+        if (featuredRes.status === 'fulfilled' && featuredRes.value?.success) {
+          featuredList = extractItems<IProduct>(featuredRes.value.data);
+        }
+
+        if (accRes.status === 'fulfilled' && accRes.value?.success) {
           setAccessories(extractItems<IAccessory>(accRes.value.data));
+        }
+
+        // Deduplicate all fetched units by _id
+        const combined = [...laptopsList, ...chromesList, ...featuredList];
+        const unique = Array.from(new Map(combined.map((item) => [item._id, item])).values());
+
+        if (unique.length > 0) {
+          setAllLaptops(unique);
+        } else {
+          // Direct fallback if specific type queries returned empty
+          const fallbackRes = await productService.getProducts({ limit: 24 });
+          if (fallbackRes.success && fallbackRes.data) {
+            setAllLaptops(extractItems<IProduct>(fallbackRes.data));
+          }
         }
       } catch {
         // graceful fallback
@@ -176,15 +205,22 @@ export default function HomePage() {
     };
   }, []);
 
-  // Filter displayed laptops based on active tab
+  // Filter displayed laptops based on active tab with resilient fallback
   const displayedLaptops = React.useMemo(() => {
     if (activeTab === 'chromebooks') {
-      return allLaptops.filter((p) => p.productType === 'chromebook');
+      const chromes = allLaptops.filter(
+        (p) => p.productType === 'chromebook' || p.name?.toLowerCase().includes('chromebook')
+      );
+      return chromes.length > 0 ? chromes : allLaptops.slice(0, 8);
     }
     if (activeTab === 'deals') {
-      return allLaptops.filter((p) => p.bestDeal || (p.previousPrice && p.previousPrice > p.price));
+      const deals = allLaptops.filter(
+        (p) => p.bestDeal || (p.previousPrice && p.previousPrice > p.price)
+      );
+      return deals.length > 0 ? deals : allLaptops.slice(0, 8);
     }
-    return allLaptops.filter((p) => p.productType !== 'accessory');
+    const standardLaptops = allLaptops.filter((p) => p.productType !== 'accessory');
+    return standardLaptops.length > 0 ? standardLaptops : allLaptops;
   }, [allLaptops, activeTab]);
 
   return (

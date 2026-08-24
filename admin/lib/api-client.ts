@@ -6,27 +6,10 @@ export interface ApiResponse<T = unknown> {
 }
 
 function getApiBaseUrl(): string {
-  if (typeof window !== 'undefined') {
-    const isLocalhost =
-      window.location.hostname === 'localhost' ||
-      window.location.hostname === '127.0.0.1' ||
-      window.location.hostname === '0.0.0.0';
-
-    if (!isLocalhost) {
-      if (
-        process.env.NEXT_PUBLIC_API_URL &&
-        !process.env.NEXT_PUBLIC_API_URL.includes('localhost') &&
-        !process.env.NEXT_PUBLIC_API_URL.includes('127.0.0.1')
-      ) {
-        return process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, '');
-      }
-      return 'https://yasin-laptop-backend.vercel.app/api';
-    }
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, '');
   }
-
-  return (
-    process.env.NEXT_PUBLIC_API_URL || 'https://yasin-laptop-backend.vercel.app/api'
-  ).replace(/\/$/, '');
+  return 'https://yasin-laptop-backend.vercel.app/api';
 }
 
 export async function adminApiClient<T>(
