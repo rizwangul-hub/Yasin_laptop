@@ -37,7 +37,6 @@ const MENU_ITEMS = [
   { name: 'Customer Reviews', href: '/reviews', icon: Star },
   { name: 'Categories', href: '/categories', icon: FolderTree },
   { name: 'Brands', href: '/brands', icon: Building2 },
-  { name: 'Use Cases', href: '/use-cases', icon: Cpu },
   { name: 'Accessories', href: '/accessories', icon: Layers },
   { name: 'Hero Media', href: '/hero-media', icon: ImageIcon },
   { name: 'Media Library', href: '/media', icon: ImageIcon },

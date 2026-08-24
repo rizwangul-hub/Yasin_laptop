@@ -30,7 +30,7 @@ const HERO_SLIDES: HeroSlide[] = [
     id: 2,
     desktopImage: '/image/L-hero-2.jpg',
     mobileImage: '/image/m-hero-2.jpg',
-    link: '/laptops?category=business-laptops',
+    link: '/laptops?brand=dell',
     tag: 'Student & Enterprise',
     model: 'Dell Latitude & XPS',
   },

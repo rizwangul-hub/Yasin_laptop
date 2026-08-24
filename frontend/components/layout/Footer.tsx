@@ -96,17 +96,22 @@ export const Footer: React.FC = () => {
           {/* Categories */}
           <div>
             <h3 className="text-sm font-bold text-white tracking-wider uppercase mb-4">
-              Categories
+              Browse Categories
             </h3>
             <ul className="space-y-2.5 text-xs sm:text-sm">
               <li>
-                <Link href="/laptops?category=business-laptops" className="text-charcoal-400 hover:text-brand-400 transition-colors">
-                  Business Laptops
+                <Link href="/laptops?brand=hp" className="text-charcoal-400 hover:text-brand-400 transition-colors">
+                  HP Laptops
                 </Link>
               </li>
               <li>
-                <Link href="/laptops?category=student-budget-laptops" className="text-charcoal-400 hover:text-brand-400 transition-colors">
-                  Student &amp; Budget Laptops
+                <Link href="/laptops?brand=dell" className="text-charcoal-400 hover:text-brand-400 transition-colors">
+                  Dell Laptops
+                </Link>
+              </li>
+              <li>
+                <Link href="/laptops?brand=lenovo" className="text-charcoal-400 hover:text-brand-400 transition-colors">
+                  Lenovo ThinkPads
                 </Link>
               </li>
               <li>
