@@ -73,6 +73,19 @@ interface ProductFormProps {
   productId?: string;
 }
 
+const STANDARD_BRANDS: Array<{ _id: string; name: string }> = [
+  { _id: 'HP', name: 'HP' },
+  { _id: 'Dell', name: 'Dell' },
+  { _id: 'Lenovo', name: 'Lenovo' },
+  { _id: 'Apple', name: 'Apple' },
+  { _id: 'Acer', name: 'Acer' },
+  { _id: 'Asus', name: 'Asus' },
+  { _id: 'Samsung', name: 'Samsung' },
+  { _id: 'Toshiba', name: 'Toshiba' },
+  { _id: 'Microsoft', name: 'Microsoft' },
+  { _id: 'Other', name: 'Other' },
+];
+
 export const ProductForm: React.FC<ProductFormProps> = ({ initialData, productId }) => {
   const router = useRouter();
 
@@ -80,7 +93,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, productId
     initialData || {
       name: '',
       slug: '',
-      brand: '',
+      brand: 'HP',
       laptopModel: '',
       productType: 'laptop',
       description: '',
@@ -116,36 +129,46 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, productId
     }
   );
 
-  const [brands, setBrands] = useState<Array<{ _id: string; name: string }>>([]);
+  const [brands, setBrands] = useState<Array<{ _id: string; name: string }>>(STANDARD_BRANDS);
   const [categoriesList, setCategoriesList] = useState<Array<{ _id: string; name: string }>>([]);
-  const [useCasesList, setUseCasesList] = useState<Array<{ _id: string; name: string }>>([]);
+  const [isCustomBrand, setIsCustomBrand] = useState(false);
+  const [customBrandName, setCustomBrandName] = useState('');
 
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  // Load auxiliary lists: brands, categories, use-cases
+  // Load auxiliary lists: brands, categories
   useEffect(() => {
     async function loadAux() {
       try {
-        const [bRes, cRes, uRes] = await Promise.allSettled([
+        const [bRes, cRes] = await Promise.allSettled([
           adminApiClient<Array<{ _id: string; name: string }>>('/brands'),
           adminApiClient<Array<{ _id: string; name: string }>>('/categories'),
-          adminApiClient<Array<{ _id: string; name: string }>>('/use-cases'),
         ]);
 
         if (bRes.status === 'fulfilled' && bRes.value.success && bRes.value.data) {
           const raw = bRes.value.data as unknown as Record<string, unknown>;
-          setBrands(
-            (Array.isArray(raw)
-              ? raw
-              : Array.isArray(raw.brands)
-              ? raw.brands
-              : Array.isArray(raw.items)
-              ? raw.items
-              : []) as Array<{ _id: string; name: string }>
-          );
+          const apiBrands = (Array.isArray(raw)
+            ? raw
+            : Array.isArray(raw.brands)
+            ? raw.brands
+            : Array.isArray(raw.items)
+            ? raw.items
+            : []) as Array<{ _id: string; name: string }>;
+
+          if (apiBrands.length > 0) {
+            // Merge API brands with standard brands
+            const existingNames = new Set(apiBrands.map((b) => b.name.toLowerCase()));
+            const merged = [...apiBrands];
+            for (const sb of STANDARD_BRANDS) {
+              if (!existingNames.has(sb.name.toLowerCase())) {
+                merged.push(sb);
+              }
+            }
+            setBrands(merged);
+          }
         }
 
         if (cRes.status === 'fulfilled' && cRes.value.success && cRes.value.data) {
@@ -160,21 +183,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, productId
               : []) as Array<{ _id: string; name: string }>
           );
         }
-
-        if (uRes.status === 'fulfilled' && uRes.value.success && uRes.value.data) {
-          const raw = uRes.value.data as unknown as Record<string, unknown>;
-          setUseCasesList(
-            (Array.isArray(raw)
-              ? raw
-              : Array.isArray(raw.useCases)
-              ? raw.useCases
-              : Array.isArray(raw.items)
-              ? raw.items
-              : []) as Array<{ _id: string; name: string }>
-          );
-        }
       } catch {
-        // auxiliary load error
+        // auxiliary load error - gracefully fallback to standard brands
       }
     }
 
@@ -284,8 +294,21 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, productId
   // Form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.brand || formData.price <= 0) {
-      setError('Please provide Product Name, Brand and a valid Price.');
+
+    const finalBrand = isCustomBrand ? customBrandName.trim() : formData.brand?.trim();
+
+    if (!formData.name || !formData.name.trim()) {
+      setError('Please provide a Product Full Title (e.g. HP EliteBook 840 G7).');
+      return;
+    }
+
+    if (!finalBrand) {
+      setError('Please select or enter a Brand (e.g. HP, Dell, Lenovo, Apple).');
+      return;
+    }
+
+    if (!formData.price || Number(formData.price) <= 0) {
+      setError('Please provide a valid Price greater than 0.');
       return;
     }
 
@@ -297,9 +320,19 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, productId
       const endpoint = productId ? `/products/${productId}` : '/products';
       const method = productId ? 'PUT' : 'POST';
 
+      const payload = {
+        ...formData,
+        brand: finalBrand,
+        laptopModel: formData.laptopModel?.trim() || formData.name.trim(),
+        description:
+          formData.description?.trim() ||
+          formData.shortDescription?.trim() ||
+          `${formData.name.trim()} - genuine tested unit with checking warranty and original charger included.`,
+      };
+
       const res = await adminApiClient(endpoint, {
         method,
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       if (res.success) {
@@ -424,21 +457,47 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, productId
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-charcoal-900 mb-1">
-              Brand
-            </label>
-            <select
-              value={formData.brand}
-              onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-              className="w-full px-4 py-2.5 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-950 focus:outline-none focus:border-brand-500 font-medium"
-            >
-              <option value="">Select Brand...</option>
-              {brands.map((b) => (
-                <option key={b._id} value={b._id}>
-                  {b.name}
-                </option>
-              ))}
-            </select>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-xs font-bold text-charcoal-900">
+                Brand *
+              </label>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsCustomBrand(!isCustomBrand);
+                  if (!isCustomBrand && !customBrandName) {
+                    setCustomBrandName(formData.brand || '');
+                  }
+                }}
+                className="text-[11px] font-bold text-brand-700 hover:text-brand-800 underline"
+              >
+                {isCustomBrand ? 'Choose from list' : '+ Custom Brand'}
+              </button>
+            </div>
+
+            {isCustomBrand ? (
+              <input
+                type="text"
+                required
+                value={customBrandName}
+                onChange={(e) => setCustomBrandName(e.target.value)}
+                placeholder="e.g. MSI, Razer, Microsoft..."
+                className="w-full px-4 py-2.5 rounded-xl bg-charcoal-50 border border-brand-400 text-xs text-charcoal-950 focus:outline-none focus:border-brand-500 font-medium"
+              />
+            ) : (
+              <select
+                value={formData.brand}
+                onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
+                className="w-full px-4 py-2.5 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-950 focus:outline-none focus:border-brand-500 font-medium"
+              >
+                <option value="">Select Brand...</option>
+                {brands.map((b) => (
+                  <option key={b._id} value={b._id}>
+                    {b.name}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
 
           <div>

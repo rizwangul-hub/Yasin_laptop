@@ -1,6 +1,8 @@
+import mongoose from 'mongoose';
 import { Request, Response } from 'express';
 import { productQueryService, ProductQueryParams } from '../services/productQueryService';
 import { Product, IProductDocument } from '../models/Product';
+import { Brand } from '../models/Brand';
 import { sendSuccess, sendError } from '../utils/apiResponse';
 import { isDatabaseConnected } from '../config/database';
 import { PaginatedResponse, IProduct } from '../types';
@@ -136,6 +138,46 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
   try {
     const productData = req.body;
 
+    if (!productData.name) {
+      sendError(res, 'Product Name is required', undefined, 400);
+      return;
+    }
+
+    // Auto-resolve Brand ObjectId if passed as name or string
+    if (productData.brand) {
+      const isObjectId = mongoose.Types.ObjectId.isValid(productData.brand) && String(productData.brand).length === 24;
+      if (!isObjectId) {
+        const brandName = String(productData.brand).trim();
+        const brandSlug = brandName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+        let existingBrand = await Brand.findOne({
+          $or: [{ slug: brandSlug }, { name: { $regex: new RegExp(`^${brandName}$`, 'i') } }],
+        });
+        if (!existingBrand) {
+          existingBrand = await Brand.create({
+            name: brandName.toUpperCase() === 'HP' ? 'HP' : brandName.charAt(0).toUpperCase() + brandName.slice(1),
+            slug: brandSlug || 'generic',
+            isActive: true,
+          });
+        }
+        productData.brand = existingBrand._id;
+      }
+    } else {
+      // Default to HP if unspecified
+      let defaultBrand = await Brand.findOne({ slug: 'hp' });
+      if (!defaultBrand) {
+        defaultBrand = await Brand.create({ name: 'HP', slug: 'hp', isActive: true });
+      }
+      productData.brand = defaultBrand._id;
+    }
+
+    if (!productData.laptopModel) {
+      productData.laptopModel = productData.name;
+    }
+
+    if (!productData.description) {
+      productData.description = productData.shortDescription || productData.name;
+    }
+
     if (!productData.slug && productData.name) {
       productData.slug = productData.name
         .toLowerCase()
@@ -143,7 +185,7 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
         .replace(/^-|-$/g, '');
     }
 
-    let finalSlug = productData.slug;
+    let finalSlug = productData.slug || `product-${Date.now()}`;
     let counter = 1;
     while (await Product.findOne({ slug: finalSlug, isDeleted: false })) {
       finalSlug = `${productData.slug}-${counter}`;
@@ -173,6 +215,26 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
 
   try {
     const updates = req.body;
+
+    // Auto-resolve Brand ObjectId if passed as name or string
+    if (updates.brand) {
+      const isObjectId = mongoose.Types.ObjectId.isValid(updates.brand) && String(updates.brand).length === 24;
+      if (!isObjectId) {
+        const brandName = String(updates.brand).trim();
+        const brandSlug = brandName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+        let existingBrand = await Brand.findOne({
+          $or: [{ slug: brandSlug }, { name: { $regex: new RegExp(`^${brandName}$`, 'i') } }],
+        });
+        if (!existingBrand) {
+          existingBrand = await Brand.create({
+            name: brandName.toUpperCase() === 'HP' ? 'HP' : brandName.charAt(0).toUpperCase() + brandName.slice(1),
+            slug: brandSlug || 'generic',
+            isActive: true,
+          });
+        }
+        updates.brand = existingBrand._id;
+      }
+    }
 
     if (updates.slug) {
       const existing = await Product.findOne({
