@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { DEFAULT_BUSINESS_CONFIG, STORE_BRANCHES } from '@/lib/business-config';
 import { MapPin, Phone, Clock, MessageCircle, ShieldCheck, ExternalLink, Store } from 'lucide-react';
 import { ContactForm } from '@/components/contact/ContactForm';
@@ -86,12 +87,20 @@ export default function ContactPage() {
               </div>
 
               <div className="pt-3 border-t border-charcoal-100 flex items-center justify-between gap-2">
-                <a
-                  href={`tel:${branch.phone}`}
-                  className="px-3.5 py-2 rounded-xl bg-charcoal-50 hover:bg-charcoal-100 text-charcoal-800 text-xs font-bold transition-colors"
-                >
-                  Call Shop
-                </a>
+                <div className="flex items-center gap-2">
+                  <a
+                    href={`tel:${branch.phone}`}
+                    className="px-3 py-2 rounded-xl bg-charcoal-50 hover:bg-charcoal-100 text-charcoal-800 text-xs font-bold transition-colors"
+                  >
+                    Call Shop
+                  </a>
+                  <Link
+                    href={branch.pageHref}
+                    className="px-3 py-2 rounded-xl bg-brand-50 hover:bg-brand-100 text-brand-900 text-xs font-bold transition-colors"
+                  >
+                    City Hub
+                  </Link>
+                </div>
                 <a
                   href={branchWhatsAppUrl}
                   target="_blank"

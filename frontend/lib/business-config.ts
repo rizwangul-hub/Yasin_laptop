@@ -11,6 +11,7 @@ export interface IStoreBranch {
   whatsapp: string;
   timings: string;
   mapsUrl?: string;
+  pageHref: string;
   isMain?: boolean;
 }
 
@@ -26,6 +27,7 @@ export const STORE_BRANCHES: IStoreBranch[] = [
     whatsapp: '+923427709129',
     timings: 'Monday – Saturday: 9:00 AM – 9:00 PM',
     mapsUrl: 'https://maps.google.com/?q=Lakki+Marwat+Main+Bazaar',
+    pageHref: '/laptop-shop-lakki-marwat',
     isMain: true,
   },
   {
@@ -39,6 +41,7 @@ export const STORE_BRANCHES: IStoreBranch[] = [
     whatsapp: '+923427709129',
     timings: 'Monday – Saturday: 10:00 AM – 8:30 PM',
     mapsUrl: 'https://maps.google.com/?q=Peshawar+Computer+Market',
+    pageHref: '/laptops-in-peshawar',
     isMain: false,
   },
   {
@@ -52,6 +55,7 @@ export const STORE_BRANCHES: IStoreBranch[] = [
     whatsapp: '+923427709129',
     timings: 'Monday – Saturday: 10:00 AM – 8:30 PM',
     mapsUrl: 'https://maps.google.com/?q=Sargodha+Computer+Market',
+    pageHref: '/laptops-in-sargodha',
     isMain: false,
   },
 ];

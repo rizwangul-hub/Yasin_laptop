@@ -76,9 +76,9 @@ export const generateLocalBusinessJsonLd = () => {
     logo: `${SITE_URL}/image/weblogo.jpg`,
     url: SITE_URL,
     telephone: process.env.NEXT_PUBLIC_PHONE_NUMBER || '+923427709129',
-    priceRange: 'PKR',
+    priceRange: 'PKR 15,000 - 250,000',
     currenciesAccepted: 'PKR',
-    paymentAccepted: 'Cash, Bank Transfer',
+    paymentAccepted: 'Cash, Cash on Delivery, Bank Transfer, EasyPaisa, JazzCash',
     address: {
       '@type': 'PostalAddress',
       streetAddress: 'Main Bazaar',
@@ -90,11 +90,62 @@ export const generateLocalBusinessJsonLd = () => {
     founder: {
       '@type': 'Person',
       name: 'Yasin Wahab',
+      jobTitle: 'Founder & CEO',
+      telephone: '+923427709129',
     },
-    areaServed: {
-      '@type': 'AdministrativeArea',
-      name: 'Lakki Marwat, Khyber Pakhtunkhwa',
-    },
+    department: [
+      {
+        '@type': 'ComputerStore',
+        name: 'Yasin Laptop Hub - Lakki Marwat Main Branch',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'Main Bazaar',
+          addressLocality: 'Lakki Marwat',
+          addressRegion: 'Khyber Pakhtunkhwa',
+          addressCountry: 'PK',
+        },
+        telephone: '+923427709129',
+      },
+      {
+        '@type': 'ComputerStore',
+        name: 'Yasin Laptop Hub - Peshawar Regional Branch',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'Saddar / University Road Computer Market',
+          addressLocality: 'Peshawar',
+          addressRegion: 'Khyber Pakhtunkhwa',
+          addressCountry: 'PK',
+        },
+        telephone: '+923427709129',
+      },
+      {
+        '@type': 'ComputerStore',
+        name: 'Yasin Laptop Hub - Sargodha Regional Branch',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'Kutchery Road / Trust Plaza Computer Market',
+          addressLocality: 'Sargodha',
+          addressRegion: 'Punjab',
+          addressCountry: 'PK',
+        },
+        telephone: '+923427709129',
+      },
+    ],
+    areaServed: [
+      'Peshawar',
+      'Bahawalpur',
+      'Lakki Marwat',
+      'Sargodha',
+      'Bannu',
+      'Dera Ismail Khan',
+      'Mardan',
+      'Charsadda',
+      'Hayatabad',
+      'South Punjab',
+      'Khyber Pakhtunkhwa',
+      'Punjab',
+      'Pakistan',
+    ],
   };
 };
 

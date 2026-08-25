@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { MapPin, Phone, MessageCircle, Clock, ExternalLink, Building2, Store } from 'lucide-react';
 import { DEFAULT_BUSINESS_CONFIG, STORE_BRANCHES } from '@/lib/business-config';
 import { sanitizeWhatsAppNumber } from '@/lib/formatters';
@@ -111,12 +112,20 @@ export const ContactPreview: React.FC = () => {
               </div>
 
               <div className="pt-3 border-t border-charcoal-100 flex items-center justify-between gap-2">
-                <a
-                  href={`tel:${branch.phone}`}
-                  className="px-3 py-1.5 rounded-xl bg-charcoal-50 hover:bg-charcoal-100 text-charcoal-800 text-xs font-bold transition-colors"
-                >
-                  Call Store
-                </a>
+                <div className="flex items-center gap-2">
+                  <a
+                    href={`tel:${branch.phone}`}
+                    className="px-3 py-1.5 rounded-xl bg-charcoal-50 hover:bg-charcoal-100 text-charcoal-800 text-xs font-bold transition-colors"
+                  >
+                    Call Store
+                  </a>
+                  <Link
+                    href={branch.pageHref}
+                    className="px-3 py-1.5 rounded-xl bg-brand-50 hover:bg-brand-100 text-brand-900 text-xs font-bold transition-colors"
+                  >
+                    City Hub
+                  </Link>
+                </div>
                 <a
                   href={branchWhatsAppUrl}
                   target="_blank"
