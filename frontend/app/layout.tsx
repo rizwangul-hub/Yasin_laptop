@@ -53,6 +53,18 @@ export const metadata: Metadata = {
   verification: {
     google: 'ywPBhptvNvklv1A9JFLg77JOIiucIVkoVNd3_fERWCU',
   },
+  icons: {
+    icon: [
+      { url: '/image/weblogo.jpg', type: 'image/jpeg' },
+      { url: '/weblogo.jpg', type: 'image/jpeg' },
+      { url: '/favicon.ico' },
+    ],
+    shortcut: ['/image/weblogo.jpg'],
+    apple: [
+      { url: '/image/weblogo.jpg', type: 'image/jpeg' },
+      { url: '/apple-touch-icon.jpg', type: 'image/jpeg' },
+    ],
+  },
 };
 
 export default function RootLayout({
@@ -67,6 +79,9 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta name="google-site-verification" content="ywPBhptvNvklv1A9JFLg77JOIiucIVkoVNd3_fERWCU" />
+        <link rel="icon" href="/image/weblogo.jpg" type="image/jpeg" sizes="any" />
+        <link rel="shortcut icon" href="/image/weblogo.jpg" type="image/jpeg" />
+        <link rel="apple-touch-icon" href="/image/weblogo.jpg" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}

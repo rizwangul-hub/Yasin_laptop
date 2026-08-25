@@ -10,7 +10,7 @@ export const SEO_CONFIG = {
   defaultTitle: 'Yasin Laptop Hub | Quality Laptops & Chromebooks in Lakki Marwat',
   defaultDescription:
     'Explore genuine business laptops, Chromebooks, and original accessories at Yasin Laptop Hub in Lakki Marwat, KPK, Pakistan. Checking warranty and WhatsApp inquiries.',
-  defaultOgImage: `${SITE_URL}/og-image.jpg`,
+  defaultOgImage: `${SITE_URL}/image/weblogo.jpg`,
   locale: 'en_PK',
   currency: 'PKR',
   contact: {
@@ -31,7 +31,7 @@ export const getCanonicalUrl = (path = ''): string => {
 
 export const generateProductJsonLd = (product: any) => {
   const brandName = typeof product.brand === 'object' && product.brand !== null ? product.brand.name : product.brand || 'Laptop';
-  const imageUrl = product.images?.[0]?.url || `${SITE_URL}/placeholder-laptop.jpg`;
+  const imageUrl = product.images?.[0]?.url || `${SITE_URL}/image/weblogo.jpg`;
   const inStock = product.stockStatus === 'available';
 
   let conditionSchema = 'https://schema.org/UsedCondition';
@@ -72,7 +72,8 @@ export const generateLocalBusinessJsonLd = () => {
     '@context': 'https://schema.org',
     '@type': 'ComputerStore',
     name: 'Yasin Laptop Hub',
-    image: `${SITE_URL}/logo.png`,
+    image: `${SITE_URL}/image/weblogo.jpg`,
+    logo: `${SITE_URL}/image/weblogo.jpg`,
     url: SITE_URL,
     telephone: process.env.NEXT_PUBLIC_PHONE_NUMBER || '+923427709129',
     priceRange: 'PKR',
