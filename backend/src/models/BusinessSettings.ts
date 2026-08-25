@@ -10,6 +10,20 @@ export interface IDailyStockVideo {
   buttonText?: string;
 }
 
+export interface IStoreBranchSetting {
+  id: string;
+  name: string;
+  city: string;
+  province: string;
+  address: string;
+  tag: string;
+  phone: string;
+  whatsapp: string;
+  timings: string;
+  mapsUrl?: string;
+  isMain?: boolean;
+}
+
 export interface IBusinessSettingsDocument extends Document {
   businessName: string;
   ownerName: string;
@@ -26,6 +40,7 @@ export interface IBusinessSettingsDocument extends Document {
     province: string;
     country: string;
   };
+  branches?: IStoreBranchSetting[];
   googleMapsUrl?: string;
   facebookUrl?: string;
   instagramUrl?: string;
@@ -77,6 +92,65 @@ const DailyStockVideoSchema = new Schema<IDailyStockVideo>(
   { _id: false }
 );
 
+const StoreBranchSchema = new Schema(
+  {
+    id: { type: String, required: true },
+    name: { type: String, required: true },
+    city: { type: String, required: true },
+    province: { type: String, required: true },
+    address: { type: String, required: true },
+    tag: { type: String, default: '' },
+    phone: { type: String, default: '03427709129' },
+    whatsapp: { type: String, default: '+923427709129' },
+    timings: { type: String, default: 'Monday – Saturday: 9:00 AM – 9:00 PM' },
+    mapsUrl: { type: String, default: '' },
+    isMain: { type: Boolean, default: false },
+  },
+  { _id: false }
+);
+
+const DEFAULT_BRANCHES: IStoreBranchSetting[] = [
+  {
+    id: 'lakki-marwat',
+    name: 'Lakki Marwat (Main Shop & Head Office)',
+    city: 'Lakki Marwat',
+    province: 'Khyber Pakhtunkhwa',
+    address: 'Main Bazaar, Lakki Marwat, Khyber Pakhtunkhwa, Pakistan',
+    tag: 'Main Store & Head Office',
+    phone: '03427709129',
+    whatsapp: '+923427709129',
+    timings: 'Monday – Saturday: 9:00 AM – 9:00 PM',
+    mapsUrl: 'https://maps.google.com/?q=Lakki+Marwat+Main+Bazaar',
+    isMain: true,
+  },
+  {
+    id: 'peshawar',
+    name: 'Peshawar Branch',
+    city: 'Peshawar',
+    province: 'Khyber Pakhtunkhwa',
+    address: 'Saddar / University Road Computer Market, Peshawar, KPK, Pakistan',
+    tag: 'KPK Regional Branch',
+    phone: '03427709129',
+    whatsapp: '+923427709129',
+    timings: 'Monday – Saturday: 10:00 AM – 8:30 PM',
+    mapsUrl: 'https://maps.google.com/?q=Peshawar+Computer+Market',
+    isMain: false,
+  },
+  {
+    id: 'sargodha',
+    name: 'Sargodha Branch',
+    city: 'Sargodha',
+    province: 'Punjab',
+    address: 'Kutchery Road / Trust Plaza, Computer Market, Sargodha, Punjab, Pakistan',
+    tag: 'Punjab Regional Branch',
+    phone: '03427709129',
+    whatsapp: '+923427709129',
+    timings: 'Monday – Saturday: 10:00 AM – 8:30 PM',
+    mapsUrl: 'https://maps.google.com/?q=Sargodha+Computer+Market',
+    isMain: false,
+  },
+];
+
 const BusinessSettingsSchema = new Schema<IBusinessSettingsDocument>(
   {
     businessName: { type: String, required: true, default: 'Yasin Laptop Hub' },
@@ -88,6 +162,7 @@ const BusinessSettingsSchema = new Schema<IBusinessSettingsDocument>(
     phoneNumber: { type: String, default: '03427709129' },
     email: { type: String, default: 'info@yasinlaptophub.com' },
     address: { type: AddressSchema, default: () => ({}) },
+    branches: { type: [StoreBranchSchema], default: DEFAULT_BRANCHES },
     googleMapsUrl: { type: String, default: '' },
     facebookUrl: { type: String, default: '' },
     instagramUrl: { type: String, default: '' },

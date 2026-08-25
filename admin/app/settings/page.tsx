@@ -2,7 +2,21 @@
 
 import React, { useState, useEffect } from 'react';
 import { adminApiClient } from '@/lib/api-client';
-import { Settings, ShieldCheck, Check, AlertCircle, Loader2, Save, PlayCircle, Share2 } from 'lucide-react';
+import { Settings, ShieldCheck, Check, AlertCircle, Loader2, Save, PlayCircle, Share2, MapPin, Store, Building2, Phone, MessageCircle, Clock } from 'lucide-react';
+
+export interface IStoreBranch {
+  id: string;
+  name: string;
+  city: string;
+  province: string;
+  address: string;
+  tag: string;
+  phone: string;
+  whatsapp: string;
+  timings: string;
+  mapsUrl?: string;
+  isMain?: boolean;
+}
 
 interface IBusinessSettings {
   businessName: string;
@@ -18,6 +32,7 @@ interface IBusinessSettings {
     province: string;
     country: string;
   };
+  branches?: IStoreBranch[];
   googleMapsUrl?: string;
   socialLinks?: {
     facebook?: string;
@@ -36,6 +51,48 @@ interface IBusinessSettings {
   };
 }
 
+const DEFAULT_SETTINGS_BRANCHES: IStoreBranch[] = [
+  {
+    id: 'lakki-marwat',
+    name: 'Lakki Marwat (Main Shop & Head Office)',
+    city: 'Lakki Marwat',
+    province: 'Khyber Pakhtunkhwa',
+    address: 'Main Bazaar, Lakki Marwat, Khyber Pakhtunkhwa, Pakistan',
+    tag: 'Main Store & Head Office',
+    phone: '03427709129',
+    whatsapp: '+923427709129',
+    timings: 'Monday – Saturday: 9:00 AM – 9:00 PM',
+    mapsUrl: 'https://maps.google.com/?q=Lakki+Marwat+Main+Bazaar',
+    isMain: true,
+  },
+  {
+    id: 'peshawar',
+    name: 'Peshawar Branch',
+    city: 'Peshawar',
+    province: 'Khyber Pakhtunkhwa',
+    address: 'Saddar / University Road Computer Market, Peshawar, KPK, Pakistan',
+    tag: 'KPK Regional Branch',
+    phone: '03427709129',
+    whatsapp: '+923427709129',
+    timings: 'Monday – Saturday: 10:00 AM – 8:30 PM',
+    mapsUrl: 'https://maps.google.com/?q=Peshawar+Computer+Market',
+    isMain: false,
+  },
+  {
+    id: 'sargodha',
+    name: 'Sargodha Branch',
+    city: 'Sargodha',
+    province: 'Punjab',
+    address: 'Kutchery Road / Trust Plaza, Computer Market, Sargodha, Punjab, Pakistan',
+    tag: 'Punjab Regional Branch',
+    phone: '03427709129',
+    whatsapp: '+923427709129',
+    timings: 'Monday – Saturday: 10:00 AM – 8:30 PM',
+    mapsUrl: 'https://maps.google.com/?q=Sargodha+Computer+Market',
+    isMain: false,
+  },
+];
+
 export default function AdminSettingsPage() {
   const [formData, setFormData] = useState<IBusinessSettings>({
     businessName: 'Yasin Laptop Hub',
@@ -51,6 +108,7 @@ export default function AdminSettingsPage() {
       province: 'Khyber Pakhtunkhwa',
       country: 'Pakistan',
     },
+    branches: DEFAULT_SETTINGS_BRANCHES,
     googleMapsUrl: '',
     socialLinks: {
       facebook: '',
@@ -87,6 +145,7 @@ export default function AdminSettingsPage() {
             whatsappNumber: raw.whatsappNumber || '+923427709129',
             phoneNumber: raw.phoneNumber || raw.phone || '03427709129',
             address: { ...prev.address, ...raw?.address },
+            branches: raw?.branches && raw.branches.length > 0 ? raw.branches : DEFAULT_SETTINGS_BRANCHES,
             socialLinks: {
               facebook: raw?.socialLinks?.facebook || '',
               instagram:
@@ -481,81 +540,208 @@ export default function AdminSettingsPage() {
         </div>
       </div>
 
-      {/* 5. PHYSICAL STORE LOCATION */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-white border border-charcoal-200/90 shadow-soft space-y-4">
-        <h2 className="text-sm font-black text-charcoal-950 uppercase tracking-wider">
-          5. Physical Store Address (Lakki Marwat, KPK)
-        </h2>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {/* 5. PHYSICAL STORE LOCATIONS (LAKKI MARWAT, PESHAWAR, SARGODHA) */}
+      <div className="space-y-6">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-brand-100 border border-brand-300 text-brand-900 flex items-center justify-center shadow-xs">
+            <Store className="w-5 h-5" />
+          </div>
           <div>
-            <label className="block text-xs font-bold text-charcoal-900 mb-1">Street / Area</label>
-            <input
-              type="text"
-              value={formData.address.street}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  address: { ...formData.address, street: e.target.value },
-                })
-              }
-              className="w-full px-4 py-2.5 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-950 focus:outline-none focus:border-brand-500 font-medium"
-            />
+            <h2 className="text-base font-black text-charcoal-950 uppercase tracking-wider">
+              5. Physical Store Locations (3 Branches: Lakki Marwat, Peshawar, Sargodha)
+            </h2>
+            <p className="text-xs text-charcoal-500 font-medium">
+              Configure addresses, phone numbers, WhatsApp, store timings, and Google Maps pin URLs for each branch.
+            </p>
           </div>
+        </div>
 
-          <div>
-            <label className="block text-xs font-bold text-charcoal-900 mb-1">City</label>
-            <input
-              type="text"
-              value={formData.address.city}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  address: { ...formData.address, city: e.target.value },
-                })
-              }
-              className="w-full px-4 py-2.5 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-950 focus:outline-none focus:border-brand-500 font-medium"
-            />
-          </div>
+        <div className="space-y-6">
+          {(formData.branches || DEFAULT_SETTINGS_BRANCHES).map((branch, index) => (
+            <div
+              key={branch.id || index}
+              className={`p-6 sm:p-8 rounded-3xl bg-white border shadow-soft space-y-5 ${
+                branch.isMain ? 'border-brand-400 ring-2 ring-brand-300/30' : 'border-charcoal-200/90'
+              }`}
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-charcoal-100">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-brand-50 border border-brand-200 text-brand-900 flex items-center justify-center font-bold text-xs">
+                    {index + 1}
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-black text-charcoal-950">
+                      {branch.name}
+                    </h3>
+                    <p className="text-[11px] text-charcoal-500 font-medium">
+                      {branch.city}, {branch.province}
+                    </p>
+                  </div>
+                </div>
 
-          <div>
-            <label className="block text-xs font-bold text-charcoal-900 mb-1">Province</label>
-            <input
-              type="text"
-              value={formData.address.province}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  address: { ...formData.address, province: e.target.value },
-                })
-              }
-              className="w-full px-4 py-2.5 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-950 focus:outline-none focus:border-brand-500 font-medium"
-            />
-          </div>
+                <span
+                  className={`text-[10px] font-bold px-3 py-1 rounded-full border self-start sm:self-auto ${
+                    branch.isMain
+                      ? 'bg-brand-500 text-charcoal-950 border-brand-600'
+                      : 'bg-charcoal-100 text-charcoal-700 border-charcoal-200'
+                  }`}
+                >
+                  {branch.tag || `${branch.city} Branch`}
+                </span>
+              </div>
 
-          <div className="sm:col-span-3">
-            <label className="block text-xs font-bold text-charcoal-900 mb-1">
-              Google Maps Pin URL
-            </label>
-            <input
-              type="text"
-              value={formData.googleMapsUrl || ''}
-              onChange={(e) => setFormData({ ...formData, googleMapsUrl: e.target.value })}
-              placeholder="https://maps.google.com/?q=..."
-              className="w-full px-4 py-2.5 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-950 focus:outline-none focus:border-brand-500 font-medium"
-            />
-          </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-bold text-charcoal-900 mb-1">
+                    Branch Full Name / Title
+                  </label>
+                  <input
+                    type="text"
+                    value={branch.name}
+                    onChange={(e) => {
+                      const updated = [...(formData.branches || DEFAULT_SETTINGS_BRANCHES)];
+                      updated[index] = { ...updated[index], name: e.target.value };
+                      setFormData({ ...formData, branches: updated });
+                    }}
+                    className="w-full px-4 py-2.5 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-950 focus:outline-none focus:border-brand-500 font-medium"
+                  />
+                </div>
 
-          <div className="sm:col-span-3">
-            <label className="block text-xs font-bold text-charcoal-900 mb-1">Store Hours</label>
-            <input
-              type="text"
-              value={formData.openingHours || ''}
-              onChange={(e) => setFormData({ ...formData, openingHours: e.target.value })}
-              placeholder="e.g. Monday – Saturday: 9:00 AM – 9:00 PM"
-              className="w-full px-4 py-2.5 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-950 focus:outline-none focus:border-brand-500 font-medium"
-            />
-          </div>
+                <div>
+                  <label className="block text-xs font-bold text-charcoal-900 mb-1">
+                    Badge / Tag Label
+                  </label>
+                  <input
+                    type="text"
+                    value={branch.tag}
+                    onChange={(e) => {
+                      const updated = [...(formData.branches || DEFAULT_SETTINGS_BRANCHES)];
+                      updated[index] = { ...updated[index], tag: e.target.value };
+                      setFormData({ ...formData, branches: updated });
+                    }}
+                    placeholder="e.g. Main Store / Regional Branch"
+                    className="w-full px-4 py-2.5 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-950 focus:outline-none focus:border-brand-500 font-medium"
+                  />
+                </div>
+
+                <div className="sm:col-span-2 lg:col-span-3">
+                  <label className="block text-xs font-bold text-charcoal-900 mb-1">
+                    Full Street Address
+                  </label>
+                  <input
+                    type="text"
+                    value={branch.address}
+                    onChange={(e) => {
+                      const updated = [...(formData.branches || DEFAULT_SETTINGS_BRANCHES)];
+                      updated[index] = { ...updated[index], address: e.target.value };
+                      setFormData({ ...formData, branches: updated });
+                    }}
+                    className="w-full px-4 py-2.5 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-950 focus:outline-none focus:border-brand-500 font-medium"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-charcoal-900 mb-1">
+                    City
+                  </label>
+                  <input
+                    type="text"
+                    value={branch.city}
+                    onChange={(e) => {
+                      const updated = [...(formData.branches || DEFAULT_SETTINGS_BRANCHES)];
+                      updated[index] = { ...updated[index], city: e.target.value };
+                      setFormData({ ...formData, branches: updated });
+                    }}
+                    className="w-full px-4 py-2.5 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-950 focus:outline-none focus:border-brand-500 font-medium"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-charcoal-900 mb-1">
+                    Province
+                  </label>
+                  <input
+                    type="text"
+                    value={branch.province}
+                    onChange={(e) => {
+                      const updated = [...(formData.branches || DEFAULT_SETTINGS_BRANCHES)];
+                      updated[index] = { ...updated[index], province: e.target.value };
+                      setFormData({ ...formData, branches: updated });
+                    }}
+                    className="w-full px-4 py-2.5 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-950 focus:outline-none focus:border-brand-500 font-medium"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-charcoal-900 mb-1">
+                    Phone Number
+                  </label>
+                  <input
+                    type="text"
+                    value={branch.phone}
+                    onChange={(e) => {
+                      const updated = [...(formData.branches || DEFAULT_SETTINGS_BRANCHES)];
+                      updated[index] = { ...updated[index], phone: e.target.value };
+                      setFormData({ ...formData, branches: updated });
+                    }}
+                    placeholder="03427709129"
+                    className="w-full px-4 py-2.5 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-950 focus:outline-none focus:border-brand-500 font-medium"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-charcoal-900 mb-1">
+                    WhatsApp Number
+                  </label>
+                  <input
+                    type="text"
+                    value={branch.whatsapp}
+                    onChange={(e) => {
+                      const updated = [...(formData.branches || DEFAULT_SETTINGS_BRANCHES)];
+                      updated[index] = { ...updated[index], whatsapp: e.target.value };
+                      setFormData({ ...formData, branches: updated });
+                    }}
+                    placeholder="+923427709129"
+                    className="w-full px-4 py-2.5 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-emerald-700 font-bold focus:outline-none focus:border-brand-500"
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-bold text-charcoal-900 mb-1">
+                    Operating / Store Timings
+                  </label>
+                  <input
+                    type="text"
+                    value={branch.timings}
+                    onChange={(e) => {
+                      const updated = [...(formData.branches || DEFAULT_SETTINGS_BRANCHES)];
+                      updated[index] = { ...updated[index], timings: e.target.value };
+                      setFormData({ ...formData, branches: updated });
+                    }}
+                    placeholder="Monday – Saturday: 9:00 AM – 9:00 PM"
+                    className="w-full px-4 py-2.5 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-950 focus:outline-none focus:border-brand-500 font-medium"
+                  />
+                </div>
+
+                <div className="sm:col-span-2 lg:col-span-3">
+                  <label className="block text-xs font-bold text-charcoal-900 mb-1">
+                    Google Maps Pin URL
+                  </label>
+                  <input
+                    type="text"
+                    value={branch.mapsUrl || ''}
+                    onChange={(e) => {
+                      const updated = [...(formData.branches || DEFAULT_SETTINGS_BRANCHES)];
+                      updated[index] = { ...updated[index], mapsUrl: e.target.value };
+                      setFormData({ ...formData, branches: updated });
+                    }}
+                    placeholder="https://maps.google.com/?q=..."
+                    className="w-full px-4 py-2.5 rounded-xl bg-charcoal-50 border border-charcoal-200 text-xs text-charcoal-950 focus:outline-none focus:border-brand-500 font-medium text-[11px]"
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </form>
