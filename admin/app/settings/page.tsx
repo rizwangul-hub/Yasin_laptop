@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { adminApiClient } from '@/lib/api-client';
-import { Settings, ShieldCheck, Check, AlertCircle, Loader2, Save, PlayCircle, Share2, MapPin, Store, Building2, Phone, MessageCircle, Clock } from 'lucide-react';
+import { Settings, ShieldCheck, Check, AlertCircle, Loader2, Save, PlayCircle, Share2, MapPin, Store, Building2, Phone, MessageCircle, Clock, Trash2 } from 'lucide-react';
 
 export interface IStoreBranch {
   id: string;
@@ -129,8 +129,47 @@ export default function AdminSettingsPage() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+
+  const handleClearInventory = async () => {
+    const confirmation = window.prompt(
+      'WARNING: This will permanently delete all laptop products and accessories from the database.\n\nType "DELETE" below to confirm:'
+    );
+
+    if (confirmation !== 'DELETE') {
+      if (confirmation !== null) {
+        alert('Action canceled. Confirmation text did not match "DELETE".');
+      }
+      return;
+    }
+
+    setIsClearing(true);
+    setError(null);
+    setSuccessMsg(null);
+
+    try {
+      const res = await adminApiClient<{ deletedProducts: number; deletedAccessories: number }>(
+        '/dashboard/clear-inventory',
+        {
+          method: 'POST',
+        }
+      );
+
+      if (res.success) {
+        setSuccessMsg(
+          `Inventory cleared successfully: ${res.data?.deletedProducts ?? 0} laptops and ${res.data?.deletedAccessories ?? 0} accessories removed.`
+        );
+      } else {
+        setError(res.message || 'Failed to clear inventory.');
+      }
+    } catch {
+      setError('Connection failure while clearing database.');
+    } finally {
+      setIsClearing(false);
+    }
+  };
 
   useEffect(() => {
     adminApiClient<IBusinessSettings & { phone?: string; instagramUrl?: string; tiktokUrl?: string }>(
@@ -742,6 +781,40 @@ export default function AdminSettingsPage() {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* 6. DANGER ZONE: CLEAR & RESET INVENTORY */}
+      <div className="p-6 sm:p-8 rounded-3xl bg-rose-50/60 border border-rose-200 shadow-soft space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 text-rose-700 font-black text-sm uppercase tracking-wider">
+              <Trash2 className="w-4 h-4" />
+              <span>Database Maintenance: Wipe Old Test Inventory</span>
+            </div>
+            <p className="text-xs text-rose-800/80 font-medium max-w-xl">
+              Permanently delete all existing laptop products and accessories from the database so you can start fresh. Your store settings, admin accounts, and categories will be kept safe.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleClearInventory}
+            disabled={isClearing}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-sm transition-all hover:scale-105 active:scale-95 disabled:opacity-50 shrink-0"
+          >
+            {isClearing ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Clearing Database...</span>
+              </>
+            ) : (
+              <>
+                <Trash2 className="w-4 h-4" />
+                <span>Clear All Products &amp; Accessories</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
     </form>

@@ -22,6 +22,7 @@ import {
   Eye,
   Trash2,
 } from 'lucide-react';
+import { compressImageFile } from '@/lib/image-utils';
 
 export interface IProductImageForm {
   url: string;
@@ -201,7 +202,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, productId
     }));
   };
 
-  // Upload image handler
+  // Upload image handler with automatic client-side compression
   const handleImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -214,12 +215,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, productId
       const newImages: IProductImageForm[] = [];
 
       for (const file of fileList) {
-        const base64 = await new Promise<string>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = reject;
-          reader.readAsDataURL(file);
-        });
+        // Compress image to max 1400px JPEG (~250KB) to ensure rapid, error-free upload
+        const compressedBase64 = await compressImageFile(file, 1400, 1400, 0.85);
 
         const uploadRes = await adminApiClient<{
           url: string;
@@ -227,7 +224,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, productId
         }>('/upload', {
           method: 'POST',
           body: JSON.stringify({
-            image: base64,
+            image: compressedBase64,
             folder: 'yasin-laptops',
           }),
         });
@@ -249,7 +246,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, productId
         }));
       }
     } catch {
-      setError('Image upload failed. Please verify image format and size.');
+      setError('Image upload failed. Please check internet connection and try again.');
     } finally {
       setIsUploading(false);
       e.target.value = '';

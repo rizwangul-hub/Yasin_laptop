@@ -3,7 +3,7 @@ import { Product } from '../models/Product';
 import { Category } from '../models/Category';
 import { Brand } from '../models/Brand';
 import { Accessory } from '../models/Accessory';
-import { sendSuccess } from '../utils/apiResponse';
+import { sendSuccess, sendError } from '../utils/apiResponse';
 import { isDatabaseConnected } from '../config/database';
 
 export const getDashboardStats = async (_req: Request, res: Response): Promise<void> => {
@@ -60,4 +60,24 @@ export const getDashboardStats = async (_req: Request, res: Response): Promise<v
     totalBrands,
     recentProducts,
   });
+};
+
+export const clearInventory = async (_req: Request, res: Response): Promise<void> => {
+  if (!isDatabaseConnected()) {
+    sendError(res, 'Database offline; unable to clear inventory', undefined, 503);
+    return;
+  }
+
+  try {
+    const prodRes = await Product.deleteMany({});
+    const accRes = await Accessory.deleteMany({});
+
+    sendSuccess(res, `Inventory cleared successfully: ${prodRes.deletedCount} products and ${accRes.deletedCount} accessories deleted.`, {
+      deletedProducts: prodRes.deletedCount,
+      deletedAccessories: accRes.deletedCount,
+    });
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : 'Failed to clear inventory';
+    sendError(res, msg, undefined, 400);
+  }
 };
