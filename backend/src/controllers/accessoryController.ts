@@ -9,7 +9,9 @@ export const getAccessories = async (_req: Request, res: Response): Promise<void
     return;
   }
 
-  const accessories = await Accessory.find({ isActive: true }).sort({ sortOrder: 1, name: 1 }).lean();
+  const accessories = await Accessory.find({ isDeleted: { $ne: true } })
+    .sort({ createdAt: -1 })
+    .lean();
   sendSuccess(res, 'Accessories fetched successfully', accessories);
 };
 
@@ -21,9 +23,36 @@ export const createAccessory = async (req: Request, res: Response): Promise<void
 
   try {
     const data = req.body;
-    if (!data.slug && data.name) {
-      data.slug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+    if (!data.name || !data.name.trim()) {
+      sendError(res, 'Accessory Name is required', undefined, 400);
+      return;
     }
+
+    if (!data.description || !data.description.trim()) {
+      data.description = data.name;
+    }
+
+    if (!data.category) {
+      data.category = 'Chargers';
+    }
+
+    let baseSlug = (data.slug || data.name)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '');
+
+    if (!baseSlug) {
+      baseSlug = `accessory-${Date.now()}`;
+    }
+
+    let finalSlug = baseSlug;
+    let counter = 1;
+    while (await Accessory.findOne({ slug: finalSlug, isDeleted: { $ne: true } })) {
+      finalSlug = `${baseSlug}-${counter}`;
+      counter++;
+    }
+    data.slug = finalSlug;
 
     const accessory = new Accessory(data);
     await accessory.save();
@@ -42,7 +71,24 @@ export const updateAccessory = async (req: Request, res: Response): Promise<void
   }
 
   try {
-    const accessory = await Accessory.findByIdAndUpdate(id, { $set: req.body }, { new: true, runValidators: true });
+    const updates = req.body;
+
+    if (updates.slug) {
+      const existing = await Accessory.findOne({
+        slug: updates.slug,
+        _id: { $ne: id },
+        isDeleted: { $ne: true },
+      });
+      if (existing) {
+        updates.slug = `${updates.slug}-${Date.now().toString().slice(-4)}`;
+      }
+    }
+
+    const accessory = await Accessory.findByIdAndUpdate(
+      id,
+      { $set: updates },
+      { new: true, runValidators: true }
+    );
     if (!accessory) {
       sendError(res, 'Accessory not found', undefined, 404);
       return;
@@ -61,7 +107,11 @@ export const deleteAccessory = async (req: Request, res: Response): Promise<void
     return;
   }
 
-  const accessory = await Accessory.findByIdAndUpdate(id, { $set: { isActive: false } }, { new: true });
+  const accessory = await Accessory.findByIdAndUpdate(
+    id,
+    { $set: { isDeleted: true } },
+    { new: true }
+  );
   if (!accessory) {
     sendError(res, 'Accessory not found', undefined, 404);
     return;
