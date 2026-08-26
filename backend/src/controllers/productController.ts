@@ -280,20 +280,33 @@ export const deleteProduct = async (req: Request, res: Response): Promise<void> 
     return;
   }
 
-  const product = await Product.findOneAndUpdate(
-    { _id: id, isDeleted: false },
-    { $set: { isDeleted: true, deletedAt: new Date() } },
-    { new: true }
-  );
+  try {
+    let product;
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      product = await Product.findByIdAndDelete(id);
+    } else {
+      product = await Product.findOneAndDelete({ slug: id });
+    }
 
-  if (!product) {
-    sendError(res, `Product not found for ID: ${id}`, undefined, 404);
-    return;
+    if (!product) {
+      // Also check and delete soft-deleted or matching document
+      await Product.deleteMany({
+        $or: [
+          ...(mongoose.Types.ObjectId.isValid(id) ? [{ _id: id }] : []),
+          { slug: id },
+        ],
+      });
+    }
+
+    if (product) {
+      await logActivity('Product Deleted', 'product', `Deleted product "${product.name}"`, String(id));
+    }
+
+    sendSuccess(res, 'Product deleted successfully', { id });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Product deletion failed';
+    sendError(res, message, undefined, 400);
   }
-
-  await logActivity('Product Archived', 'product', `Archived product "${product.name}"`, product._id.toString());
-
-  sendSuccess(res, 'Product archived / soft deleted successfully', { id });
 };
 
 export const toggleProductField = async (req: Request, res: Response): Promise<void> => {

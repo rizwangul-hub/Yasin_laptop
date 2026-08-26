@@ -52,6 +52,7 @@ export async function adminApiClient<T>(
 
   const executeFetch = async (targetUrl: string): Promise<ApiResponse<T>> => {
     const response = await fetch(targetUrl, {
+      cache: 'no-store',
       ...options,
       headers,
     });

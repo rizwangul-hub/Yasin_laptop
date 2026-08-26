@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { Request, Response } from 'express';
 import { Accessory } from '../models/Accessory';
 import { sendSuccess, sendError } from '../utils/apiResponse';
@@ -111,14 +112,26 @@ export const deleteAccessory = async (req: Request, res: Response): Promise<void
     return;
   }
 
-  const accessory = await Accessory.findByIdAndUpdate(
-    id,
-    { $set: { isDeleted: true } },
-    { new: true }
-  );
-  if (!accessory) {
-    sendError(res, 'Accessory not found', undefined, 404);
-    return;
+  try {
+    let accessory;
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      accessory = await Accessory.findByIdAndDelete(id);
+    } else {
+      accessory = await Accessory.findOneAndDelete({ slug: id });
+    }
+
+    if (!accessory) {
+      await Accessory.deleteMany({
+        $or: [
+          ...(mongoose.Types.ObjectId.isValid(id) ? [{ _id: id }] : []),
+          { slug: id },
+        ],
+      });
+    }
+
+    sendSuccess(res, 'Accessory deleted successfully', { id });
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : 'Failed to delete accessory';
+    sendError(res, msg, undefined, 400);
   }
-  sendSuccess(res, 'Accessory archived successfully', { id });
 };
