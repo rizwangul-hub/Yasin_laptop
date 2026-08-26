@@ -211,9 +211,29 @@ export const Footer: React.FC = () => {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-charcoal-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-charcoal-500">
           <p>© {currentYear} Yasin Laptop Hub. All rights reserved.</p>
-          <p>
-            Developed for <span className="text-charcoal-300 font-semibold">Yasin Wahab</span> • Lakki Marwat, KPK
-          </p>
+          <div className="flex flex-wrap items-center gap-3 font-medium">
+            <span>
+              Made by{' '}
+              <a
+                href="https://full-stack-portfolio-coral.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-300 font-bold underline transition-colors"
+              >
+                Rizwan
+              </a>
+            </span>
+            <span className="text-charcoal-700">•</span>
+            <a
+              href="https://wa.me/923179500901"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#25D366] hover:text-[#20bd5a] font-bold inline-flex items-center gap-1 transition-colors"
+            >
+              <MessageCircle className="w-3.5 h-3.5" />
+              <span>WhatsApp: 03179500901</span>
+            </a>
+          </div>
         </div>
       </div>
     </footer>
