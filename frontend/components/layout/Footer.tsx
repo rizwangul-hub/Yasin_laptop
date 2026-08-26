@@ -186,13 +186,6 @@ export const Footer: React.FC = () => {
                 <p className="text-[11px] text-charcoal-400 group-hover:text-charcoal-300 pl-5">Kutchery Rd / Trust Plaza Market, Sargodha</p>
               </Link>
 
-              <Link href="/laptops-in-bahawalpur" className="block space-y-1 group">
-                <div className="flex items-center gap-1.5 font-bold text-white group-hover:text-brand-400 transition-colors">
-                  <MapPin className="w-3.5 h-3.5 text-brand-400" />
-                  <span>Bahawalpur Delivery Hub</span>
-                </div>
-                <p className="text-[11px] text-charcoal-400 group-hover:text-charcoal-300 pl-5">Serving Bahawalpur, IUB &amp; South Punjab</p>
-              </Link>
 
               <div className="pt-2 border-t border-charcoal-800 space-y-1.5">
                 <div className="flex items-center gap-2">
