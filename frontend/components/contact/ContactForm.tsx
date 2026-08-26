@@ -109,10 +109,12 @@ export const ContactForm: React.FC = () => {
       )}
 
       <div>
-        <label className="block text-xs font-bold text-charcoal-900 mb-1.5">
+        <label htmlFor="contact-name" className="block text-xs font-bold text-charcoal-900 mb-1.5">
           Your Full Name <span className="text-rose-500">*</span>
         </label>
         <input
+          id="contact-name"
+          name="name"
           type="text"
           required
           value={name}
@@ -123,10 +125,12 @@ export const ContactForm: React.FC = () => {
       </div>
 
       <div>
-        <label className="block text-xs font-bold text-charcoal-900 mb-1.5">
+        <label htmlFor="contact-phone" className="block text-xs font-bold text-charcoal-900 mb-1.5">
           Phone / WhatsApp Number <span className="text-rose-500">*</span>
         </label>
         <input
+          id="contact-phone"
+          name="phone"
           type="tel"
           required
           value={phone}
@@ -137,10 +141,12 @@ export const ContactForm: React.FC = () => {
       </div>
 
       <div>
-        <label className="block text-xs font-bold text-charcoal-900 mb-1.5">
+        <label htmlFor="contact-message" className="block text-xs font-bold text-charcoal-900 mb-1.5">
           Your Message or Inquired Laptop <span className="text-rose-500">*</span>
         </label>
         <textarea
+          id="contact-message"
+          name="message"
           required
           rows={4}
           value={message}

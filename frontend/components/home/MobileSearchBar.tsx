@@ -28,6 +28,8 @@ export const MobileSearchBar: React.FC = () => {
         </div>
 
         <input
+          id="mobile-search-input"
+          name="search"
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}

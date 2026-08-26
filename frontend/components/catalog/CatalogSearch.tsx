@@ -41,6 +41,8 @@ export const CatalogSearch: React.FC<CatalogSearchProps> = ({
         <Search className="w-4 h-4" />
       </div>
       <input
+        id="catalog-search-input"
+        name="catalogSearch"
         type="text"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}

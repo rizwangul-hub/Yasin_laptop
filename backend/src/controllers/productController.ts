@@ -9,27 +9,32 @@ import { PaginatedResponse, IProduct } from '../types';
 import { logActivity } from './activityController';
 
 export const getProducts = async (req: Request, res: Response): Promise<void> => {
+  const emptyResponse: PaginatedResponse<IProduct> = {
+    items: [],
+    pagination: {
+      page: Number(req.query.page) || 1,
+      limit: Number(req.query.limit) || 12,
+      total: 0,
+      totalPages: 0,
+      hasNextPage: false,
+      hasPreviousPage: false,
+    },
+  };
+
   if (!isDatabaseConnected()) {
-    const emptyResponse: PaginatedResponse<IProduct> = {
-      items: [],
-      pagination: {
-        page: Number(req.query.page) || 1,
-        limit: Number(req.query.limit) || 12,
-        total: 0,
-        totalPages: 0,
-        hasNextPage: false,
-        hasPreviousPage: false,
-      },
-    };
     sendSuccess(res, 'Database offline; returning empty product structure', emptyResponse);
     return;
   }
 
-  const queryParams: ProductQueryParams = req.query as unknown as ProductQueryParams;
-  const result = await productQueryService.executeProductQuery(queryParams);
+  try {
+    const queryParams: ProductQueryParams = req.query as unknown as ProductQueryParams;
+    const result = await productQueryService.executeProductQuery(queryParams);
 
-  res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
-  sendSuccess(res, 'Products fetched successfully', result);
+    res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+    sendSuccess(res, 'Products fetched successfully', result);
+  } catch {
+    sendSuccess(res, 'Fallback product list', emptyResponse);
+  }
 };
 
 export const getProductFilters = async (req: Request, res: Response): Promise<void> => {

@@ -81,15 +81,23 @@ export async function apiClient<T>(
   // 3. Execute network fetch with automatic fallback if primary connection fails
   const fetchPromise = (async (): Promise<ApiResponse<T>> => {
     const executeFetch = async (targetUrl: string): Promise<ApiResponse<T>> => {
-      const response = await fetch(targetUrl, {
-        ...options,
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        },
-      });
+      const controller = typeof AbortController !== 'undefined' && !options.signal ? new AbortController() : null;
+      const timeoutId = controller ? setTimeout(() => controller.abort(), 10000) : null;
 
-      return await response.json();
+      try {
+        const response = await fetch(targetUrl, {
+          ...options,
+          signal: options.signal || controller?.signal,
+          headers: {
+            'Content-Type': 'application/json',
+            ...options.headers,
+          },
+        });
+
+        return await response.json();
+      } finally {
+        if (timeoutId) clearTimeout(timeoutId);
+      }
     };
 
     try {

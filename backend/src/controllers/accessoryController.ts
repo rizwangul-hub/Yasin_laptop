@@ -9,10 +9,14 @@ export const getAccessories = async (_req: Request, res: Response): Promise<void
     return;
   }
 
-  const accessories = await Accessory.find({ isDeleted: { $ne: true } })
-    .sort({ createdAt: -1 })
-    .lean();
-  sendSuccess(res, 'Accessories fetched successfully', accessories);
+  try {
+    const accessories = await Accessory.find({ isDeleted: { $ne: true } })
+      .sort({ createdAt: -1 })
+      .lean();
+    sendSuccess(res, 'Accessories fetched successfully', accessories);
+  } catch {
+    sendSuccess(res, 'Accessories fallback', []);
+  }
 };
 
 export const createAccessory = async (req: Request, res: Response): Promise<void> => {
