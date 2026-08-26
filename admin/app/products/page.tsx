@@ -6,6 +6,7 @@ import { adminApiClient } from '@/lib/api-client';
 import { getOptimizedAdminThumbnail } from '@/lib/cloudinary';
 import {
   Laptop,
+  Layers,
   Plus,
   Search,
   Copy,
@@ -237,6 +238,14 @@ export default function AdminProductsPage() {
           >
             <RefreshCw className="w-4 h-4" />
           </button>
+
+          <Link
+            href="/accessories"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-charcoal-100 hover:bg-charcoal-200 text-charcoal-900 font-bold text-xs shadow-xs transition-all hover:scale-105 active:scale-95"
+          >
+            <Layers className="w-4 h-4" />
+            <span>Accessories</span>
+          </Link>
 
           <Link
             href="/products/new"

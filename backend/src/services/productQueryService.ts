@@ -1,5 +1,6 @@
 import { FilterQuery } from 'mongoose';
 import { IProductDocument, Product } from '../models/Product';
+import { Accessory } from '../models/Accessory';
 import { Brand } from '../models/Brand';
 import { Category } from '../models/Category';
 import { UseCase } from '../models/UseCase';
@@ -275,9 +276,54 @@ export const productQueryService = {
     const page = Math.max(1, parseInt(params.page || '1', 10));
     const limit = Math.min(50, Math.max(1, parseInt(params.limit || '12', 10)));
     const skip = (page - 1) * limit;
+    const sort = productQueryService.getSortOption(params.sort);
+
+    // If productType is specifically 'accessory', query the Accessory collection directly
+    if (params.productType === 'accessory') {
+      const accFilter: Record<string, unknown> = { isDeleted: { $ne: true } };
+
+      if (params.stockStatus && ['available', 'sold_out'].includes(params.stockStatus)) {
+        accFilter.stockStatus = params.stockStatus;
+      }
+
+      const rawSearch = (params.search || params.q || '').trim();
+      if (rawSearch.length > 0) {
+        const sanitized = rawSearch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        accFilter.$or = [
+          { name: new RegExp(sanitized, 'i') },
+          { category: new RegExp(sanitized, 'i') },
+          { description: new RegExp(sanitized, 'i') },
+        ];
+      }
+
+      const [accItems, accTotal] = await Promise.all([
+        Accessory.find(accFilter).sort(sort).skip(skip).limit(limit).lean(),
+        Accessory.countDocuments(accFilter),
+      ]);
+
+      const formatted = accItems.map((a) => ({
+        ...a,
+        productType: 'accessory',
+        brand: { name: a.category || 'Accessory', slug: 'accessories' },
+        laptopModel: a.category || 'Accessory',
+        categories: [{ name: a.category || 'Accessory', slug: 'accessories' }],
+      }));
+
+      const totalPages = Math.ceil(accTotal / limit) || 1;
+      return {
+        items: formatted,
+        pagination: {
+          page,
+          limit,
+          total: accTotal,
+          totalPages,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1,
+        },
+      };
+    }
 
     const filter = await productQueryService.buildFilterQuery(params);
-    const sort = productQueryService.getSortOption(params.sort);
 
     const cardProjection =
       'name slug laptopModel brand categories productType price previousPrice isDiscounted discountPercentage stockStatus condition publicationStatus images specs accessoryCategory featured bestDeal latestArrival createdAt';

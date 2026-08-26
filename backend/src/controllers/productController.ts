@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { Request, Response } from 'express';
 import { productQueryService, ProductQueryParams } from '../services/productQueryService';
 import { Product, IProductDocument } from '../models/Product';
+import { Accessory } from '../models/Accessory';
 import { Brand } from '../models/Brand';
 import { sendSuccess, sendError } from '../utils/apiResponse';
 import { isDatabaseConnected } from '../config/database';
@@ -57,19 +58,37 @@ export const getProductBySlug = async (req: Request, res: Response): Promise<voi
     return;
   }
 
-  const product = await Product.findOne({ slug: slug.toLowerCase(), isDeleted: false })
-    .populate('brand', 'name slug logo description')
-    .populate('categories', 'name slug description')
-    .populate('useCases', 'name slug description')
-    .lean();
+  try {
+    let product = await Product.findOne({ slug: slug.toLowerCase(), isDeleted: false })
+      .populate('brand', 'name slug logo description')
+      .populate('categories', 'name slug description')
+      .populate('useCases', 'name slug description')
+      .lean();
 
-  if (!product) {
-    sendError(res, `Product not found for slug: ${slug}`, undefined, 404);
-    return;
+    if (!product) {
+      const acc = (await Accessory.findOne({ slug: slug.toLowerCase(), isDeleted: { $ne: true } }).lean()) as Record<string, unknown> | null;
+      if (acc) {
+        const catName = (typeof acc.category === 'string' ? acc.category : 'Accessory') || 'Accessory';
+        product = {
+          ...acc,
+          productType: 'accessory',
+          brand: { name: catName, slug: 'accessories' },
+          laptopModel: catName,
+          categories: [{ name: catName, slug: 'accessories' }],
+        } as unknown as typeof product;
+      }
+    }
+
+    if (!product) {
+      sendError(res, `Product not found for slug: ${slug}`, undefined, 404);
+      return;
+    }
+
+    res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+    sendSuccess(res, 'Product fetched successfully', product);
+  } catch (err) {
+    sendError(res, 'Error looking up product', undefined, 400);
   }
-
-  res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
-  sendSuccess(res, 'Product fetched successfully', product);
 };
 
 export const getProductById = async (req: Request, res: Response): Promise<void> => {
