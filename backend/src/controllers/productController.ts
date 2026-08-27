@@ -84,7 +84,7 @@ export const getProductBySlug = async (req: Request, res: Response): Promise<voi
       return;
     }
 
-    res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     sendSuccess(res, 'Product fetched successfully', product);
   } catch (err) {
     sendError(res, 'Error looking up product', undefined, 400);

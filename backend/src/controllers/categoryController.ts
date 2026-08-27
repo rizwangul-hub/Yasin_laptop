@@ -13,7 +13,7 @@ export const getCategories = async (_req: Request, res: Response): Promise<void>
     .populate('parent', 'name slug')
     .sort({ sortOrder: 1, name: 1 })
     .lean();
-  res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
   sendSuccess(res, 'Categories fetched successfully', categories);
 };
 
@@ -34,7 +34,7 @@ export const getCategoryBySlug = async (req: Request, res: Response): Promise<vo
     return;
   }
 
-  res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
   sendSuccess(res, 'Category fetched successfully', category);
 };
 

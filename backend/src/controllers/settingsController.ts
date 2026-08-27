@@ -28,7 +28,7 @@ export const getSettings = async (_req: Request, res: Response): Promise<void> =
     });
   }
 
-  res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
   sendSuccess(res, 'Business settings fetched successfully', settings);
 };
 
