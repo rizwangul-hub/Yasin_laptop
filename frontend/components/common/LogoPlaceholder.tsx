@@ -70,12 +70,12 @@ export const Logo: React.FC<LogoProps> = ({
         </div>
         {showTagline && (
           <span
-            className={`text-[11px] ${
+            className={`text-[10px] sm:text-[11px] ${
               isDark ? 'text-charcoal-400' : 'text-charcoal-500'
-            } font-medium tracking-wider uppercase mt-1 flex items-center gap-1`}
+            } font-bold tracking-wider uppercase mt-1 flex items-center gap-1`}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-brand-500 inline-block"></span>
-            <span>Lakki Marwat • KPK</span>
+            <span>Lakki Marwat • Peshawar • Sargodha</span>
           </span>
         )}
       </div>
