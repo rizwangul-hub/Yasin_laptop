@@ -1,5 +1,13 @@
 {
   "version": 2,
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Vary", "value": "Origin" }
+      ]
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",

@@ -11,6 +11,10 @@ export const createApp = (): Application => {
 
   // Security & Body parsing with reasonable limits
   app.use(cors(corsOptions));
+  app.use((_req: Request, res: Response, next: NextFunction) => {
+    res.setHeader('Vary', 'Origin');
+    next();
+  });
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
